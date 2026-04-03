@@ -1,0 +1,19 @@
+{
+  "sidebar": {
+    "home": "Home",
+    "map": "Map",
+    "aiPlan": "AI Plan",
+    "community": "Community",
+    "profile": "Profile",
+    "login": "Login",
+    "viewProfile": "View Profile"
+  },
+  "home": {
+    "title": "Discover Viet Soul",
+    "subtitle": "Authentic Vietnam Experience",
+    "searchPlaceholder": "Search experiences, crafts, places...",
+    "touristAttractionsSectionTitle": "Soul of Vietnam Stories",
+    "craftSectionTitle": "Featured Crafts",
+    "viewAll": "View all"
+  }
+}

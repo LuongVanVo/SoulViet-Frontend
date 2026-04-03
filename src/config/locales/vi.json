@@ -1,0 +1,20 @@
+{
+  "sidebar": {
+    "logo":"Soul Việt",
+    "home": "Trang chủ",
+    "map": "Bản đồ",
+    "aiPlan": "AI Plan",
+    "community": "Cộng đồng",
+    "profile": "Cá nhân",
+    "login": "Đăng nhập",
+    "viewProfile": "Xem hồ sơ"
+  },
+  "home": {
+    "title": "Khám Phá Hồn Việt",
+    "subtitle": "Trải nghiệm Việt Nam đích thực",
+    "searchPlaceholder": "Tìm trải nghiệm, nghề thủ công, địa điểm...",
+    "touristAttractionsSectionTitle": "Câu chuyện Hồn Việt",
+    "craftSectionTitle": "Nghề thủ công nổi bật",
+    "viewAll": "Xem tất cả"
+  }
+}
