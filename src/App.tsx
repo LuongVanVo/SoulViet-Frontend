@@ -1,9 +1,8 @@
+import { RouterProvider } from 'react-router-dom';
+import { router } from './routes/index';
+
 function App() {
-  return (
-    <>
-      <h1>Na na na anh độ mixi</h1>
-    </>
-  )
+  return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;
