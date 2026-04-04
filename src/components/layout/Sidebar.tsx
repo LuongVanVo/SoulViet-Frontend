@@ -18,7 +18,7 @@ export const Sidebar = () => {
     { to: '/', icon: Home, label: t('sidebar.home') },
     { to: '/map', icon: Map, label: t('sidebar.map') },
     { to: '/ai-plan', icon: Sparkles, label: t('sidebar.aiPlan') },
-    { to: '/community', icon: Users, label: t('sidebar.community') },
+    { to: '/social', icon: Users, label: t('sidebar.social') },
     { to: '/profile', icon: User, label: t(isLoggedIn ? 'sidebar.profile' : 'sidebar.login') },
   ];
 

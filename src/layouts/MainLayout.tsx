@@ -8,7 +8,7 @@ export const MainLayout = () => {
       <div className="sidebar-responsive">
         <Sidebar />
       </div>
-      <main className="flex-1 ml-64 main-responsive overflow-y-auto h-full pb-24">
+      <main className="flex-1 ml-64 main-responsive overflow-y-auto scrollbar-hide h-full pb-24">
         <div className="max-w-7xl mx-auto">
           <Outlet />
         </div>

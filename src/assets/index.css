@@ -20,8 +20,14 @@
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   gap: 0.5rem;
   min-width: 0;
+}
+
+.tag-row-scroll::-webkit-scrollbar {
+  display: none;
 }
 
 .badge-no-shrink {
@@ -72,7 +78,13 @@
 
 .overflow-x-scroll-row {
   overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   flex-wrap: nowrap;
+}
+
+.overflow-x-scroll-row::-webkit-scrollbar {
+  display: none;
 }
 @media (min-width: 768px) {
   .overflow-x-scroll-row {
@@ -111,7 +123,6 @@
   --font-sans: 'Inter', system-ui, sans-serif;
 }
 
-/* Responsive: Hide sidebar, show bottom bar on tablet/phone */
 @media (max-width: 1024px) {
   .sidebar-responsive {
     display: none !important;
@@ -127,6 +138,28 @@
 @media (min-width: 1025px) {
   .bottom-bar-responsive {
     display: none !important;
+  }
+}
+
+@layer components {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  @media (min-width: 1025px) {
+    .scrollbar-hide {
+      -ms-overflow-style: auto;
+      scrollbar-width: auto;
+    }
+    
+    .scrollbar-hide::-webkit-scrollbar {
+      display: block;
+    }
   }
 }
 
