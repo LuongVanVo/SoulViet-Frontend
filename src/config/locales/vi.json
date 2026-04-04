@@ -4,6 +4,7 @@
     "home": "Trang chủ",
     "map": "Bản đồ",
     "aiPlan": "AI Plan",
+    "social": "Cộng đồng",
     "community": "Cộng đồng",
     "profile": "Cá nhân",
     "login": "Đăng nhập",
@@ -16,5 +17,77 @@
     "touristAttractionsSectionTitle": "Câu chuyện Hồn Việt",
     "craftSectionTitle": "Nghề thủ công nổi bật",
     "viewAll": "Xem tất cả"
+  },
+  "map": {
+    "title": "Bản đồ cảm xúc",
+    "subtitle": "Khám phá theo cảm xúc"
+  },
+  "aiPlan": {
+    "title": "AI Lập Lịch Trình",
+    "subtitle": "Hành trình của bạn trong 30 giây"
+  },
+  "social": {
+    "title": "Cộng đồng",
+    "subtitle": "",
+    "tabs": {
+      "community": "Cộng đồng",
+      "localMarket": "Chợ địa phương"
+    },
+    "feed": {
+      "title": "Feed cộng đồng",
+      "description": "Khung bài viết, tương tác và gợi ý đang chờ dữ liệu thật.",
+      "placeholder": "Khu vực danh sách bài đăng"
+    },
+    "localMarket": {
+      "title": "Chợ địa phương",
+      "description": "Khung sản phẩm, gian hàng và lọc theo khu vực đang chờ dữ liệu thật.",
+      "placeholder": "Khu vực danh sách gian hàng"
+    }
+  },
+  "profile": {
+    "title": "Cá nhân",
+    "subtitle": "Quản lý hồ sơ, sở thích và các trải nghiệm đã lưu của bạn",
+    "auth": {
+      "loginTitle": "Đăng nhập",
+      "loginSubtitle": "Đăng nhập để đồng bộ hành trình và lưu địa điểm yêu thích",
+      "registerTitle": "Đăng ký",
+      "registerSubtitle": "Tạo tài khoản để bắt đầu hành trình khám phá của bạn",
+      "form": {
+        "loginTab": "Đăng nhập",
+        "registerTab": "Đăng ký",
+        "emailLabel": "Email",
+        "emailPlaceholder": "you@example.com",
+        "passwordLabel": "Mật khẩu",
+        "passwordPlaceholder": "••••••••",
+        "confirmPasswordLabel": "Nhập lại mật khẩu",
+        "fullNameLabel": "Tên đầy đủ",
+        "fullNamePlaceholder": "Tên đầy đủ của bạn",
+        "loginAction": "Đăng nhập",
+        "registerAction": "Tạo tài khoản",
+        "loadingLogin": "Đang đăng nhập...",
+        "loadingRegister": "Đang đăng ký...",
+        "alreadyHaveAccount": "Đã có tài khoản?",
+        "newHere": "Bạn mới ở đây?"
+      },
+      "errors": {
+        "loginFailed": "Đăng nhập thất bại. Vui lòng thử lại.",
+        "registerFailed": "Đăng ký thất bại. Vui lòng thử lại.",
+        "serverError": "Máy chủ gặp lỗi. Vui lòng thử lại sau.",
+        "invalidEmail": "Email không hợp lệ",
+        "fullNameRequired": "Tên đầy đủ không được để trống",
+        "passwordMismatch": "Mật khẩu xác nhận không khớp",
+        "passwordTooShort": "Mật khẩu phải có ít nhất 6 ký tự",
+        "emailUsernameEmpty": "Email hoặc tên đăng nhập không được để trống",
+        "emailUsernameTooShort": "Email hoặc tên đăng nhập phải có ít nhất 2 ký tự"
+      }
+    },
+    "user": {
+      "role": "Người khám phá văn hóa",
+      "stats": {
+        "soulCoins": "SoulCoins",
+        "visitedPlaces": "Địa điểm đã thăm",
+        "favorites": "Yêu thích"
+      }
+    }
   }
 }

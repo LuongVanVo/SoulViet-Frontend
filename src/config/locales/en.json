@@ -3,6 +3,7 @@
     "home": "Home",
     "map": "Map",
     "aiPlan": "AI Plan",
+    "social": "Community",
     "community": "Community",
     "profile": "Profile",
     "login": "Login",
@@ -15,5 +16,77 @@
     "touristAttractionsSectionTitle": "Soul of Vietnam Stories",
     "craftSectionTitle": "Featured Crafts",
     "viewAll": "View all"
+  },
+  "map": {
+    "title": "Emotion Map",
+    "subtitle": "Explore by your current vibe"
+  },
+  "aiPlan": {
+    "title": "AI Itinerary",
+    "subtitle": "Your journey in 30 seconds"
+  },
+  "social": {
+    "title": "Community",
+    "subtitle": "",
+    "tabs": {
+      "community": "Community",
+      "localMarket": "Local Market"
+    },
+    "feed": {
+      "title": "Community Feed",
+      "description": "Post, interaction, and recommendation sections are waiting for real data.",
+      "placeholder": "Post list area"
+    },
+    "localMarket": {
+      "title": "Local Market",
+      "description": "Product, vendor, and regional filter sections are waiting for real data.",
+      "placeholder": "Vendor list area"
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Manage your profile, preferences, and saved experiences",
+    "auth": {
+      "loginTitle": "Login",
+      "loginSubtitle": "Sign in to sync your journey and save favorite places",
+      "registerTitle": "Sign up",
+      "registerSubtitle": "Create an account to start your discovery journey",
+      "form": {
+        "loginTab": "Login",
+        "registerTab": "Sign up",
+        "emailLabel": "Email",
+        "emailPlaceholder": "you@example.com",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "••••••••",
+        "confirmPasswordLabel": "Confirm password",
+        "fullNameLabel": "Full name",
+        "fullNamePlaceholder": "Your full name",
+        "loginAction": "Login",
+        "registerAction": "Create account",
+        "loadingLogin": "Logging in...",
+        "loadingRegister": "Signing up...",
+        "alreadyHaveAccount": "Already have an account?",
+        "newHere": "New here?"
+      },
+      "errors": {
+        "loginFailed": "Login failed. Please try again.",
+        "registerFailed": "Registration failed. Please try again.",
+        "serverError": "Server error. Please try again later.",
+        "invalidEmail": "Invalid email",
+        "fullNameRequired": "Full name is required",
+        "passwordMismatch": "Password confirmation does not match",
+        "passwordTooShort": "Password must be at least 6 characters",
+        "emailUsernameEmpty": "Email or username cannot be empty",
+        "emailUsernameTooShort": "Email or username must be at least 2 characters"
+      }
+    },
+    "user": {
+      "role": "Culture explorer",
+      "stats": {
+        "soulCoins": "SoulCoins",
+        "visitedPlaces": "Visited places",
+        "favorites": "Favorites"
+      }
+    }
   }
 }
