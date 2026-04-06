@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { PageHeroSection } from '../components/layout/PageHeroSection';
 import { apiService } from '../services/mockData';
 import type { UserProfile } from '../types';
-import { AuthProfilePage } from './profile/AuthProfilePage';
+import { AuthPage } from './profile/AuthPage';
 import { UserProfilePage } from './profile/UserProfilePage';
 
 export const Profile = () => {
@@ -41,7 +41,7 @@ export const Profile = () => {
       {user ? (
         <UserProfilePage user={user} />
       ) : (
-        <AuthProfilePage authMode={authMode} onChangeMode={setAuthMode} onAuthSuccess={handleAuthSuccess} />
+        <AuthPage authMode={authMode} onChangeMode={setAuthMode} onAuthSuccess={handleAuthSuccess} />
       )}
     </div>
   );

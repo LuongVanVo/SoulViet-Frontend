@@ -5,6 +5,7 @@ import { Map } from '../pages/Map';
 import { AIPlan } from '../pages/AIPlan';
 import { Social } from '../pages/Social';
 import { Profile } from '../pages/Profile';
+import { ForgotPasswordPage, OAuthPage, SignInPage, SignUpPage } from '../pages/auth';
 
 export const router = createBrowserRouter([
   {
@@ -34,6 +35,22 @@ export const router = createBrowserRouter([
       {
         path: 'profile',
         element: <Profile />,
+      },
+      {
+        path: 'login',
+        element: <SignInPage />,
+      },
+      {
+        path: 'register',
+        element: <SignUpPage />,
+      },
+      {
+        path: 'forgot-password',
+        element: <ForgotPasswordPage />,
+      },
+      {
+        path: 'oauth2',
+        element: <OAuthPage />,
       },
     ],
   },
