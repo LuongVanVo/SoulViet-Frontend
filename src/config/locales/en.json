@@ -43,6 +43,55 @@
       "placeholder": "Vendor list area"
     }
   },
+  "auth": {
+    "signIn": {
+      "title": "Sign in to your account",
+      "subtitle": "Enter your email below to sign in to your account",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "forgotPassword": "Forgot your password?",
+      "loginButton": "Login",
+      "continueWith": "Or continue with",
+      "loginWithGoogle": "Login with Google",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up"
+    },
+    "signUp": {
+      "title": "Sign up for your account",
+      "subtitle": "Enter your details below to create your account",
+      "nameLabel": "Name",
+      "namePlaceholder": "Your name",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "confirmPasswordLabel": "Confirm password",
+      "confirmPasswordPlaceholder": "••••••••",
+      "signUpButton": "Sign up",
+      "continueWith": "Or continue with",
+      "loginWithGoogle": "Login with Google",
+      "haveAccount": "Already have an account?",
+      "login": "Login"
+    },
+    "forgotPassword": {
+      "title": "Forgot password",
+      "subtitle": "Enter your email and we'll send you a password reset link",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "sendButton": "Send",
+      "successMessage": "Password reset link sent. Please check your email.",
+      "rememberPassword": "Remember your password?",
+      "backToLogin": "Back to login"
+    },
+    "oauth": {
+      "title": "OAuth sign in",
+      "subtitle": "Choose a provider to continue",
+      "googleButton": "Login with Google",
+      "backToSignIn": "Back to sign in"
+    }
+  },
   "profile": {
     "title": "Profile",
     "subtitle": "Manage your profile, preferences, and saved experiences",

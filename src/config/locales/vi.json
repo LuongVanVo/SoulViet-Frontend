@@ -44,6 +44,55 @@
       "placeholder": "Khu vực danh sách gian hàng"
     }
   },
+  "auth": {
+    "signIn": {
+      "title": "Đăng nhập tài khoản",
+      "subtitle": "Nhập email bên dưới để đăng nhập vào tài khoản",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "Mật khẩu",
+      "passwordPlaceholder": "••••••••",
+      "forgotPassword": "Quên mật khẩu?",
+      "loginButton": "Đăng nhập",
+      "continueWith": "Hoặc tiếp tục với",
+      "loginWithGoogle": "Đăng nhập với Google",
+      "noAccount": "Chưa có tài khoản?",
+      "signUp": "Đăng ký"
+    },
+    "signUp": {
+      "title": "Đăng ký tài khoản",
+      "subtitle": "Nhập thông tin bên dưới để tạo tài khoản",
+      "nameLabel": "Tên",
+      "namePlaceholder": "Tên của bạn",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "Mật khẩu",
+      "passwordPlaceholder": "••••••••",
+      "confirmPasswordLabel": "Xác nhận mật khẩu",
+      "confirmPasswordPlaceholder": "••••••••",
+      "signUpButton": "Đăng ký",
+      "continueWith": "Hoặc tiếp tục với",
+      "loginWithGoogle": "Đăng nhập với Google",
+      "haveAccount": "Đã có tài khoản?",
+      "login": "Đăng nhập"
+    },
+    "forgotPassword": {
+      "title": "Quên mật khẩu",
+      "subtitle": "Nhập email và chúng tôi sẽ gửi liên kết đặt lại mật khẩu",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "sendButton": "Gửi",
+      "successMessage": "Đã gửi liên kết đặt lại mật khẩu. Vui lòng kiểm tra email của bạn.",
+      "rememberPassword": "Bạn nhớ mật khẩu rồi?",
+      "backToLogin": "Quay lại đăng nhập"
+    },
+    "oauth": {
+      "title": "Đăng nhập OAuth",
+      "subtitle": "Chọn nhà cung cấp để tiếp tục",
+      "googleButton": "Đăng nhập với Google",
+      "backToSignIn": "Quay lại đăng nhập"
+    }
+  },
   "profile": {
     "title": "Cá nhân",
     "subtitle": "Quản lý hồ sơ, sở thích và các trải nghiệm đã lưu của bạn",
