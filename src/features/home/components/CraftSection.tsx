@@ -1,17 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight, Flame } from 'lucide-react';
-import { apiService } from '../../../services/mockData';
-import type { CraftSectionData } from '../../../types';
+import { useRef } from 'react';
+import { ChevronLeft, ChevronRight, Flame } from 'lucide-react'
+import { useCraftSection } from '../../../hooks/useCraftSection';
 import { useTranslation } from 'react-i18next';
 
 export const CraftSection = () => {
     const { t } = useTranslation();
-    const [craftSection, setCraftSection] = useState<CraftSectionData | null>(null);
     const sliderRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        apiService.getCraftSection().then(setCraftSection);
-    }, []);
+    const { data: craftSection} = useCraftSection()
 
     const scrollCrafts = (direction: 'left' | 'right') => {
         const slider = sliderRef.current;

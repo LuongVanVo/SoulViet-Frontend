@@ -1,18 +1,13 @@
-import { useTranslation } from 'react-i18next';
-import { Home, Map, Sparkles, Users, User } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { apiService } from '../../services/mockData';
-import type { UserProfile } from '../../types';
+import { useTranslation } from 'react-i18next'
+import { Home, Map, Sparkles, Users, User } from 'lucide-react'
+import { NavLink } from 'react-router-dom'
+import { useAuthStore } from '../../store/authStore'
+
 
 export const BottomBar = () => {
-  const { t } = useTranslation();
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const isLoggedIn = Boolean(user);
+  const { t } = useTranslation()
 
-  useEffect(() => {
-    apiService.getCurrentUser().then(setUser);
-  }, []);
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn)
 
   const navItems = [
     { to: '/', icon: Home, label: t('sidebar.home') },
@@ -31,19 +26,18 @@ export const BottomBar = () => {
               <NavLink
                 to={item.to}
                 className={({ isActive }) =>
-                  `flex items-center justify-center w-20 h-20 rounded-full shadow-lg border-4 border-white ${
-                    isActive ? 'bg-primary text-white font-bold' : 'bg-secondary text-white/90'
+                  `flex items-center justify-center w-20 h-20 rounded-full shadow-lg border-4 border-white ${isActive ? 'bg-primary text-white font-bold' : 'bg-secondary text-primary-dark'
                   } transition-all duration-200`
                 }
                 style={({ isActive }) => ({
-                  boxShadow: isActive 
-                    ? '0 4px 24px 0 rgba(59, 130, 246, 0.3)' 
-                    : '0 4px 24px 0 rgba(255, 193, 7, 0.4)'
+                  boxShadow: isActive
+                    ? '0 4px 24px 0 rgba(54, 101, 107, 0.35)'
+                    : '0 4px 24px 0 rgba(218, 216, 135, 0.5)'
                 })}
               >
                 <item.icon className="w-9 h-9" />
               </NavLink>
-              <span className="mt-2 text-xs text-text-dark text-center select-none" style={{lineHeight:1}}>{item.label}</span>
+              <span className="mt-2 text-xs text-text-dark text-center select-none" style={{ lineHeight: 1 }}>{item.label}</span>
             </div>
           );
         }
@@ -52,8 +46,7 @@ export const BottomBar = () => {
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              `flex flex-col items-center justify-center flex-1 px-1 py-1 responsive-text font-medium transition-all ${
-                isActive ? 'text-primary' : 'text-gray-500 hover:text-primary'
+              `flex flex-col items-center justify-center flex-1 px-1 py-1 responsive-text font-medium transition-all ${isActive ? 'text-primary' : 'text-gray-500 hover:text-primary'
               }`
             }
           >

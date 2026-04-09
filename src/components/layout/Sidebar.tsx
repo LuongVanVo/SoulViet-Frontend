@@ -1,26 +1,25 @@
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Home, Map, Sparkles, Users, User } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
-import { apiService } from '../../services/mockData';
-import type { UserProfile } from '../../types';
+import { useTranslation } from 'react-i18next'
+import { Home, Map, Sparkles, Users, User } from 'lucide-react'
+import { NavLink } from 'react-router-dom'
+import { useAuthStore } from '../../store/authStore'
 
 export const Sidebar = () => {
-  const { t } = useTranslation();
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const isLoggedIn = Boolean(user);
+  const { t } = useTranslation()
 
-  useEffect(() => {
-    apiService.getCurrentUser().then(setUser);
-  }, []);
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn)
+  const isLoading = useAuthStore((state) => state.isLoading)
 
   const navItems = [
     { to: '/', icon: Home, label: t('sidebar.home') },
     { to: '/map', icon: Map, label: t('sidebar.map') },
     { to: '/ai-plan', icon: Sparkles, label: t('sidebar.aiPlan') },
     { to: '/social', icon: Users, label: t('sidebar.social') },
-    { to: isLoggedIn ? '/profile' : '/login', icon: User, label: t(isLoggedIn ? 'sidebar.profile' : 'sidebar.login') },
-  ];
+    {
+      to: isLoggedIn ? '/profile' : '/login',
+      icon: User,
+      label: t(isLoggedIn ? 'sidebar.profile' : 'sidebar.login'),
+    },
+  ]
 
   return (
     <div className="w-64 h-screen bg-white border-r border-gray-100 flex flex-col fixed left-0 top-0">
@@ -29,29 +28,47 @@ export const Sidebar = () => {
           {t('sidebar.logo')}
         </h1>
       </div>
+
       <nav className="flex-1 px-4 space-y-1.5 mt-4">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            className={({ isActive }) =>
-              `flex items-center space-x-3 px-4 py-3 rounded-xl transition-all font-medium ${
-                isActive
-                  ? 'bg-primary text-white shadow-md'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-primary'
-              }`
-            }
-          >
-            <item.icon className="w-5 h-5" />
-            <span>{item.label}</span>
-          </NavLink>
-        ))}
+        {isLoading ? (
+          <SidebarSkeleton />
+        ) : (
+          navItems.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) =>
+                `flex items-center space-x-3 px-4 py-3 rounded-xl transition-all font-medium ${
+                  isActive
+                    ? 'bg-primary text-white shadow-md'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-primary'
+                }`
+              }
+            >
+              <item.icon className="w-5 h-5" />
+              <span>{item.label}</span>
+            </NavLink>
+          ))
+        )}
       </nav>
 
       <div className="border-t border-gray-100 px-6 py-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Soul Viet 2025</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+          Soul Viet 2025
+        </p>
         <p className="mt-1 text-xs text-gray-400">Explore authentic Vietnam</p>
       </div>
     </div>
-  );
-};
+  )
+}
+
+const SidebarSkeleton = () => (
+  <>
+    {Array.from({ length: 5 }).map((_, i) => (
+      <div
+        key={i}
+        className="h-12 rounded-xl bg-gray-100 animate-pulse mx-1"
+      />
+    ))}
+  </>
+)
