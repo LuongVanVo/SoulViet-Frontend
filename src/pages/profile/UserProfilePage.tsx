@@ -11,7 +11,7 @@ export const UserProfilePage = ({ user }: UserProfilePageProps) => {
 
   return (
     <section className="px-4 pb-6 sm:px-6">
-      <div className="rounded-3xl bg-[linear-gradient(135deg,_#1A4B8E_0%,_#1d7a63_100%)] p-5 text-white shadow-soft">
+      <div className="rounded-3xl bg-[linear-gradient(135deg,_#36656B_0%,_#75B06F_100%)] p-5 text-white shadow-soft">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-4">
             <div className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-white/45 bg-white/15 backdrop-blur-sm">

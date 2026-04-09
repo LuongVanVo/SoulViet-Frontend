@@ -1,19 +1,14 @@
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Star } from 'lucide-react';
 import { PageHeroSection } from '../../../components/layout/PageHeroSection';
 import { SearchInput } from '../../../components/ui/SearchInput';
 import { VibeTag } from '../../../components/ui/VibeTag';
-import { apiService } from '../../../services/mockData';
-import type { VibeTag as VibeTagType } from '../../../types';
+import { useVibeTags } from '../../../hooks/useVibeTags'
 
 export const HeroSection = () => {
-  const { t } = useTranslation();
-  const [tags, setTags] = useState<VibeTagType[]>([]);
+  const { t } = useTranslation()
 
-  useEffect(() => {
-    apiService.getVibeTags().then(setTags);
-  }, []);
+  const { data: tags = [], isLoading } = useVibeTags()
 
   return (
     <div>
@@ -33,10 +28,14 @@ export const HeroSection = () => {
       </PageHeroSection>
 
       <div className="mt-5 flex flex-row overflow-x-auto gap-2.5 px-5 sm:gap-3 sm:px-8 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {tags.map((tag) => (
-          <VibeTag key={tag.id} tag={tag} variant="hero" className="badge-no-shrink" />
-        ))}
+        {isLoading ? (
+          <div className="px-5">Loading tags...</div>
+        ) : (
+          tags.map((tag) => (
+            <VibeTag key={tag.id} tag={tag} variant="hero" />
+          ))
+        )}
       </div>
     </div>
-  );
-};
+  )
+}

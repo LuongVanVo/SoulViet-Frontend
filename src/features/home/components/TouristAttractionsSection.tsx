@@ -1,25 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { TouristAttractionsCard } from '../../../components/ui/TouristAttractionsCard';
-import { apiService } from '../../../services/mockData';
-import type { TouristAttractionsSectionData, VibeTag } from '../../../types';
+import { useTouristAttractions } from '../../../hooks/useTouristAttractions';
+import { useVibeTags } from '../../../hooks/useVibeTags';
 
 export const TouristAttractionsSection = () => {
   const { t } = useTranslation();
-  const [touristAttractionsSection, setTouristAttractionsSection] = useState<TouristAttractionsSectionData | null>(null);
-  const [tags, setTags] = useState<VibeTag[]>([]);
-  const sliderRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    Promise.all([
-      apiService.getTouristAttractionsCards(),
-      apiService.getVibeTags()
-    ]).then(([fetchedTouristAttractionsSection, fetchedTags]) => {
-      setTouristAttractionsSection(fetchedTouristAttractionsSection);
-      setTags(fetchedTags);
-    });
-  }, []);
+  const { data: touristAttractionsSection } = useTouristAttractions();
+  const { data: tags = [] } = useVibeTags();
+  const sliderRef = React.useRef<HTMLDivElement>(null);
 
   const getTagInfo = (tagId: string) => {
     return tags.find(t => t.id === tagId);

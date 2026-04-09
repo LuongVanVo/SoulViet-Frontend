@@ -19,8 +19,8 @@ export const VibeTag = ({
         variant === 'outline'
           ? 'border border-white/20 bg-white/5 px-3 py-2 text-white hover:bg-white/10'
           : variant === 'hero'
-            ? 'border border-[#bed9c7] bg-[#edf5ef] px-4 py-2 text-[0.98rem] font-semibold text-[#2d6a4f] hover:border-[#2d6a4f] hover:bg-[#2d6a4f] hover:text-white'
-            : 'bg-secondary px-2 py-0.5 text-xs text-text-dark',  
+            ? 'border border-primary-teal/30 bg-secondary-alt px-4 py-2 text-[0.98rem] font-semibold text-primary hover:border-primary hover:bg-primary hover:text-white'
+            : 'bg-secondary px-2 py-0.5 text-xs text-primary-dark',
         className
       )}
     >
