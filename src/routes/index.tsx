@@ -5,7 +5,7 @@ import { Map } from '../pages/Map';
 import { AIPlan } from '../pages/AIPlan';
 import { Social } from '../pages/Social';
 import { Profile } from '../pages/Profile';
-import { ForgotPasswordPage, OAuthPage, SignInPage, SignUpPage } from '../pages/auth';
+import { ConfirmEmailPage, ForgotPasswordPage, OAuthPage, SignInPage, SignUpPage, VerifyEmailNoticePage } from '../pages/auth';
 
 export const router = createBrowserRouter([
   {
@@ -51,6 +51,14 @@ export const router = createBrowserRouter([
       {
         path: 'oauth2',
         element: <OAuthPage />,
+      },
+      {
+        path: 'verify-email-notice',
+        element: <VerifyEmailNoticePage />,
+      },
+      {
+        path: 'confirm-email',
+        element: <ConfirmEmailPage />,
       },
     ],
   },

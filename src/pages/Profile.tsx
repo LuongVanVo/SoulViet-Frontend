@@ -1,45 +1,36 @@
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { PageHeroSection } from '../components/layout/PageHeroSection';
-import { apiService } from '../services/mockData';
+import { apiService } from '../services/apiService';
 import type { UserProfile } from '../types';
 import { AuthPage } from './profile/AuthPage';
 import { UserProfilePage } from './profile/UserProfilePage';
+import { useAuthStore } from '../store/authStore';
 
 export const Profile = () => {
-  const { t } = useTranslation();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+  const setStoreUser = useAuthStore((state) => state.setUser);
 
   useEffect(() => {
-    apiService.getCurrentUser().then(setUser);
-  }, []);
-
-  const heroTitle = user
-    ? t('profile.title')
-    : authMode === 'login'
-      ? t('profile.auth.loginTitle')
-      : t('profile.auth.registerTitle');
-
-  const heroSubtitle = user
-    ? t('profile.subtitle')
-    : authMode === 'login'
-      ? t('profile.auth.loginSubtitle')
-      : t('profile.auth.registerSubtitle');
+    apiService.getCurrentUser().then((userData) => {
+      setUser(userData);
+      setStoreUser(userData);
+    });
+  }, [setStoreUser]);
 
   const handleAuthSuccess = (userData: UserProfile) => {
     setUser(userData);
+    setStoreUser(userData);
+  };
+
+  const handleLoggedOut = () => {
+    setUser(null);
+    setStoreUser(null);
   };
 
   return (
-    <div className="animate-in fade-in duration-500 space-y-5">
-      <PageHeroSection
-        title={heroTitle}
-        subtitle={heroSubtitle}
-      />
-
+    <div className="animate-in fade-in duration-500">
       {user ? (
-        <UserProfilePage user={user} />
+        <UserProfilePage user={user} onLoggedOut={handleLoggedOut} />
       ) : (
         <AuthPage authMode={authMode} onChangeMode={setAuthMode} onAuthSuccess={handleAuthSuccess} />
       )}

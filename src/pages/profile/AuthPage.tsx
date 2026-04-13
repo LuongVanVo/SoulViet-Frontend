@@ -55,7 +55,6 @@ export const AuthPage = ({ authMode, onChangeMode, onAuthSuccess }: AuthPageProp
         {authMode === 'register' && (
           <SignUpPage
             embedded
-            onAuthSuccess={onAuthSuccess}
             onSwitchToSignIn={() => handleModeChange('login')}
           />
         )}
