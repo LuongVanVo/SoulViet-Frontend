@@ -82,6 +82,7 @@
       "emailLabel": "Email",
       "emailPlaceholder": "you@example.com",
       "sendButton": "Gửi",
+      "sendingButton": "Đang gửi...",
       "successMessage": "Đã gửi liên kết đặt lại mật khẩu. Vui lòng kiểm tra email của bạn.",
       "rememberPassword": "Bạn nhớ mật khẩu rồi?",
       "backToLogin": "Quay lại đăng nhập"
@@ -91,6 +92,28 @@
       "subtitle": "Chọn nhà cung cấp để tiếp tục",
       "googleButton": "Đăng nhập với Google",
       "backToSignIn": "Quay lại đăng nhập"
+    },
+    "verifyEmail": {
+      "title": "Xác thực email",
+      "subtitle": "Chúng tôi đã gửi email kích hoạt tài khoản cho bạn",
+      "sentTitle": "Email xác thực đã được gửi",
+      "sentDescription": "Vui lòng kiểm tra hộp thư (và cả thư rác) để kích hoạt tài khoản.",
+      "sentDescriptionWithEmail": "Vui lòng kiểm tra hộp thư {{email}} (và cả thư rác) để kích hoạt tài khoản.",
+      "openGmail": "Mở Gmail",
+      "backToLogin": "Tôi đã xác thực, quay lại đăng nhập",
+      "tip": "Sau khi bấm link kích hoạt trong email, bạn có thể đăng nhập ngay."
+    },
+    "confirmEmail": {
+      "title": "Kích hoạt tài khoản",
+      "subtitle": "Đang xác thực liên kết kích hoạt email",
+      "loading": "Đang xác thực email...",
+      "successTitle": "Kích hoạt tài khoản thành công",
+      "successDescription": "Email của bạn đã được xác thực. Bây giờ bạn có thể đăng nhập.",
+      "errorTitle": "Xác thực thất bại",
+      "failed": "Liên kết xác thực không hợp lệ hoặc đã hết hạn.",
+      "missingToken": "Thiếu token xác thực trong đường dẫn.",
+      "backToLogin": "Quay lại đăng nhập",
+      "backToRegister": "Quay lại đăng ký"
     }
   },
   "profile": {
@@ -121,6 +144,7 @@
       "errors": {
         "loginFailed": "Đăng nhập thất bại. Vui lòng thử lại.",
         "registerFailed": "Đăng ký thất bại. Vui lòng thử lại.",
+        "networkError": "Không thể kết nối tới máy chủ. Vui lòng kiểm tra API URL/backend và thử lại.",
         "serverError": "Máy chủ gặp lỗi. Vui lòng thử lại sau.",
         "invalidEmail": "Email không hợp lệ",
         "fullNameRequired": "Tên đầy đủ không được để trống",
@@ -132,6 +156,15 @@
     },
     "user": {
       "role": "Người khám phá văn hóa",
+      "accountSectionTitle": "Tài khoản",
+      "quickMenu": {
+        "journey": "Hành trình của tôi",
+        "bookings": "Đặt chỗ của tôi",
+        "settings": "Cài đặt",
+        "support": "Trợ giúp & Hỗ trợ"
+      },
+      "logout": "Đăng xuất",
+      "loggingOut": "Đang đăng xuất...",
       "stats": {
         "soulCoins": "SoulCoins",
         "visitedPlaces": "Địa điểm đã thăm",

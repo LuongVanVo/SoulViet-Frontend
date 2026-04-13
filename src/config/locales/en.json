@@ -81,6 +81,7 @@
       "emailLabel": "Email",
       "emailPlaceholder": "you@example.com",
       "sendButton": "Send",
+      "sendingButton": "Sending...",
       "successMessage": "Password reset link sent. Please check your email.",
       "rememberPassword": "Remember your password?",
       "backToLogin": "Back to login"
@@ -90,6 +91,28 @@
       "subtitle": "Choose a provider to continue",
       "googleButton": "Login with Google",
       "backToSignIn": "Back to sign in"
+    },
+    "verifyEmail": {
+      "title": "Verify your email",
+      "subtitle": "We have sent an account activation email",
+      "sentTitle": "Verification email sent",
+      "sentDescription": "Please check your inbox (and spam folder) to activate your account.",
+      "sentDescriptionWithEmail": "Please check {{email}} (and spam folder) to activate your account.",
+      "openGmail": "Open Gmail",
+      "backToLogin": "I have verified, back to login",
+      "tip": "After clicking the activation link in email, you can sign in immediately."
+    },
+    "confirmEmail": {
+      "title": "Activate account",
+      "subtitle": "Verifying your email activation link",
+      "loading": "Verifying email...",
+      "successTitle": "Account activated successfully",
+      "successDescription": "Your email is verified. You can now sign in.",
+      "errorTitle": "Verification failed",
+      "failed": "Verification link is invalid or expired.",
+      "missingToken": "Missing verification token in the URL.",
+      "backToLogin": "Back to login",
+      "backToRegister": "Back to register"
     }
   },
   "profile": {
@@ -120,6 +143,7 @@
       "errors": {
         "loginFailed": "Login failed. Please try again.",
         "registerFailed": "Registration failed. Please try again.",
+        "networkError": "Cannot connect to the server. Please check API URL/backend and try again.",
         "serverError": "Server error. Please try again later.",
         "invalidEmail": "Invalid email",
         "fullNameRequired": "Full name is required",
@@ -131,6 +155,15 @@
     },
     "user": {
       "role": "Culture explorer",
+      "accountSectionTitle": "Account",
+      "quickMenu": {
+        "journey": "My journey",
+        "bookings": "My bookings",
+        "settings": "Settings",
+        "support": "Help & Support"
+      },
+      "logout": "Sign out",
+      "loggingOut": "Signing out...",
       "stats": {
         "soulCoins": "SoulCoins",
         "visitedPlaces": "Visited places",

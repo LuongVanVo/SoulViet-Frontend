@@ -1,8 +1,8 @@
 import { useState, type SubmitEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 import { authApi } from '../../services/auth.api';
-import { userApi } from '../../services/user.api';
 import {
   doPasswordsMatch,
   getPasswordMatchMessage,
@@ -11,16 +11,14 @@ import {
   isValidInput,
   isValidPassword,
 } from '../../utils/validation';
-import type { UserProfile } from '../../types';
 import { AuthShell } from './AuthShell';
 
 interface SignUpPageProps {
   embedded?: boolean;
-  onAuthSuccess?: (user: UserProfile) => void;
   onSwitchToSignIn?: () => void;
 }
 
-export default function SignUpPage({ embedded = false, onAuthSuccess, onSwitchToSignIn }: SignUpPageProps) {
+export default function SignUpPage({ embedded = false, onSwitchToSignIn }: SignUpPageProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -59,48 +57,61 @@ export default function SignUpPage({ embedded = false, onAuthSuccess, onSwitchTo
     setError('');
 
     try {
-      const response = await authApi.register({
+      await authApi.register({
         email: email.trim(),
         fullName: fullName.trim(),
         password,
         confirmPassword,
       });
 
-      const token = response.accessToken || response.access;
-      if (token) {
-        authApi.setToken(token);
-      }
-      if (response.refresh) {
-        authApi.setRefreshToken(response.refresh);
-      }
-
-      const user = await userApi.getCurrentUser();
-
-      if (onAuthSuccess && user) {
-        onAuthSuccess(user);
-      } else {
-        navigate('/profile');
-      }
+      authApi.clearTokens();
+      navigate('/verify-email-notice', { state: { email: email.trim() } });
     } catch (err: unknown) {
       let message = t('profile.auth.errors.registerFailed');
-      const errorData = err as {
-        response?: {
-          data?: Record<string, string | string[]> | string;
-        };
-      };
 
-      const data = errorData.response?.data;
-      if (typeof data === 'string') {
-        message = data.includes('<!DOCTYPE') ? t('profile.auth.errors.serverError') : data;
-      } else if (data && typeof data === 'object') {
-        for (const value of Object.values(data)) {
-          if (Array.isArray(value) && value.length > 0) {
-            message = value[0];
-            break;
-          }
-          if (typeof value === 'string') {
-            message = value;
-            break;
+      if (axios.isAxiosError(err)) {
+        if (!err.response) {
+          message = t('profile.auth.errors.networkError');
+        } else {
+          const data = err.response.data as
+            | {
+                message?: string;
+                detail?: string;
+                title?: string;
+                errors?: Record<string, string[]>;
+                [key: string]: unknown;
+              }
+            | string
+            | undefined;
+
+          if (typeof data === 'string') {
+            message = data.includes('<!DOCTYPE') ? t('profile.auth.errors.serverError') : data;
+          } else if (data && typeof data === 'object') {
+            if (data.message && typeof data.message === 'string') {
+              message = data.message;
+            } else if (data.detail && typeof data.detail === 'string') {
+              message = data.detail;
+            } else if (data.title && typeof data.title === 'string') {
+              message = data.title;
+            } else if (data.errors && typeof data.errors === 'object') {
+              for (const value of Object.values(data.errors)) {
+                if (Array.isArray(value) && value.length > 0) {
+                  message = value[0];
+                  break;
+                }
+              }
+            } else {
+              for (const value of Object.values(data)) {
+                if (Array.isArray(value) && value.length > 0) {
+                  message = String(value[0]);
+                  break;
+                }
+                if (typeof value === 'string') {
+                  message = value;
+                  break;
+                }
+              }
+            }
           }
         }
       }

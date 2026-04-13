@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { apiService } from '../services/mockData'
+import { userApi } from '../services/user.api'
 import { useAuthStore } from '../store/authStore'
 
 export const useInitAuth = () => {
@@ -11,7 +11,7 @@ export const useInitAuth = () => {
 
     setLoading(true)
 
-    apiService
+    userApi
       .getCurrentUser()
       .then((user) => {
         if (isActive) {

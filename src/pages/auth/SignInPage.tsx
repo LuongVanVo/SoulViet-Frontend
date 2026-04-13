@@ -6,6 +6,7 @@ import { userApi } from '../../services/user.api';
 import { getValidationMessage, isValidInput } from '../../utils/validation';
 import type { UserProfile } from '../../types';
 import { AuthShell } from './AuthShell';
+import { useAuthStore } from '../../store/authStore';
 
 interface SignInPageProps {
   embedded?: boolean;
@@ -16,6 +17,7 @@ interface SignInPageProps {
 export default function SignInPage({ embedded = false, onAuthSuccess, onSwitchToSignUp }: SignInPageProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const setUser = useAuthStore((state) => state.setUser);
   const [emailOrUsername, setEmailOrUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -34,19 +36,23 @@ export default function SignInPage({ embedded = false, onAuthSuccess, onSwitchTo
 
     try {
       const response = await authApi.login({
-        username: emailOrUsername.trim(),
+        email: emailOrUsername.trim(),
         password,
       });
 
-      const token = response.accessToken || response.access;
+      const token = response.accessToken || response.access || response.token;
       if (token) {
         authApi.setToken(token);
       }
-      if (response.refresh) {
-        authApi.setRefreshToken(response.refresh);
+      const refreshToken = response.refreshToken || response.refresh;
+      if (refreshToken) {
+        authApi.setRefreshToken(refreshToken);
       }
 
       const user = await userApi.getCurrentUser();
+      if (user) {
+        setUser(user);
+      }
 
       if (onAuthSuccess && user) {
         onAuthSuccess(user);
