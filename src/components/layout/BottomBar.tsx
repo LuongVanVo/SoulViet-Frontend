@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Home, Map, Sparkles, Users, User } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
-import { useAuthStore } from '../../store/authStore'
+import { useAuthStore } from '@/store'
 
 
 export const BottomBar = () => {

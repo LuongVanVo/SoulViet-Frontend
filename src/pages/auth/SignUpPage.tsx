@@ -2,7 +2,7 @@ import { useState, type SubmitEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
-import { authApi } from '../../services/auth.api';
+import { authApi } from '@/services';
 import {
   doPasswordsMatch,
   getPasswordMatchMessage,
@@ -10,7 +10,7 @@ import {
   getValidationEmailMessage,
   isValidInput,
   isValidPassword,
-} from '../../utils/validation';
+} from '@/utils/validation';
 import { AuthShell } from './AuthShell';
 
 interface SignUpPageProps {

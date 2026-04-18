@@ -1,12 +1,11 @@
 import { useState, type SubmitEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { authApi } from '../../services/auth.api';
-import { userApi } from '../../services/user.api';
-import { getValidationMessage, isValidInput } from '../../utils/validation';
-import type { UserProfile } from '../../types';
+import { authApi, userApi } from '@/services';
+import { getValidationMessage, isValidInput } from '@/utils/validation';
+import type { UserProfile } from '@/types';
 import { AuthShell } from './AuthShell';
-import { useAuthStore } from '../../store/authStore';
+import { useAuthStore } from '@/store';
 
 interface SignInPageProps {
   embedded?: boolean;

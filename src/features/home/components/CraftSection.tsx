@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { ChevronLeft, ChevronRight, Flame } from 'lucide-react'
-import { useCraftSection } from '../../../hooks/useCraftSection';
+import { useCraftSection } from '@/hooks/useCraftSection';
 import { useTranslation } from 'react-i18next';
 
 export const CraftSection = () => {

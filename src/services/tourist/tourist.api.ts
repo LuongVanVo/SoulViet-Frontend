@@ -1,5 +1,5 @@
-import { apiClient } from './axios';
-import type { TouristAttractionsSectionData } from '../types';
+import { apiClient } from '@/services';
+import type { TouristAttractionsSectionData } from '@/types';
 
 export const touristApi = {
   getTouristAttractions(

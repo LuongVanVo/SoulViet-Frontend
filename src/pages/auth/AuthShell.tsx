@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { PageHeroSection } from '../../components/layout/PageHeroSection';
+import { PageHeroSection } from '@/components';
 
 type AuthMode = 'login' | 'register';
 

@@ -1,6 +1,6 @@
 import axios from 'axios';
-import type { UserProfile } from '../types';
-import { authApi } from './auth.api';
+import type { UserProfile } from '@/types';
+import { authApi } from '@/services';
 
 function mapCurrentUserToProfile(data: Record<string, unknown>): UserProfile {
   const id = String(data.id ?? data.userId ?? data.email ?? 'user');

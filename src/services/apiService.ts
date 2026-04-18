@@ -1,6 +1,6 @@
-import { vibeApi } from './vibe.api';
-import { touristApi } from './tourist.api';
-import { userApi } from './user.api';
+import { vibeApi } from './vibe';
+import { touristApi } from './tourist';
+import { userApi } from './user';
 
 export const apiService = {
   getVibeTags: vibeApi.getVibeTags,

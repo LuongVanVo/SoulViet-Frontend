@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { TouristAttractionsCard } from '../../../components/ui/TouristAttractionsCard';
-import { useTouristAttractions } from '../../../hooks/useTouristAttractions';
-import { useVibeTags } from '../../../hooks/useVibeTags';
+import { TouristAttractionsCard } from '@/components';
+import { useTouristAttractions } from '@/hooks/useTouristAttractions';
+import { useVibeTags } from '@/hooks/useVibeTags';
 
 export const TouristAttractionsSection = () => {
   const { t } = useTranslation();

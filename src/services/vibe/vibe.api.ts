@@ -1,5 +1,5 @@
-import { apiClient } from './axios';
-import type { VibeTag } from '../types';
+import { apiClient } from '@/services';
+import type { VibeTag } from '@/types';
 
 export const vibeApi = {
   getVibeTags(): Promise<VibeTag[]> {

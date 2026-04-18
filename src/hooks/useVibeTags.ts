@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { apiService } from '../services/mockData'
+import { apiService } from '@/services/mockData'
 
 
 export const useVibeTags = () => {

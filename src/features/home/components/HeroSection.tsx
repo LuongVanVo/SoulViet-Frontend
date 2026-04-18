@@ -1,9 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Star } from 'lucide-react';
-import { PageHeroSection } from '../../../components/layout/PageHeroSection';
-import { SearchInput } from '../../../components/ui/SearchInput';
-import { VibeTag } from '../../../components/ui/VibeTag';
-import { useVibeTags } from '../../../hooks/useVibeTags'
+import { PageHeroSection, SearchInput, VibeTag } from '@/components';
+import { useVibeTags } from '@/hooks/useVibeTags'
 
 export const HeroSection = () => {
   const { t } = useTranslation()

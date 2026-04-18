@@ -1,5 +1,6 @@
-export { Home } from './Home';
-export { Map } from './Map';
-export { AIPlan } from './AIPlan';
-export { Social } from './Social';
-export { Profile } from './Profile';
+export * from './home';
+export * from './auth';
+export * from './map';
+export * from './profile';
+export * from './social';
+export * from './AIplan';

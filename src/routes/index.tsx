@@ -1,11 +1,18 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { MainLayout } from '../layouts/MainLayout';
-import { Home } from '../pages/Home';
-import { Map } from '../pages/Map';
-import { AIPlan } from '../pages/AIPlan';
-import { Social } from '../pages/Social';
-import { Profile } from '../pages/Profile';
-import { ConfirmEmailPage, ForgotPasswordPage, OAuthPage, SignInPage, SignUpPage, VerifyEmailNoticePage } from '../pages/auth';
+import { MainLayout } from '@/layouts/MainLayout';
+import { 
+  Home, 
+  Map, 
+  AIPlan, 
+  Social, 
+  Profile,
+  ConfirmEmailPage, 
+  ForgotPasswordPage, 
+  OAuthPage, 
+  SignInPage, 
+  SignUpPage, 
+  VerifyEmailNoticePage 
+} from '@/pages';
 
 export const router = createBrowserRouter([
   {
