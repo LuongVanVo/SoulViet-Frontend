@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Store, Users } from 'lucide-react';
-import { PageHeroSection } from '../components/layout/PageHeroSection';
-import { SocialFeed } from './social/SocialFeed';
-import { LocalMarket } from './social/LocalMarket';
+import { PageHeroSection } from '@/components';
+import { SocialFeed, LocalMarket } from '@/features/social';
 
 export const Social = () => {
   const { t } = useTranslation();

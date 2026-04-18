@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { PageHeroSection } from '../components/layout/PageHeroSection';
+import { PageHeroSection } from '@/components';
 
 export const Map = () => {
   const { t } = useTranslation();

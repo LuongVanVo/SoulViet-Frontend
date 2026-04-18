@@ -1,6 +1,6 @@
 import { Heart } from 'lucide-react';
 import { VibeTag } from './VibeTag';
-import type { TouristAttractionCardItem, VibeTag as VibeTagType } from '../../types';
+import type { TouristAttractionCardItem, VibeTag as VibeTagType } from '@/types';
 
 interface TouristAttractionsCardProps {
   item: TouristAttractionCardItem;

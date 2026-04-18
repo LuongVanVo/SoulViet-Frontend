@@ -2,8 +2,8 @@ import { ChevronRight, Heart, LogOut, MapPin, Route, Settings, Shield, TicketChe
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import type { UserProfile } from '../../types';
-import { authApi } from '../../services/auth.api';
+import type { UserProfile } from '@/types';
+import { authApi } from '@/services';
 
 interface UserProfilePageProps {
   user: UserProfile;

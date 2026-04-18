@@ -1,8 +1,6 @@
 import { Outlet } from 'react-router-dom';
-import { Sidebar } from '../components/layout/Sidebar';
-import { BottomBar } from '../components/layout/BottomBar';
-import { PageLoadingPlaceholder } from '../components/layout/PageLoadingPlaceholder';
-import { useAuthStore } from '../store/authStore';
+import * as Layout from '@/components';
+import { useAuthStore } from '@/store';
 
 export const MainLayout = () => {
   const isLoading = useAuthStore((state) => state.isLoading);
@@ -10,15 +8,15 @@ export const MainLayout = () => {
   return (
     <div className="h-screen bg-background flex overflow-hidden">
       <div className="sidebar-responsive">
-        <Sidebar />
+        <Layout.Sidebar />
       </div>
       <main className="flex-1 ml-64 main-responsive overflow-y-auto scrollbar-hide h-full pb-24">
         <div className="max-w-7xl mx-auto">
-          {isLoading ? <PageLoadingPlaceholder /> : <Outlet />}
+          {isLoading ? <Layout.PageLoadingPlaceholder /> : <Outlet />}
         </div>
       </main>
       <div className="bottom-bar-responsive">
-        <BottomBar />
+        <Layout.BottomBar />
       </div>
     </div>
   );

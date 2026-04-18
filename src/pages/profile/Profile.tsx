@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { apiService } from '../services/apiService';
-import type { UserProfile } from '../types';
-import { AuthPage } from './profile/AuthPage';
-import { UserProfilePage } from './profile/UserProfilePage';
-import { useAuthStore } from '../store/authStore';
+import { apiService } from '@/services';
+import type { UserProfile } from '@/types';
+import { useAuthStore } from '@/store';
+import { AuthPage } from './AuthPage';
+import { UserProfilePage } from './UserProfilePage';
 
 export const Profile = () => {
   const [user, setUser] = useState<UserProfile | null>(null);

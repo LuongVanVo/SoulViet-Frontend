@@ -2,7 +2,7 @@ import { useState, type SubmitEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AuthShell } from './AuthShell';
-import { authApi } from '../../services/auth.api';
+import { authApi } from '@/services';
 
 export default function ForgotPasswordPage() {
   const { t } = useTranslation();

@@ -1,5 +1,5 @@
-import { cn } from '../../utils/cn';
-import type { VibeTag as VibeTagType } from '../../types';
+import { cn } from '@/utils/cn';
+import type { VibeTag as VibeTagType } from '@/types';
 
 interface VibeTagProps {
   tag: VibeTagType;

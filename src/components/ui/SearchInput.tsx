@@ -1,6 +1,6 @@
 import type { InputHTMLAttributes } from 'react';
 import { useTranslation } from 'react-i18next';
-import { cn } from '../../utils/cn';
+import { cn } from '@/utils/cn';
 
 interface SearchInputProps extends InputHTMLAttributes<HTMLInputElement> {}
 

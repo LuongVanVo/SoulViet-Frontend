@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, LoaderCircle, XCircle } from 'lucide-react';
 import { AuthShell } from './AuthShell';
-import { authApi } from '../../services/auth.api';
+import { authApi } from '@/services';
 
 type VerifyStatus = 'loading' | 'success' | 'error';
 
