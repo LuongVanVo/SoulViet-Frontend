@@ -14,7 +14,7 @@ export const Social = () => {
         title={t('social.title')}
         subtitle={t('social.subtitle')}
       >
-        <div className="w-full max-w-xl rounded-2xl bg-white/20 p-1.5 backdrop-blur-sm">
+        <div className="w-full max-w-xl rounded-2xl bg-white/20 p-1.5 backdrop-blur-sm mx-auto">
           <div className="grid grid-cols-2 gap-1.5">
             <button
               type="button"

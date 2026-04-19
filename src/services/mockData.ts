@@ -8,10 +8,12 @@ import type {
 } from '../types';
 
 const CATEGORY_TAGS: VibeTag[] = [
-  { id: 'peaceful', name: 'Bình yên' },
-  { id: 'adventure', name: 'Phiêu lưu' },
-  { id: 'healing', name: 'Chữa lành' },
-  { id: 'romantic', name: 'Lãng mạn' },
+  { id: 1, name: 'Chữa lành & Yên bình' },
+  { id: 2, name: 'Năng động & Phiêu lưu' },
+  { id: 3, name: 'Sang trọng & Đẳng cấp' },
+  { id: 4, name: 'Sáng tạo & Truyền cảm hứng' },
+  { id: 5, name: 'Trải nghiệm đa dạng' },
+  { id: 6, name: 'Đậm văn hóa & Bản địa' },
 ];
 
 const TOURIST_ATTRACTIONS_CARDS: TouristAttractionCardItem[] = [

@@ -33,9 +33,70 @@
       "localMarket": "Local Market"
     },
     "feed": {
-      "title": "Community Feed",
-      "description": "Post, interaction, and recommendation sections are waiting for real data.",
-      "placeholder": "Post list area"
+      "createPost": "Share your story",
+      "createModal": {
+        "title": "Create a new post",
+        "close": "Close",
+        "defaultUserName": "Bao Nguyen",
+        "captionLabel": "Caption",
+        "captionPlaceholder": "{{name}}, what's on your mind?",
+        "addToPost": "Add to your post",
+        "mediaLabel": "Add media",
+        "mediaButton": "Choose image/video",
+        "mediaPreviewAlt": "Selected media",
+        "editMedia": "Edit",
+        "removeMedia": "Remove media",
+        "mediaHint": "You can select multiple images or videos",
+        "selectedMedia": "{{count}} media file(s) selected",
+        "locationLabel": "Tag location",
+        "locationPlaceholder": "Example: Hoi An, Quang Nam",
+        "tagLabel": "Tag people",
+        "cancel": "Cancel",
+        "publish": "Publish",
+        "publishing": "Publishing...",
+        "submitError": "Unable to publish post. Please try again.",
+        "vibePickerTitle": "Pick a vibe for this trip",
+        "vibeTabFeelings": "Feelings",
+        "vibeTabActivities": "Activities",
+        "vibeSearchPlaceholder": "Search",
+        "vibeEmptySearch": "No matching feelings found",
+        "vibeNames": {
+          "1": "Healing & Calm",
+          "2": "Active & Adventurous",
+          "3": "Luxury & Premium",
+          "4": "Creative & Inspiring",
+          "5": "Diverse Experiences",
+          "6": "Cultural & Local"
+        },
+        "vibeLabelPrefix": "is feeling",
+        "vibeSelectHint": "Select a vibe",
+        "locationEmptySearch": "No matching locations found",
+        "locationSearchPlaceholder": "Search for your location..."
+      },
+      "wallet": {
+        "label": "Your SoulCoins",
+        "action": "Details"
+      },
+      "mockPost": {
+        "author": "User01",
+        "timeAgo": "2 hours ago",
+        "location": "Hoi An",
+        "caption": "Hello"
+      },
+      "post": {
+        "likes": "likes",
+        "comments": "comments",
+        "actions": {
+          "like": "Like",
+          "comment": "Comment",
+          "share": "Share"
+        },
+        "rewardPrefix": "Earn",
+        "rewardSuffix": "from this post",
+        "vibes": {
+          "calm": "Calm"
+        }
+      }
     },
     "localMarket": {
       "title": "Local Market",

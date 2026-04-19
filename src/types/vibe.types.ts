@@ -1,4 +1,4 @@
 export interface VibeTag {
-  id: string;
+  id: number;
   name: string;
 }

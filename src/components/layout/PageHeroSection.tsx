@@ -25,7 +25,7 @@ export const PageHeroSection = ({ title, subtitle, badge, children, className }:
         </div>
       ) : null}
 
-      <div className="relative max-w-3xl pr-0 sm:pr-36">
+      <div className="relative max-w-3xl px-4 text-left sm:mx-auto sm:px-8 sm:text-center">
         <h2 className="mb-1.5 text-[1.25rem] font-semibold leading-tight text-white sm:text-[2rem]">{title}</h2>
         <p className="mb-6 mt-1 text-base font-medium text-text-hero-subtitle sm:text-lg">{subtitle}</p>
 
