@@ -11,6 +11,17 @@ export const useInitAuth = () => {
 
     setLoading(true)
 
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null
+    if (!token) {
+      if (isActive) {
+        setUser(null)
+        setLoading(false)
+      }
+      return () => {
+        isActive = false
+      }
+    }
+
     userApi
       .getCurrentUser()
       .then((user) => {

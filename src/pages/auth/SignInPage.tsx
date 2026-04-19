@@ -1,5 +1,5 @@
 import { useState, type SubmitEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { authApi, userApi } from '@/services';
 import { getValidationMessage, isValidInput } from '@/utils/validation';
@@ -16,6 +16,7 @@ interface SignInPageProps {
 export default function SignInPage({ embedded = false, onAuthSuccess, onSwitchToSignUp }: SignInPageProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const setUser = useAuthStore((state) => state.setUser);
   const [emailOrUsername, setEmailOrUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -56,7 +57,9 @@ export default function SignInPage({ embedded = false, onAuthSuccess, onSwitchTo
       if (onAuthSuccess && user) {
         onAuthSuccess(user);
       } else {
-        navigate('/profile');
+        const redirectParam = new URLSearchParams(location.search).get('redirect');
+        const nextPath = redirectParam ? decodeURIComponent(redirectParam) : '/profile';
+        navigate(nextPath, { replace: true });
       }
     } catch (err: unknown) {
       const unknownMessage = t('profile.auth.errors.loginFailed');

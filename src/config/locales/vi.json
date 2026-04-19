@@ -1,6 +1,6 @@
 {
   "sidebar": {
-    "logo":"Soul Viet",
+    "logo": "Soul Viet",
     "home": "Trang chủ",
     "map": "Bản đồ",
     "aiPlan": "AI Plan",
@@ -34,9 +34,70 @@
       "localMarket": "Chợ địa phương"
     },
     "feed": {
-      "title": "Feed cộng đồng",
-      "description": "Khung bài viết, tương tác và gợi ý đang chờ dữ liệu thật.",
-      "placeholder": "Khu vực danh sách bài đăng"
+      "createPost": "Chia sẻ câu chuyện của bạn",
+      "createModal": {
+        "title": "Tạo bài viết mới",
+        "close": "Đóng",
+        "defaultUserName": "Bao Nguyen",
+        "captionLabel": "Nội dung",
+        "captionPlaceholder": "{{name}} ơi, bạn đang nghĩ gì thế?",
+        "addToPost": "Thêm vào bài viết của bạn",
+        "mediaLabel": "Thêm media",
+        "mediaButton": "Chọn ảnh/video",
+        "mediaPreviewAlt": "Ảnh đã chọn",
+        "editMedia": "Chỉnh sửa",
+        "removeMedia": "Xóa ảnh",
+        "mediaHint": "Bạn có thể chọn nhiều ảnh hoặc video",
+        "selectedMedia": "Đã chọn {{count}} tệp media",
+        "locationLabel": "Gắn vị trí",
+        "locationPlaceholder": "Ví dụ: Hội An, Quảng Nam",
+        "tagLabel": "Gắn thẻ",
+        "cancel": "Hủy",
+        "publish": "Đăng",
+        "publishing": "Đang đăng...",
+        "submitError": "Không thể đăng bài. Vui lòng thử lại.",
+        "vibePickerTitle": "Vibe nào cho chuyến đi này?",
+        "vibeTabFeelings": "Cảm xúc",
+        "vibeTabActivities": "Hoạt động",
+        "vibeSearchPlaceholder": "Tìm kiếm",
+        "vibeEmptySearch": "Không tìm thấy cảm xúc phù hợp",
+        "vibeNames": {
+          "1": "Chữa lành & Yên bình",
+          "2": "Năng động & Phiêu lưu",
+          "3": "Sang trọng & Đẳng cấp",
+          "4": "Sáng tạo & Truyền cảm hứng",
+          "5": "Trải nghiệm đa dạng",
+          "6": "Đậm văn hóa & Bản địa"
+        },
+        "vibeLabelPrefix": "đang cảm thấy",
+        "vibeSelectHint": "Chọn không khí (Vibe)",
+        "locationEmptySearch": "Không tìm thấy địa điểm phù hợp",
+        "locationSearchPlaceholder": "Tìm kiếm địa điểm của bạn..."
+      },
+      "wallet": {
+        "label": "SoulCoins của bạn",
+        "action": "Chi tiết"
+      },
+      "mockPost": {
+        "author": "User01",
+        "timeAgo": "2 giờ trước",
+        "location": "Hội An",
+        "caption": "Xin chào"
+      },
+      "post": {
+        "likes": "yêu thích",
+        "comments": "bình luận",
+        "actions": {
+          "like": "Thích",
+          "comment": "Bình luận",
+          "share": "Chia sẻ"
+        },
+        "rewardPrefix": "Nhận được",
+        "rewardSuffix": "từ bài viết này",
+        "vibes": {
+          "calm": "Bình yên"
+        }
+      }
     },
     "localMarket": {
       "title": "Chợ địa phương",
