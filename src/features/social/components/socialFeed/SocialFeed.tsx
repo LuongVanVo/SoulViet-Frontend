@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSocialPosts } from '@/hooks';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/store';
 import { CoinBanner } from './CoinBanner';
@@ -10,6 +11,7 @@ export const SocialFeed = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const { data: posts = [] } = useSocialPosts();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const handleCreatePostClick = () => {
@@ -27,7 +29,7 @@ export const SocialFeed = () => {
       <div className="mx-auto w-full max-w-2xl space-y-4">
         <CoinBanner coinBalance={1247} />
         <CreatePost onClick={handleCreatePostClick} />
-        <PostFeedList />
+        <PostFeedList posts={posts} />
       </div>
 
       <CreatePostModal
