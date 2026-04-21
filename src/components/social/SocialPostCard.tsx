@@ -7,10 +7,13 @@ import { SocialPostHeader } from './SocialPostHeader';
 
 export interface SocialPostCardProps extends PostCardProps {
 	footer?: ReactNode;
+	onEditPost?: (postId: string) => void;
+	onDeletePost?: (postId: string) => void;
 }
 
-export const SocialPostCard = ({ post, footer }: SocialPostCardProps) => {
+export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost }: SocialPostCardProps) => {
 	const { t } = useTranslation();
+	const thumbnail = post.images?.[0] || post.image || 'https://via.placeholder.com/400?text=No+Image+Found';
 
 	return (
 		<article className="overflow-hidden rounded-3xl border border-[#ECEEF1] bg-white shadow-[0_10px_25px_-18px_rgba(15,23,42,0.45)]">
@@ -20,9 +23,12 @@ export const SocialPostCard = ({ post, footer }: SocialPostCardProps) => {
 				timeAgo={post.timeAgo}
 				location={post.location}
 				vibe={post.vibe}
+				postId={post.id}
+				onEdit={onEditPost}
+				onDelete={onDeletePost}
 			/>
 
-			<img src={post.image} alt={post.author} className="h-64 w-full object-cover" />
+			<img src={thumbnail} alt={post.author} className="h-64 w-full object-cover" />
 
 			<div className="space-y-3 px-4 py-4">
 				<p className="text-[15px] leading-6 text-[#334155]">{post.caption}</p>

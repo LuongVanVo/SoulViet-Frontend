@@ -19,15 +19,25 @@ export interface CreatePostPayload {
 	checkinLocationId?: string;
 }
 
+export interface GetUserPostsParams{
+	userId: string;    
+    after?: string;   
+    first?: number;    
+    sortBy?: 'newest' | 'oldest'; 
+}
+
 export interface SocialPostApiItem {
-	id: string;
-	userId: string;
-	content: string;
-	mediaUrls: string[];
-	vibeTag?: number;
-	checkinLocationId?: string;
-	createdAt?: string;
-	updatedAt?: string;
+    id: string;
+    userId: string;
+    content: string;
+    mediaUrls: string[];
+    vibeTag: number; 
+    checkinLocationId?: string;
+    createdAt: string; 
+    likesCount: number;    
+    commentsCount: number; 
+    sharesCount: number;   
+    status: number;      
 }
 
 export interface PostHeaderProps {
@@ -44,20 +54,42 @@ export interface PostActionProps {
 }
 
 export interface SocialPost {
-	id: string;
-	userId?: string;
-	author: string;
-	avatar: string;
-	timeAgo: string;
-	location: string;
-	vibe: string;
-	image: string;
-	caption: string;
-	likes: number;
-	comments: number;
-	rewardCoins: number;
+    id: string;
+    userId: string;
+    author: string;
+    avatar: string;
+    timeAgo: string; 
+    location: string;
+    vibe: string;
+    vibeTag?: number;
+    images: string[]; 
+  image?: string;
+    caption: string;
+    likes: number;
+    comments: number;
+    shares: number; 
+    rewardCoins: number;
+    createdAt: string; 
 }
 
 export interface PostCardProps {
 	post: SocialPost;
+}
+
+export interface PageInfo {
+	hasNextPage: boolean;
+	hasPreviousPage: boolean;
+	startCursor: string | null;
+	endCursor: string | null;
+}
+
+export interface Edge<T> {
+  node: T;
+  cursor: string;
+}
+
+export interface Connection<T> {
+  edges: Edge<T>[];
+  pageInfo: PageInfo;
+  totalCount: number;
 }

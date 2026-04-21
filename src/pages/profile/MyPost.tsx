@@ -1,8 +1,8 @@
 import { ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { MyPostsSection } from '@/features/profile';
 import { useAuthStore } from '@/store';
-import { MyPostsSection } from './components';
 
 export const MyPost = () => {
   const { t } = useTranslation();
