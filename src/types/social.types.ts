@@ -16,7 +16,7 @@ export interface CreatePostPayload {
 	content: string;
 	mediaUrls: string[];
 	vibeTag: number;
-	checkInLocationId?: string;
+	checkinLocationId?: string;
 }
 
 export interface SocialPostApiItem {
@@ -25,7 +25,7 @@ export interface SocialPostApiItem {
 	content: string;
 	mediaUrls: string[];
 	vibeTag?: number;
-	checkInLocationId?: string;
+	checkinLocationId?: string;
 	createdAt?: string;
 	updatedAt?: string;
 }
@@ -45,6 +45,7 @@ export interface PostActionProps {
 
 export interface SocialPost {
 	id: string;
+	userId?: string;
 	author: string;
 	avatar: string;
 	timeAgo: string;

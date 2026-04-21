@@ -3,30 +3,10 @@ import axios from 'axios';
 import { ImagePlus, MapPin, Tag, X, ArrowLeft, Search, Sprout, Mountain, Diamond, Lightbulb, Globe, Home, Pencil } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { postApi, touristApi } from '@/services';
-import { authApi } from '@/services/auth';
 import { useAuthStore } from '@/store';
 import type { CreatePostModalProps, CreatePostPayload, TouristAttractionCardItem } from '@/types';
 
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const EMPTY_GUID = '00000000-0000-0000-0000-000000000000';
-
-const decodeJwtSub = (token: string | null): string | undefined => {
-  if (!token) return undefined;
-
-  try {
-    const payload = token.split('.')[1];
-    if (!payload) return undefined;
-
-    const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
-    const json = JSON.parse(atob(normalized));
-    const sub = typeof json?.sub === 'string' ? json.sub : undefined;
-
-    return sub && UUID_PATTERN.test(sub) ? sub : undefined;
-  } catch {
-    return undefined;
-  }
-};
 
 export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
   const { t } = useTranslation();
@@ -74,9 +54,8 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
       const timer = setTimeout(async () => {
         setIsSearchingLocation(true);
         try {
-          // Assuming the backend might support a filter or we just fetch all and filter
           const response = await touristApi.getTouristAttractions();
-          const filtered = response.items.filter(item => 
+          const filtered = response.items.filter(item =>
             item.name.toLowerCase().includes(locationQuery.toLowerCase())
           );
           setLocationResults(filtered);
@@ -164,23 +143,14 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
       setIsSubmitting(true);
       setSubmitError('');
 
-      const userIdFromStore = UUID_PATTERN.test(user?.id ?? '') ? user?.id : undefined;
-      const userIdFromToken = decodeJwtSub(authApi.getToken());
-      const userId = userIdFromStore ?? userIdFromToken;
-
-      if (!userId) {
-        setSubmitError(t('social.feed.createModal.submitError'));
-        setIsSubmitting(false);
-        return;
-      }
-
+      // userId is intentionally omitted — the backend resolves it from the
+      // Authorization token via User.GetCurrentUserId(), so any frontend
+      // validation or derivation here is unnecessary and error-prone.
       const payload: CreatePostPayload = {
-        userId,
         content: caption.trim(),
-        // Until upload API is integrated, map selected files to mock URLs so backend receives an array.
         mediaUrls: mediaFiles.map((_, index) => `https://i.pinimg.com/736x/b1/56/a6/b156a6129a622b9284eba286737b2656.jpg?img=${index + 1}`),
         vibeTag: selectedVibe ?? 1,
-        checkInLocationId: selectedLocation?.id ?? EMPTY_GUID,
+        checkinLocationId: selectedLocation?.id ?? EMPTY_GUID,
       };
 
       await postApi.createPost(payload);
@@ -452,7 +422,7 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                         <div className="absolute right-3 top-2.5 h-4 w-4 animate-spin rounded-full border-2 border-[#1F58A5] border-t-transparent" />
                       )}
                     </div>
-                    
+
                     {locationResults.length > 0 ? (
                       <div className="max-h-[150px] overflow-y-auto rounded-xl border border-[#D9DEE6] bg-white py-1 shadow-sm">
                         {locationResults.map((loc) => (

@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { MainLayout } from '@/layouts/MainLayout';
+import { MyPost } from '@/pages/profile/MyPost';
 import { 
   Home, 
   Map, 
@@ -42,6 +43,10 @@ export const router = createBrowserRouter([
       {
         path: 'profile',
         element: <Profile />,
+      },
+      {
+        path: 'profile/my-posts',
+        element: <MyPost />,
       },
       {
         path: 'login',

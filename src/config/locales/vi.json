@@ -221,8 +221,22 @@
       "quickMenu": {
         "journey": "Hành trình của tôi",
         "bookings": "Đặt chỗ của tôi",
+        "posts": "Bài đăng của tôi",
         "settings": "Cài đặt",
         "support": "Trợ giúp & Hỗ trợ"
+      },
+      "posts": {
+        "sectionLabel": "Hoạt động của tôi",
+        "sectionTitle": "Bài đăng của tôi",
+        "pageTitle": "Bài đăng của tôi",
+        "backToProfile": "Trở về trang cá nhân",
+        "sectionDescription": "Xem lại các bài viết đã đăng. Bố cục giống feed cộng đồng để bạn dễ rà soát, sửa hoặc xóa nhanh hơn.",
+        "loading": "Đang tải bài đăng của bạn...",
+        "empty": "Bạn chưa đăng bài nào.",
+        "actions": {
+          "edit": "Sửa",
+          "delete": "Xóa"
+        }
       },
       "logout": "Đăng xuất",
       "loggingOut": "Đang đăng xuất...",

@@ -220,8 +220,22 @@
       "quickMenu": {
         "journey": "My journey",
         "bookings": "My bookings",
+        "posts": "My posts",
         "settings": "Settings",
         "support": "Help & Support"
+      },
+      "posts": {
+        "sectionLabel": "My activity",
+        "sectionTitle": "My posts",
+        "pageTitle": "My posts",
+        "backToProfile": "Back to profile",
+        "sectionDescription": "Review the posts you have published. The layout matches the community feed so you can scan, edit, or delete faster.",
+        "loading": "Loading your posts...",
+        "empty": "You have not published any posts yet.",
+        "actions": {
+          "edit": "Edit",
+          "delete": "Delete"
+        }
       },
       "logout": "Sign out",
       "loggingOut": "Signing out...",

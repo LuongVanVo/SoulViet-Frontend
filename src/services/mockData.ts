@@ -4,6 +4,7 @@ import type {
   CraftSectionData,
   TouristAttractionsSectionData,
   TouristAttractionCardItem,
+  SocialPost,
   UserProfile,
 } from '../types';
 
@@ -92,19 +93,78 @@ const CRAFT_SECTION: CraftSectionData = {
   items: CRAFT_CARDS,
 };
 
+const SOCIAL_POSTS: SocialPost[] = [
+  {
+    id: 'post-1',
+    userId: 'user-1',
+    author: 'Nguyen',
+    avatar: 'User',
+    timeAgo: '2 giờ trước',
+    location: 'Hội An',
+    vibe: 'social.feed.post.vibes.calm',
+    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80',
+    caption: 'Một buổi chiều rất yên ở Hội An, ánh đèn bắt đầu lên và mọi thứ chậm lại.',
+    likes: 234,
+    comments: 18,
+    rewardCoins: 25,
+  },
+  {
+    id: 'post-2',
+    userId: 'user-1',
+    author: 'Nguyen',
+    avatar: 'User',
+    timeAgo: '1 ngày trước',
+    location: 'Huế',
+    vibe: 'social.feed.post.vibes.calm',
+    image: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=1200&q=80',
+    caption: 'Ghé Huế đúng lúc trời dịu nắng, ăn chén chè rồi đi bộ quanh Đại Nội.',
+    likes: 98,
+    comments: 7,
+    rewardCoins: 18,
+  },
+  {
+    id: 'post-3',
+    userId: 'user-2',
+    author: 'Mai Linh',
+    avatar: 'User',
+    timeAgo: '3 ngày trước',
+    location: 'Đà Nẵng',
+    vibe: 'social.feed.post.vibes.calm',
+    image: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=1200&q=80',
+    caption: 'Sáng biển rất nhẹ, thích hợp để nạp năng lượng trước một tuần mới.',
+    likes: 176,
+    comments: 13,
+    rewardCoins: 22,
+  },
+];
+
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const CURRENT_USER: UserProfile | null = null;
 
 export const apiService = {
   async getVibeTags(): Promise<VibeTag[]> {
-    return new Promise((resolve) => setTimeout(() => resolve(CATEGORY_TAGS), 300));
+    await delay(300);
+    return CATEGORY_TAGS;
   },
   async getTouristAttractionsCards(): Promise<TouristAttractionsSectionData> {
-    return new Promise((resolve) => setTimeout(() => resolve(TOURIST_ATTRACTIONS_SECTION), 500));
+    await delay(500);
+    return TOURIST_ATTRACTIONS_SECTION;
   },
   async getCraftSection(): Promise<CraftSectionData> {
-    return new Promise((resolve) => setTimeout(() => resolve(CRAFT_SECTION), 400));
+    await delay(400);
+    return CRAFT_SECTION;
   },
   async getCurrentUser(): Promise<UserProfile | null> {
-    return new Promise((resolve) => setTimeout(() => resolve(CURRENT_USER), 200));
+    await delay(200);
+    return CURRENT_USER;
+  },
+  async getSocialPosts(): Promise<SocialPost[]> {
+    await delay(250);
+    return SOCIAL_POSTS;
+  },
+  async getUserSocialPosts(userId: string): Promise<SocialPost[]> {
+    await delay(250);
+    return SOCIAL_POSTS.filter((post) => post.userId === userId);
   },
 };

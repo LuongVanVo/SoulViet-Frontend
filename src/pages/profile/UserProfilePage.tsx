@@ -1,4 +1,4 @@
-import { ChevronRight, Heart, LogOut, MapPin, Route, Settings, Shield, TicketCheck, UserRound } from 'lucide-react';
+import { ChevronRight, Heart, LogOut, MapPin, PenLine, Route, Settings, Shield, TicketCheck, UserRound } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
@@ -18,6 +18,7 @@ export const UserProfilePage = ({ user, onLoggedOut }: UserProfilePageProps) => 
   const quickMenus = [
     { id: 'journey', icon: Route, label: t('profile.user.quickMenu.journey') },
     { id: 'bookings', icon: TicketCheck, label: t('profile.user.quickMenu.bookings') },
+    { id: 'posts', icon: PenLine, label: t('profile.user.quickMenu.posts') },
     { id: 'settings', icon: Settings, label: t('profile.user.quickMenu.settings') },
     { id: 'support', icon: Shield, label: t('profile.user.quickMenu.support') },
   ];
@@ -77,6 +78,11 @@ export const UserProfilePage = ({ user, onLoggedOut }: UserProfilePageProps) => 
             <button
               key={item.id}
               type="button"
+              onClick={() => {
+                if (item.id === 'posts') {
+                  navigate('/profile/my-posts');
+                }
+              }}
               className="flex w-full items-center justify-between rounded-2xl border border-gray-200 bg-white px-4 py-4 text-left shadow-sm transition hover:border-primary/30"
             >
               <span className="flex items-center gap-3">
