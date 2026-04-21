@@ -233,9 +233,36 @@
         "sectionDescription": "Xem lại các bài viết đã đăng. Bố cục giống feed cộng đồng để bạn dễ rà soát, sửa hoặc xóa nhanh hơn.",
         "loading": "Đang tải bài đăng của bạn...",
         "empty": "Bạn chưa đăng bài nào.",
+        "timeAgo": {
+          "justNow": "Vừa xong",
+          "minutesAgo": "{{count}} phút trước",
+          "hoursAgo": "{{count}} giờ trước",
+          "daysAgo": "{{count}} ngày trước"
+        },
         "actions": {
           "edit": "Sửa",
           "delete": "Xóa"
+        },
+        "editModal": {
+          "title": "Chỉnh sửa bài viết",
+          "close": "Đóng",
+          "privacyLabel": "Chỉ mình tôi",
+          "captionLabel": "Nội dung bài viết",
+          "captionPlaceholder": "{{name}} ơi, bạn đang nghĩ gì thế?",
+          "mediaPreviewAlt": "Ảnh bài viết",
+          "changeMedia": "Chỉnh sửa",
+          "removeMedia": "Xóa ảnh",
+          "addToPost": "Thêm vào bài viết của bạn",
+          "addMedia": "Thêm ảnh",
+          "save": "Lưu",
+          "saving": "Đang lưu..."
+        },
+        "deleteDialog": {
+          "title": "Xóa bài viết",
+          "message": "Bạn có chắc chắn muốn xóa bài viết này không? Hành động này không thể hoàn tác.",
+          "cancel": "Hủy",
+          "confirm": "Xóa",
+          "deleting": "Đang xóa..."
         }
       },
       "logout": "Đăng xuất",

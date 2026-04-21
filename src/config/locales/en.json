@@ -232,9 +232,36 @@
         "sectionDescription": "Review the posts you have published. The layout matches the community feed so you can scan, edit, or delete faster.",
         "loading": "Loading your posts...",
         "empty": "You have not published any posts yet.",
+        "timeAgo": {
+          "justNow": "Just now",
+          "minutesAgo": "{{count}} minutes ago",
+          "hoursAgo": "{{count}} hours ago",
+          "daysAgo": "{{count}} days ago"
+        },
         "actions": {
           "edit": "Edit",
           "delete": "Delete"
+        },
+        "editModal": {
+          "title": "Edit post",
+          "close": "Close",
+          "privacyLabel": "Only me",
+          "captionLabel": "Post content",
+          "captionPlaceholder": "{{name}}, what's on your mind?",
+          "mediaPreviewAlt": "Post media",
+          "changeMedia": "Edit",
+          "removeMedia": "Remove media",
+          "addToPost": "Add to your post",
+          "addMedia": "Add media",
+          "save": "Save",
+          "saving": "Saving..."
+        },
+        "deleteDialog": {
+          "title": "Delete post",
+          "message": "Are you sure you want to delete this post? This action cannot be undone.",
+          "cancel": "Cancel",
+          "confirm": "Delete",
+          "deleting": "Deleting..."
         }
       },
       "logout": "Sign out",
