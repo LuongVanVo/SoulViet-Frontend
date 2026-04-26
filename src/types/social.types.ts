@@ -1,3 +1,5 @@
+import type { TouristAttractionCardItem } from './attraction.types';
+
 export interface CoinBannerProps {
 	coinBalance: number;
 }
@@ -11,10 +13,43 @@ export interface CreatePostModalProps {
 	onClose: () => void;
 }
 
+export interface PostMediaPayload {
+  url: string;
+  objectKey: string;
+  mediaType: number;
+  width: number;
+  height: number;
+  fileSizeBytes: number;
+  sortOrder: number;
+}
+
+export interface LocationMapPickerModalProps {
+  isOpen: boolean;
+  locations: TouristAttractionCardItem[];
+  selectedLocationId: string | null;
+  isLoadingLocations: boolean;
+  title: string;
+  searchHint: string;
+  loadingText: string;
+  emptyText: string;
+  selectButtonText: string;
+  onClose: () => void;
+  onSelect: (location: TouristAttractionCardItem) => void;
+}
+
+export interface SearchLocationSuggestion {
+  id: string;
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+}
+
 export interface CreatePostPayload {
 	userId?: string;
-	content: string;
-	mediaUrls: string[];
+	content?: string;
+  media: PostMediaPayload[];
+  taggedProductIds: string[];
 	vibeTag: number;
 	checkinLocationId?: string;
 }
@@ -29,10 +64,13 @@ export interface GetUserPostsParams{
 export interface SocialPostApiItem {
     id: string;
     userId: string;
-    content: string;
-    mediaUrls: string[];
+    content?: string;
+  media?: PostMediaPayload[];
+  mediaUrls?: string[];
+  taggedProductIds?: string[];
     vibeTag: number; 
     checkinLocationId?: string;
+    checkinLocationName?: string;
     createdAt: string; 
     likesCount: number;    
     commentsCount: number; 
@@ -44,7 +82,7 @@ export interface PostHeaderProps {
 	avatar: string;
 	author: string;
 	timeAgo: string;
-	location: string;
+	location?: string;
 	vibe: string;
 }
 
@@ -59,12 +97,15 @@ export interface SocialPost {
     author: string;
     avatar: string;
     timeAgo: string; 
-    location: string;
-    vibe: string;
+    location?: string;
+    checkinLocationId?: string;
+    vibe?: string;
     vibeTag?: number;
     images: string[]; 
-  image?: string;
-    caption: string;
+    media?: { url: string; type: 'image' | 'video'; objectKey: string }[];
+    aspectRatio?: 'horizontal' | 'vertical' | 'square';
+    image?: string;
+    caption?: string;
     likes: number;
     comments: number;
     shares: number; 

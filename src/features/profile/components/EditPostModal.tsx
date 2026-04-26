@@ -1,8 +1,9 @@
 import { useEffect, useId, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
-import { ImagePlus, MapPin, Pencil, Tag, X, ArrowLeft, Search, Sprout, Mountain, Diamond, Lightbulb, Globe, Home } from 'lucide-react';
+import { ImagePlus, MapPin, Pencil, Tag, X, ArrowLeft, Search, Sprout, Mountain, Diamond, Lightbulb, Globe, Home, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { mediaApi } from '@/services';
 import { useVibeTags } from '@/hooks';
-import type { CreatePostPayload, SocialPost } from '@/types';
+import type { CreatePostPayload, PostMediaPayload, SocialPost, FileUploadRequest } from '@/types';
 
 interface EditPostModalProps {
 	isOpen: boolean;
@@ -11,9 +12,6 @@ interface EditPostModalProps {
 	onClose: () => void;
 	onSubmit: (postId: string, payload: Partial<CreatePostPayload>) => Promise<void>;
 }
-
-const buildUploadedMediaUrls = (files: File[]) =>
-	files.map((_, index) => `https://i.pinimg.com/736x/b1/56/a6/b156a6129a622b9284eba286737b2656.jpg?img=${index + 1}`);
 
 const revokePreviewUrls = (urls: string[]) => {
 	urls.forEach((url) => URL.revokeObjectURL(url));
@@ -29,16 +27,17 @@ export const EditPostModal = ({ isOpen, post, isSubmitting, onClose, onSubmit }:
 
 	const [caption, setCaption] = useState('');
 	const [selectedVibe, setSelectedVibe] = useState<number>(1);
-	const [existingMediaUrls, setExistingMediaUrls] = useState<string[]>([]);
+	const [existingMedia, setExistingMedia] = useState<{ url: string; type: 'image' | 'video'; objectKey: string }[]>([]);
+	const [aspectRatio, setAspectRatio] = useState<'horizontal' | 'vertical' | 'square'>('square');
 	const [mediaFiles, setMediaFiles] = useState<File[]>([]);
-	const [mediaPreviewUrls, setMediaPreviewUrls] = useState<string[]>([]);
+	const [mediaPreviewItems, setMediaPreviewItems] = useState<{ url: string; type: 'image' | 'video'; objectKey: string }[]>([]);
 	const [showLocationInfo, setShowLocationInfo] = useState(false);
 	const [showVibePicker, setShowVibePicker] = useState(false);
 	const [vibeSearchQuery, setVibeSearchQuery] = useState('');
 
 	const clearSelectedUploads = () => {
-		setMediaPreviewUrls((prev) => {
-			revokePreviewUrls(prev);
+		setMediaPreviewItems((prev) => {
+			revokePreviewUrls(prev.map(item => item.url));
 			previewUrlsRef.current = [];
 			return [];
 		});
@@ -58,14 +57,16 @@ export const EditPostModal = ({ isOpen, post, isSubmitting, onClose, onSubmit }:
 			return;
 		}
 
-		setCaption(post.caption);
+		setCaption(post.caption ?? '');
 		setSelectedVibe(post.vibeTag ?? 1);
-		setExistingMediaUrls(post.images);
+		setExistingMedia(post.media || []);
+		setAspectRatio(post.aspectRatio || 'square');
 		setShowLocationInfo(false);
 		setShowVibePicker(false);
 		setVibeSearchQuery('');
 		clearSelectedUploads();
-	}, [isOpen, post]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isOpen, post?.id]);
 
 	useEffect(() => {
 		if (!isOpen) {
@@ -88,20 +89,56 @@ export const EditPostModal = ({ isOpen, post, isSubmitting, onClose, onSubmit }:
 	);
 
 	useEffect(() => {
-		previewUrlsRef.current = mediaPreviewUrls;
-	}, [mediaPreviewUrls]);
+		previewUrlsRef.current = mediaPreviewItems.map(item => item.url);
+	}, [mediaPreviewItems]);
 
-	useEffect(() => {
-		if (!showVibePicker || !selectedVibeButtonRef.current) {
-			return;
+	const [currentIndex, setCurrentIndex] = useState(0);
+	const scrollRef = useRef<HTMLDivElement>(null);
+
+	const scroll = (direction: 'left' | 'right') => {
+		if (scrollRef.current) {
+			const { scrollLeft, clientWidth } = scrollRef.current;
+			const scrollTo = direction === 'left' ? scrollLeft - clientWidth : scrollLeft + clientWidth;
+			scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+		}
+	};
+
+	const handleScroll = () => {
+		if (scrollRef.current) {
+			const { scrollLeft, clientWidth } = scrollRef.current;
+			const index = Math.round(scrollLeft / clientWidth);
+			setCurrentIndex(index);
+		}
+	};
+
+	const displayMedia = [...existingMedia, ...mediaPreviewItems];
+	const mediaCount = displayMedia.length;
+
+	const removeMediaAtIndex = (index: number) => {
+		if (index < existingMedia.length) {
+			const newItems = [...existingMedia];
+			newItems.splice(index, 1);
+			setExistingMedia(newItems);
+		} else {
+			const previewIndex = index - existingMedia.length;
+			const newItems = [...mediaPreviewItems];
+			const removed = newItems.splice(previewIndex, 1);
+			if (removed[0]) {
+				URL.revokeObjectURL(removed[0].url);
+			}
+			setMediaPreviewItems(newItems);
+			setMediaFiles((prev) => {
+				const newFiles = [...prev];
+				newFiles.splice(previewIndex, 1);
+				return newFiles;
+			});
 		}
 
-		selectedVibeButtonRef.current.scrollIntoView({ block: 'center', behavior: 'smooth' });
-	}, [selectedVibe, showVibePicker]);
+		if (currentIndex >= mediaCount - 1 && currentIndex > 0) {
+			setCurrentIndex(currentIndex - 1);
+		}
+	};
 
-	const displayMediaUrls = mediaPreviewUrls.length > 0 ? mediaPreviewUrls : existingMediaUrls;
-	const primaryPreview = displayMediaUrls[0];
-	const mediaCount = displayMediaUrls.length;
 	const vibeConfig: Record<number, { icon: typeof Sprout; color: string; bgColor: string }> = {
 		1: { icon: Sprout, color: 'text-[#16A34A]', bgColor: 'bg-[#EAF7EF]' },
 		2: { icon: Mountain, color: 'text-[#2563EB]', bgColor: 'bg-[#EAF0FB]' },
@@ -110,7 +147,7 @@ export const EditPostModal = ({ isOpen, post, isSubmitting, onClose, onSubmit }:
 		5: { icon: Globe, color: 'text-[#4F46E5]', bgColor: 'bg-[#ECEFFE]' },
 		6: { icon: Home, color: 'text-[#EA580C]', bgColor: 'bg-[#FAF1E8]' },
 	};
-	const vibeOptions = vibeTags.map((tag) => ({
+	const vibeOptions = vibeTags.map((tag: any) => ({
 		id: tag.id,
 		label: tag.name,
 	}));
@@ -121,29 +158,25 @@ export const EditPostModal = ({ isOpen, post, isSubmitting, onClose, onSubmit }:
 		}
 
 		const trimmedCaption = caption.trim();
-		const currentMediaUrls = mediaPreviewUrls.length > 0 ? buildUploadedMediaUrls(mediaFiles) : existingMediaUrls;
+		const hasMediaChanges = mediaFiles.length > 0 || JSON.stringify(existingMedia) !== JSON.stringify(post.media);
+		const hasContent = trimmedCaption.length > 0 || displayMedia.length > 0 || Boolean(post.checkinLocationId);
 
 		return (
-			trimmedCaption.length > 0 &&
-			(trimmedCaption !== post.caption ||
+			hasContent &&
+			(trimmedCaption !== (post.caption ?? '') ||
 				selectedVibe !== (post.vibeTag ?? 1) ||
-				JSON.stringify(currentMediaUrls) !== JSON.stringify(post.images))
+				aspectRatio !== (post.aspectRatio || 'square') ||
+				hasMediaChanges)
 		);
-	}, [caption, existingMediaUrls, mediaFiles, mediaPreviewUrls.length, post, selectedVibe]);
+	}, [caption, existingMedia, mediaFiles, displayMedia.length, post, selectedVibe, aspectRatio]);
 
-	const removePrimaryMedia = () => {
-		if (mediaPreviewUrls.length > 0) {
-			const [first, ...rest] = mediaPreviewUrls;
-			if (first) {
-				URL.revokeObjectURL(first);
-			}
-			setMediaPreviewUrls(rest);
-			setMediaFiles((prev) => prev.slice(1));
+	useEffect(() => {
+		if (!showVibePicker || !selectedVibeButtonRef.current) {
 			return;
 		}
 
-		setExistingMediaUrls((prev) => prev.slice(1));
-	};
+		selectedVibeButtonRef.current.scrollIntoView({ block: 'center', behavior: 'smooth' });
+	}, [selectedVibe, showVibePicker]);
 
 	const handleMediaChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const files = event.target.files;
@@ -152,11 +185,16 @@ export const EditPostModal = ({ isOpen, post, isSubmitting, onClose, onSubmit }:
 		}
 
 		const selectedFiles = Array.from(files);
-		const nextPreviewUrls = selectedFiles.map((file) => URL.createObjectURL(file));
+		const nextPreviewItems = selectedFiles.map((file) => ({
+			url: URL.createObjectURL(file),
+			type: (file.type.startsWith('video/') ? 'video' : 'image') as 'image' | 'video',
+			objectKey: '',
+		}));
 
 		setMediaFiles((prev) => [...prev, ...selectedFiles]);
-		setMediaPreviewUrls((prev) => [...prev, ...nextPreviewUrls]);
+		setMediaPreviewItems((prev) => [...prev, ...nextPreviewItems]);
 	};
+
 
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -164,14 +202,78 @@ export const EditPostModal = ({ isOpen, post, isSubmitting, onClose, onSubmit }:
 			return;
 		}
 
-		const payload: Partial<CreatePostPayload> = {
-			content: caption.trim(),
-			vibeTag: selectedVibe,
-			mediaUrls: mediaPreviewUrls.length > 0 ? buildUploadedMediaUrls(mediaFiles) : existingMediaUrls,
-		};
+		try {
+			let finalMedia: PostMediaPayload[] = [];
 
-		await onSubmit(post.id, payload);
-		handleClose();
+			const mappedExistingMedia = existingMedia.map((m, idx) => ({
+				url: m.url,
+				Url: m.url,
+				objectKey: m.objectKey,
+				ObjectKey: m.objectKey,
+				mediaType: m.type === 'video' ? 2 : 1,
+				MediaType: m.type === 'video' ? 2 : 1,
+				width: 0,
+				Width: 0,
+				height: 0,
+				Height: 0,
+				fileSizeBytes: 0,
+				FileSizeBytes: 0,
+				sortOrder: idx,
+				SortOrder: idx,
+			}));
+
+			if (mediaFiles.length > 0) {
+				const uploadRequests: FileUploadRequest[] = mediaFiles.map((file) => ({
+					fileName: file.name,
+					contentType: file.type,
+				}));
+
+				const presignedUrls = await mediaApi.getSocialPostPresignedUrls(uploadRequests);
+
+				const uploadTasks = mediaFiles.map(async (file, index) => {
+					const presignedInfo = presignedUrls[index];
+					await mediaApi.uploadFileToR2(presignedInfo.uploadUrl, file, presignedInfo.fileName);
+					const currentSortOrder = mappedExistingMedia.length + index;
+					return {
+						url: presignedInfo.publicUrl,
+						Url: presignedInfo.publicUrl,
+						objectKey: presignedInfo.objectKey,
+						ObjectKey: presignedInfo.objectKey,
+						mediaType: presignedInfo.mediaType,
+						MediaType: presignedInfo.mediaType,
+						width: 0,
+						Width: 0,
+						height: 0,
+						Height: 0,
+						fileSizeBytes: file.size,
+						FileSizeBytes: file.size,
+						sortOrder: currentSortOrder,
+						SortOrder: currentSortOrder,
+					};
+				});
+
+				const newMedia = await Promise.all(uploadTasks);
+				finalMedia = [...mappedExistingMedia, ...newMedia];
+			} else {
+				finalMedia = mappedExistingMedia;
+			}
+
+			const payload = {
+				content: caption.trim(),
+				Content: caption.trim(),
+				vibeTag: selectedVibe,
+				VibeTag: selectedVibe,
+				media: finalMedia,
+				Media: finalMedia,
+				aspectRatio: aspectRatio,
+				AspectRatio: aspectRatio,
+			};
+
+			await onSubmit(post.id, payload as any);
+			handleClose();
+		} catch (error) {
+			console.error('Failed to update post media:', error);
+		}
 	};
 
 	if (!isOpen || !post) {
@@ -193,7 +295,7 @@ export const EditPostModal = ({ isOpen, post, isSubmitting, onClose, onSubmit }:
 					</button>
 				</div>
 
-				<form className="space-y-4 p-4" onSubmit={handleSubmit}>
+				<form className="space-y-4 p-4 max-h-[85vh] overflow-y-auto scrollbar-hide" onSubmit={handleSubmit}>
 					<div className="flex items-center gap-2 px-1">
 						<div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1F58A5] text-sm font-semibold text-white">
 							{post.author.charAt(0).toUpperCase()}
@@ -207,9 +309,6 @@ export const EditPostModal = ({ isOpen, post, isSubmitting, onClose, onSubmit }:
 						</div>
 					</div>
 
-					<label htmlFor={captionId} className="sr-only">
-						{t('profile.user.posts.editModal.captionLabel')}
-					</label>
 					<textarea
 						id={captionId}
 						value={caption}
@@ -219,32 +318,97 @@ export const EditPostModal = ({ isOpen, post, isSubmitting, onClose, onSubmit }:
 						placeholder={t('profile.user.posts.editModal.captionPlaceholder', { name: post.author })}
 					/>
 
-					{primaryPreview ? (
-						<div className="relative overflow-hidden rounded-2xl border border-[#D9DEE6] bg-white">
-							<img src={primaryPreview} alt={t('profile.user.posts.editModal.mediaPreviewAlt')} className="h-64 w-full object-cover" />
-							<div className="absolute left-3 top-3">
-								<button
-									type="button"
-									onClick={() => fileInputRef.current?.click()}
-									className="inline-flex items-center gap-2 rounded-2xl bg-white px-3 py-2 text-base font-semibold text-[#111827] shadow-sm"
-								>
-									<Pencil className="h-4 w-4" />
-									{t('profile.user.posts.editModal.changeMedia')}
-								</button>
-							</div>
-							<button
-								type="button"
-								onClick={removePrimaryMedia}
-								aria-label={t('profile.user.posts.editModal.removeMedia')}
-								className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#4B5563] shadow-sm"
+					<div className="flex gap-2 px-1">
+						<button
+							type="button"
+							onClick={() => setAspectRatio('square')}
+							className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${aspectRatio === 'square' ? 'bg-[#1F58A5] text-white' : 'bg-[#F0F2F5] text-[#4B5563] hover:bg-[#E4E6E9]'}`}
+						>
+							{t('social.feed.createModal.aspectRatio.square', { defaultValue: '1:1' })}
+						</button>
+						<button
+							type="button"
+							onClick={() => setAspectRatio('horizontal')}
+							className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${aspectRatio === 'horizontal' ? 'bg-[#1F58A5] text-white' : 'bg-[#F0F2F5] text-[#4B5563] hover:bg-[#E4E6E9]'}`}
+						>
+							{t('social.feed.createModal.aspectRatio.horizontal', { defaultValue: '16:9' })}
+						</button>
+						<button
+							type="button"
+							onClick={() => setAspectRatio('vertical')}
+							className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${aspectRatio === 'vertical' ? 'bg-[#1F58A5] text-white' : 'bg-[#F0F2F5] text-[#4B5563] hover:bg-[#E4E6E9]'}`}
+						>
+							{t('social.feed.createModal.aspectRatio.vertical', { defaultValue: '4:5' })}
+						</button>
+					</div>
+
+					{mediaCount > 0 ? (
+						<div className="relative group overflow-hidden rounded-2xl border border-[#D9DEE6] bg-[#F8FAFC]">
+							<div
+								ref={scrollRef}
+								onScroll={handleScroll}
+								className={`flex snap-x snap-mandatory overflow-x-auto scrollbar-hide w-full ${aspectRatio === 'vertical'
+										? 'aspect-[4/5]'
+										: (aspectRatio === 'horizontal' ? 'aspect-[16/9]' : 'aspect-square')
+									}`}
 							>
-								<X className="h-5 w-5" />
-							</button>
-							{mediaCount > 1 ? (
-								<div className="absolute bottom-3 right-3 rounded-full bg-black/65 px-2.5 py-1 text-xs font-semibold text-white">
-									+{mediaCount - 1}
-								</div>
-							) : null}
+								{displayMedia.map((item, idx) => (
+									<div key={idx} className="w-full shrink-0 snap-center relative flex items-center justify-center overflow-hidden">
+										{item.type === 'video' ? (
+											<video src={item.url} className="h-full w-full object-contain bg-black" controls />
+										) : (
+											<img src={item.url} alt="" className="h-full w-full object-contain" />
+										)}
+
+										<div className="absolute left-3 top-3 z-10">
+											<button
+												type="button"
+												onClick={() => fileInputRef.current?.click()}
+												className="inline-flex items-center gap-2 rounded-2xl bg-white/90 px-3 py-2 text-sm font-semibold text-[#111827] shadow-sm backdrop-blur-sm"
+											>
+												<Pencil className="h-3.5 w-3.5" />
+												{t('profile.user.posts.editModal.changeMedia')}
+											</button>
+										</div>
+
+										<button
+											type="button"
+											onClick={() => removeMediaAtIndex(idx)}
+											className="absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#4B5563] shadow-sm backdrop-blur-sm"
+										>
+											<X className="h-5 w-5" />
+										</button>
+									</div>
+								))}
+							</div>
+
+							{mediaCount > 1 && (
+								<>
+									<button
+										type="button"
+										onClick={() => scroll('left')}
+										className={`absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-1 shadow-md z-10 transition-opacity ${currentIndex === 0 ? 'opacity-0' : 'opacity-100'}`}
+									>
+										<ChevronLeft className="h-4 w-4" />
+									</button>
+									<button
+										type="button"
+										onClick={() => scroll('right')}
+										className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-1 shadow-md z-10 transition-opacity ${currentIndex === mediaCount - 1 ? 'opacity-0' : 'opacity-100'}`}
+									>
+										<ChevronRight className="h-4 w-4" />
+									</button>
+
+									<div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1 px-2 py-1 z-10">
+										{displayMedia.map((_, idx) => (
+											<div
+												key={idx}
+												className={`h-1 w-1 rounded-full transition-all ${idx === currentIndex ? 'bg-blue-600 w-2' : 'bg-gray-300'}`}
+											/>
+										))}
+									</div>
+								</>
+							)}
 						</div>
 					) : null}
 
@@ -264,30 +428,28 @@ export const EditPostModal = ({ isOpen, post, isSubmitting, onClose, onSubmit }:
 									type="button"
 									onClick={() => fileInputRef.current?.click()}
 									aria-label={t('profile.user.posts.editModal.addMedia')}
-										className="flex h-8 w-8 items-center justify-center rounded-full bg-[#DCE7F5] text-[#1F58A5] hover:bg-[#CADBF2]"
+									className="flex h-8 w-8 items-center justify-center rounded-full bg-[#DCE7F5] text-[#1F58A5] hover:bg-[#CADBF2]"
 								>
 									<ImagePlus className="h-4 w-4" />
 								</button>
-									<button
-										type="button"
-										onClick={() => setShowLocationInfo((prev) => !prev)}
-										aria-label={t('social.feed.createModal.locationLabel')}
-										className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
-											showLocationInfo ? 'bg-[#1F58A5] text-white' : 'bg-[#DCE7F5] text-[#1F58A5] hover:bg-[#CADBF2]'
+								<button
+									type="button"
+									onClick={() => setShowLocationInfo((prev) => !prev)}
+									aria-label={t('social.feed.createModal.locationLabel')}
+									className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${showLocationInfo ? 'bg-[#1F58A5] text-white' : 'bg-[#DCE7F5] text-[#1F58A5] hover:bg-[#CADBF2]'
 										}`}
-									>
-										<MapPin className="h-4 w-4" />
-									</button>
-									<button
-										type="button"
-										onClick={() => setShowVibePicker((prev) => !prev)}
-										aria-label={t('social.feed.createModal.tagLabel')}
-										className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
-											showVibePicker || selectedVibe ? 'bg-[#1F58A5] text-white' : 'bg-[#DCE7F5] text-[#1F58A5] hover:bg-[#CADBF2]'
+								>
+									<MapPin className="h-4 w-4" />
+								</button>
+								<button
+									type="button"
+									onClick={() => setShowVibePicker((prev) => !prev)}
+									aria-label={t('social.feed.createModal.tagLabel')}
+									className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${showVibePicker || selectedVibe ? 'bg-[#1F58A5] text-white' : 'bg-[#DCE7F5] text-[#1F58A5] hover:bg-[#CADBF2]'
 										}`}
-									>
-										<Tag className="h-4 w-4" />
-									</button>
+								>
+									<Tag className="h-4 w-4" />
+								</button>
 							</div>
 						</div>
 
@@ -335,8 +497,8 @@ export const EditPostModal = ({ isOpen, post, isSubmitting, onClose, onSubmit }:
 								<div className="flex-1 overflow-y-auto pb-4">
 									<div className="flex flex-col px-4">
 										{vibeOptions
-											.filter((tag) => tag.label.toLowerCase().includes(vibeSearchQuery.toLowerCase()))
-											.map((tag) => {
+											.filter((tag: any) => tag.label.toLowerCase().includes(vibeSearchQuery.toLowerCase()))
+											.map((tag: any) => {
 												const config = vibeConfig[tag.id];
 												const Icon = config?.icon || Tag;
 												const isSelected = selectedVibe === tag.id;
@@ -349,9 +511,8 @@ export const EditPostModal = ({ isOpen, post, isSubmitting, onClose, onSubmit }:
 															setShowVibePicker(false);
 														}}
 														ref={isSelected ? selectedVibeButtonRef : null}
-														className={`flex items-center gap-4 border-b border-[#D8DDE5] py-5 text-left transition-colors hover:bg-[#F9FAFB] ${
-															isSelected ? 'bg-[#F6F9FF]' : ''
-														}`}
+														className={`flex items-center gap-4 border-b border-[#D8DDE5] py-5 text-left transition-colors hover:bg-[#F9FAFB] ${isSelected ? 'bg-[#F6F9FF]' : ''
+															}`}
 													>
 														<div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${config?.bgColor || 'bg-gray-50'}`}>
 															<Icon className={`h-6 w-6 ${config?.color || 'text-gray-500'}`} />
@@ -362,13 +523,13 @@ export const EditPostModal = ({ isOpen, post, isSubmitting, onClose, onSubmit }:
 													</button>
 												);
 											})}
-										{vibeOptions.filter((tag) => tag.label.toLowerCase().includes(vibeSearchQuery.toLowerCase())).length === 0 && vibeSearchQuery.length > 0 ? (
+										{vibeOptions.filter((tag: any) => tag.label.toLowerCase().includes(vibeSearchQuery.toLowerCase())).length === 0 && vibeSearchQuery.length > 0 ? (
 											<p className="px-1 text-center text-base text-[#6B7280]">{t('social.feed.createModal.vibeEmptySearch')}</p>
 										) : null}
 									</div>
 								</div>
 							</div>
-							) : null}
+						) : null}
 					</div>
 
 					<div className="pt-1">

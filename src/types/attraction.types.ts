@@ -5,6 +5,8 @@ export interface TouristAttractionCardItem {
   tagId: string;
   likes: number;
   imageUrl: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface TouristAttractionsSectionData {

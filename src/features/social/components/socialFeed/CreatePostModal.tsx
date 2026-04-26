@@ -1,12 +1,30 @@
 import { useEffect, useId, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import axios from 'axios';
-import { ImagePlus, MapPin, Tag, X, ArrowLeft, Search, Sprout, Mountain, Diamond, Lightbulb, Globe, Home, Pencil } from 'lucide-react';
+import {
+  ImagePlus,
+  MapPin,
+  Tag,
+  X,
+  ArrowLeft,
+  Search,
+  Sprout,
+  Mountain,
+  Diamond,
+  Lightbulb,
+  Globe,
+  Home,
+  Pencil,
+  type LucideIcon,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { postApi, touristApi } from '@/services';
+import { apiService, postApi, touristApi, mediaApi } from '@/services';
 import { useAuthStore } from '@/store';
-import type { CreatePostModalProps, CreatePostPayload, TouristAttractionCardItem } from '@/types';
+import type { CreatePostModalProps, PostMediaPayload, TouristAttractionCardItem, FileUploadRequest } from '@/types';
+import { LocationMapPickerModal } from './LocationMapPickerModal';
 
-const EMPTY_GUID = '00000000-0000-0000-0000-000000000000';
+const GUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+
 
 export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
   const { t } = useTranslation();
@@ -21,21 +39,16 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
-  // Vibe Tag States
   const [selectedVibe, setSelectedVibe] = useState<number | null>(null);
-
-  // Location States
-  const [showLocationSearch, setShowLocationSearch] = useState(false);
-  const [locationQuery, setLocationQuery] = useState('');
-  const [locationResults, setLocationResults] = useState<TouristAttractionCardItem[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<TouristAttractionCardItem | null>(null);
-  const [isSearchingLocation, setIsSearchingLocation] = useState(false);
+  const [isLocationPickerOpen, setIsLocationPickerOpen] = useState(false);
+  const [touristLocations, setTouristLocations] = useState<TouristAttractionCardItem[]>([]);
+  const [isLoadingLocations, setIsLoadingLocations] = useState(false);
 
-  // Vibe Selection View State
   const [isSelectingVibe, setIsSelectingVibe] = useState(false);
   const [vibeSearchQuery, setVibeSearchQuery] = useState('');
 
-  const vibeConfig: Record<number, { icon: any; color: string; bgColor: string }> = {
+  const vibeConfig: Record<number, { icon: LucideIcon; color: string; bgColor: string }> = {
     1: { icon: Sprout, color: 'text-[#16A34A]', bgColor: 'bg-[#EAF7EF]' },
     2: { icon: Mountain, color: 'text-[#2563EB]', bgColor: 'bg-[#EAF0FB]' },
     3: { icon: Diamond, color: 'text-[#D97706]', bgColor: 'bg-[#FBF5E8]' },
@@ -44,32 +57,12 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
     6: { icon: Home, color: 'text-[#EA580C]', bgColor: 'bg-[#FAF1E8]' },
   };
 
+  const [aspectRatio, setAspectRatio] = useState<'horizontal' | 'vertical' | 'square'>('square');
+
   const vibeOptions = [1, 2, 3, 4, 5, 6].map((id) => ({
     id,
     label: t(`social.feed.createModal.vibeNames.${id}`),
   }));
-
-  useEffect(() => {
-    if (locationQuery.trim().length > 1) {
-      const timer = setTimeout(async () => {
-        setIsSearchingLocation(true);
-        try {
-          const response = await touristApi.getTouristAttractions();
-          const filtered = response.items.filter(item =>
-            item.name.toLowerCase().includes(locationQuery.toLowerCase())
-          );
-          setLocationResults(filtered);
-        } catch (error) {
-          console.error('Failed to fetch locations', error);
-        } finally {
-          setIsSearchingLocation(false);
-        }
-      }, 500);
-      return () => clearTimeout(timer);
-    } else {
-      setLocationResults([]);
-    }
-  }, [locationQuery]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -83,6 +76,50 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
       document.body.style.overflow = previousOverflow;
     };
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    if (touristLocations.length > 0) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const loadLocations = async () => {
+      setIsLoadingLocations(true);
+      try {
+        const response = await touristApi.getTouristAttractions();
+        if (!cancelled) {
+          if (response.items.length > 0) {
+            setTouristLocations(response.items);
+            return;
+          }
+
+          const fallback = await apiService.getTouristAttractionsCards();
+          setTouristLocations(fallback.items);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          console.warn('Using fallback locations for create post map.', error);
+          const fallback = await apiService.getTouristAttractionsCards();
+          setTouristLocations(fallback.items);
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoadingLocations(false);
+        }
+      }
+    };
+
+    loadLocations();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, touristLocations.length]);
 
   if (!isOpen) {
     return null;
@@ -101,17 +138,30 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
   const handleMediaChange = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || files.length === 0) {
-      clearMedia();
       return;
     }
 
     const selectedFiles = Array.from(files);
     const nextPreviewUrls = selectedFiles.map((file) => URL.createObjectURL(file));
 
-    mediaPreviewUrls.forEach((url) => URL.revokeObjectURL(url));
-    setMediaFiles(selectedFiles);
-    setMediaNames(selectedFiles.map((file) => file.name));
-    setMediaPreviewUrls(nextPreviewUrls);
+    setMediaFiles((prev) => [...prev, ...selectedFiles]);
+    setMediaNames((prev) => [...prev, ...selectedFiles.map((file) => file.name)]);
+    setMediaPreviewUrls((prev) => [...prev, ...nextPreviewUrls]);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const removeMediaAt = (index: number) => {
+    const previewUrl = mediaPreviewUrls[index];
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+
+    setMediaFiles((prev) => prev.filter((_, idx) => idx !== index));
+    setMediaNames((prev) => prev.filter((_, idx) => idx !== index));
+    setMediaPreviewUrls((prev) => prev.filter((_, idx) => idx !== index));
   };
 
   const resetForm = () => {
@@ -119,9 +169,8 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
     clearMedia();
     setSelectedVibe(null);
     setSelectedLocation(null);
-    setLocationQuery('');
-    setShowLocationSearch(false);
     setIsSelectingVibe(false);
+    setIsLocationPickerOpen(false);
     setVibeSearchQuery('');
     setSubmitError('');
     setIsSubmitting(false);
@@ -143,15 +192,57 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
       setIsSubmitting(true);
       setSubmitError('');
 
-      // userId is intentionally omitted — the backend resolves it from the
-      // Authorization token via User.GetCurrentUserId(), so any frontend
-      // validation or derivation here is unnecessary and error-prone.
-      const payload: CreatePostPayload = {
-        content: caption.trim(),
-        mediaUrls: mediaFiles.map((_, index) => `https://i.pinimg.com/736x/b1/56/a6/b156a6129a622b9284eba286737b2656.jpg?img=${index + 1}`),
-        vibeTag: selectedVibe ?? 1,
-        checkinLocationId: selectedLocation?.id ?? EMPTY_GUID,
+      let uploadedMedia: PostMediaPayload[] = [];
+      if (mediaFiles.length > 0) {
+        const uploadRequests: FileUploadRequest[] = mediaFiles.map((file) => ({
+          fileName: file.name,
+          contentType: file.type,
+        }));
+
+        const presignedUrls = await mediaApi.getSocialPostPresignedUrls(uploadRequests);
+
+        const uploadTasks = mediaFiles.map(async (file, index) => {
+          const presignedInfo = presignedUrls[index];
+          await mediaApi.uploadFileToR2(presignedInfo.uploadUrl, file, presignedInfo.fileName);
+          return {
+            url: presignedInfo.publicUrl,
+            Url: presignedInfo.publicUrl,
+            objectKey: presignedInfo.objectKey,
+            ObjectKey: presignedInfo.objectKey,
+            mediaType: presignedInfo.mediaType,
+            MediaType: presignedInfo.mediaType,
+            width: 0,
+            Width: 0,
+            height: 0,
+            Height: 0,
+            fileSizeBytes: file.size,
+            FileSizeBytes: file.size,
+            sortOrder: index,
+            SortOrder: index,
+          };
+        });
+
+        uploadedMedia = await Promise.all(uploadTasks);
+      }
+
+      const normalizedContent = caption.trim();
+      const resolvedCheckinLocationId =
+        selectedLocation?.id && GUID_REGEX.test(selectedLocation.id)
+          ? selectedLocation.id
+          : undefined;
+
+      const payload: any = {
+        content: normalizedContent || undefined,
+        media: uploadedMedia,
+        Media: uploadedMedia,
+        aspectRatio: aspectRatio,
+        AspectRatio: aspectRatio,
+        taggedProductIds: [],
+        vibeTag: selectedVibe ?? 0,
+        checkinLocationId: selectedLocation?.id,
       };
+
+      console.log('Publishing post with payload:', payload);
 
       await postApi.createPost(payload);
       handleClose();
@@ -190,13 +281,13 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
   };
 
   const userName = user?.name ?? t('social.feed.createModal.defaultUserName');
-  const canPublish = caption.trim().length > 0;
+  const canPublish = caption.trim().length > 0 || mediaFiles.length > 0 || Boolean(selectedLocation);
   const avatarInitial = userName.charAt(0).toUpperCase();
   const primaryPreview = mediaPreviewUrls[0];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#6B728099] p-4">
-      <div className="w-full max-w-[360px] overflow-hidden rounded-3xl bg-[#FCFCFD] shadow-2xl">
+      <div className="relative w-full max-w-[360px] overflow-hidden rounded-3xl bg-[#FCFCFD] shadow-2xl">
         {isSelectingVibe ? (
           <div className="flex h-[640px] flex-col bg-[#FCFCFD]">
             <div className="flex items-center gap-3 border-b border-[#EAECF0] px-5 py-4">
@@ -247,9 +338,10 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                       </button>
                     );
                   })}
-                {vibeOptions.filter((tag) => tag.label.toLowerCase().includes(vibeSearchQuery.toLowerCase())).length === 0 && vibeSearchQuery.length > 0 && (
+                {vibeOptions.filter((tag) => tag.label.toLowerCase().includes(vibeSearchQuery.toLowerCase())).length === 0 &&
+                vibeSearchQuery.length > 0 ? (
                   <p className="px-1 text-center text-base text-[#6B7280]">{t('social.feed.createModal.vibeEmptySearch')}</p>
-                )}
+                ) : null}
               </div>
             </div>
           </div>
@@ -278,14 +370,14 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                 )}
                 <div className="flex flex-col">
                   <p className="text-[17px] font-semibold text-[#2F3A48]">{userName}</p>
-                  {selectedVibe && (
+                  {selectedVibe ? (
                     <p className="text-sm text-[#6B7280]">
                       {t('social.feed.createModal.vibeLabelPrefix')}{' '}
                       <span className="font-semibold text-[#1F58A5]">
                         {selectedVibe ? t(`social.feed.createModal.vibeNames.${selectedVibe}`) : ''}
                       </span>
                     </p>
-                  )}
+                  ) : null}
                 </div>
               </div>
 
@@ -298,10 +390,33 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                   value={caption}
                   onChange={(event) => setCaption(event.target.value)}
                   rows={3}
-                  required
                   placeholder={t('social.feed.createModal.captionPlaceholder', { name: userName })}
                   className="w-full resize-none bg-transparent px-1 text-[26px] leading-tight text-[#2F3A48] outline-none placeholder:text-[#C0C4CC]"
                 />
+              </div>
+
+              <div className="flex gap-2 px-1">
+                <button
+                  type="button"
+                  onClick={() => setAspectRatio('square')}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${aspectRatio === 'square' ? 'bg-[#1F58A5] text-white' : 'bg-[#F0F2F5] text-[#4B5563] hover:bg-[#E4E6E9]'}`}
+                >
+                  {t('social.feed.createModal.aspectRatio.square', { defaultValue: '1:1' })}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAspectRatio('horizontal')}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${aspectRatio === 'horizontal' ? 'bg-[#1F58A5] text-white' : 'bg-[#F0F2F5] text-[#4B5563] hover:bg-[#E4E6E9]'}`}
+                >
+                  {t('social.feed.createModal.aspectRatio.horizontal', { defaultValue: '16:9' })}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAspectRatio('vertical')}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${aspectRatio === 'vertical' ? 'bg-[#1F58A5] text-white' : 'bg-[#F0F2F5] text-[#4B5563] hover:bg-[#E4E6E9]'}`}
+                >
+                  {t('social.feed.createModal.aspectRatio.vertical', { defaultValue: '4:5' })}
+                </button>
               </div>
 
               {primaryPreview ? (
@@ -321,7 +436,7 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
 
                   <button
                     type="button"
-                    onClick={clearMedia}
+                    onClick={() => removeMediaAt(0)}
                     aria-label={t('social.feed.createModal.removeMedia')}
                     className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#4B5563] shadow-sm"
                   >
@@ -359,15 +474,12 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                     </button>
                     <button
                       type="button"
-                      onClick={() => {
-                        setShowLocationSearch((prev) => !prev);
-                        if (!showLocationSearch) {
-                          setSelectedLocation(null);
-                        }
-                      }}
+                      onClick={() => setIsLocationPickerOpen(true)}
                       aria-label={t('social.feed.createModal.locationLabel')}
                       className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
-                        showLocationSearch || selectedLocation ? 'bg-[#1F58A5] text-white' : 'bg-[#DCE7F5] text-[#1F58A5] hover:bg-[#CADBF2]'
+                        isLocationPickerOpen || selectedLocation
+                          ? 'bg-[#1F58A5] text-white'
+                          : 'bg-[#DCE7F5] text-[#1F58A5] hover:bg-[#CADBF2]'
                       }`}
                     >
                       <MapPin className="h-4 w-4" />
@@ -386,9 +498,24 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                 </div>
 
                 {mediaNames.length > 0 ? (
-                  <p className="mt-2 text-xs text-[#64748B]">
-                    {t('social.feed.createModal.selectedMedia', { count: mediaNames.length })}
-                  </p>
+                  <div className="mt-2 space-y-2">
+                    <p className="text-xs text-[#64748B]">{t('social.feed.createModal.selectedMedia', { count: mediaNames.length })}</p>
+                    <div className="flex gap-2 overflow-x-auto pb-1">
+                      {mediaPreviewUrls.map((url, index) => (
+                        <div key={`${url}-${index}`} className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-[#D1D5DB] bg-white">
+                          <img src={url} alt={mediaNames[index] ?? t('social.feed.createModal.mediaPreviewAlt')} className="h-full w-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => removeMediaAt(index)}
+                            className="absolute right-0 top-0 rounded-bl-md bg-black/60 px-1 text-[10px] text-white"
+                            aria-label={t('social.feed.createModal.removeMedia')}
+                          >
+                            x
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 ) : null}
 
                 {selectedLocation ? (
@@ -406,61 +533,9 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                     </button>
                   </div>
                 ) : null}
-
-                {showLocationSearch && !selectedLocation ? (
-                  <div className="mt-3 space-y-2">
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={locationQuery}
-                        onChange={(event) => setLocationQuery(event.target.value)}
-                        autoFocus
-                        placeholder={t('social.feed.createModal.locationPlaceholder')}
-                        className="w-full rounded-xl border border-[#D9DEE6] bg-white px-3 py-2 text-sm text-[#1F2937] outline-none focus:border-[#1F58A5] focus:ring-1 focus:ring-[#1F58A5]"
-                      />
-                      {isSearchingLocation && (
-                        <div className="absolute right-3 top-2.5 h-4 w-4 animate-spin rounded-full border-2 border-[#1F58A5] border-t-transparent" />
-                      )}
-                    </div>
-
-                    {locationResults.length > 0 ? (
-                      <div className="max-h-[150px] overflow-y-auto rounded-xl border border-[#D9DEE6] bg-white py-1 shadow-sm">
-                        {locationResults.map((loc) => (
-                          <button
-                            key={loc.id}
-                            type="button"
-                            onClick={() => {
-                              setSelectedLocation(loc);
-                              setShowLocationSearch(false);
-                              setLocationQuery('');
-                            }}
-                            className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-[#F3F4F6]"
-                          >
-                            <MapPin className="h-4 w-4 text-[#6B7280]" />
-                            <div>
-                              <p className="text-sm font-medium text-[#1F2937]">{loc.name}</p>
-                              <p className="text-[11px] text-[#6B7280]">{loc.address}</p>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    ) : locationQuery.length > 1 && !isSearchingLocation ? (
-                      <p className="px-1 text-[11px] text-[#6B7280]">{t('social.feed.createModal.locationEmptySearch')}</p>
-                    ) : null}
-                  </div>
-                ) : (
-                  !selectedLocation && showLocationSearch && (
-                    <div className="mt-2 flex items-center gap-2 text-xs text-[#6B7280]">
-                      <MapPin className="h-3 w-3" />
-                      <span>{t('social.feed.createModal.locationSearchPlaceholder')}</span>
-                    </div>
-                  )
-                )}
               </div>
 
-              {submitError ? (
-                <p className="text-sm font-medium text-red-600">{submitError}</p>
-              ) : null}
+              {submitError ? <p className="text-sm font-medium text-red-600">{submitError}</p> : null}
 
               <button
                 type="submit"
@@ -472,6 +547,23 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
             </form>
           </div>
         )}
+
+        <LocationMapPickerModal
+          isOpen={isLocationPickerOpen}
+          locations={touristLocations}
+          selectedLocationId={selectedLocation?.id ?? null}
+          isLoadingLocations={isLoadingLocations}
+          title={t('social.feed.createModal.locationPickerTitle')}
+          searchHint={t('social.feed.createModal.locationPickerHint')}
+          loadingText={t('social.feed.createModal.locationPickerLoading')}
+          emptyText={t('social.feed.createModal.locationPickerEmpty')}
+          selectButtonText={t('social.feed.createModal.locationPickerConfirm')}
+          onClose={() => setIsLocationPickerOpen(false)}
+          onSelect={(location) => {
+            setSelectedLocation(location);
+            setIsLocationPickerOpen(false);
+          }}
+        />
       </div>
     </div>
   );

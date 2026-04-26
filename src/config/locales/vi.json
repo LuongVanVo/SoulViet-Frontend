@@ -72,7 +72,17 @@
         "vibeLabelPrefix": "đang cảm thấy",
         "vibeSelectHint": "Chọn không khí (Vibe)",
         "locationEmptySearch": "Không tìm thấy địa điểm phù hợp",
-        "locationSearchPlaceholder": "Tìm kiếm địa điểm của bạn..."
+        "locationSearchPlaceholder": "Tìm kiếm địa điểm của bạn...",
+        "locationPickerTitle": "Chọn vị trí trên bản đồ",
+        "locationPickerHint": "Chạm vào ghim trên bản đồ hoặc chọn từ danh sách địa điểm",
+        "locationPickerLoading": "Đang tải bản đồ địa điểm...",
+        "locationPickerEmpty": "Chưa thể hiển thị vị trí trên bản đồ. Bạn có thể chọn từ danh sách bên dưới.",
+        "locationPickerConfirm": "Xác nhận vị trí",
+        "locationPickerSearchPlaceholder": "Bạn đang ở đâu?",
+        "locationPickerSearching": "Đang tìm vị trí...",
+        "locationPickerNoSearchResult": "Không tìm thấy vị trí phù hợp",
+        "locationPickerSuggestions": "Gợi ý",
+        "locationPickerCurrentLocation": "Vị trí hiện tại"
       },
       "wallet": {
         "label": "SoulCoins của bạn",

@@ -25,23 +25,45 @@ const formatTimeAgo = (createdAt: string) => {
 	return i18n.t('profile.user.posts.timeAgo.daysAgo', { count: diffInDays });
 };
 
-const toSocialPost = (post: SocialPostApiItem, vibeTags: Map<number, string> = new Map()): SocialPost => ({
-	id: post.id,
-	userId: post.userId,
-	author: `User ${post.userId.slice(0, 8)}`,
-	avatar: `https://api.dicebear.com/8.x/initials/svg?seed=${post.userId}`,
-	timeAgo: formatTimeAgo(post.createdAt),
-	location: 'Viet Nam',
-	vibe: vibeTags.get(post.vibeTag) ?? `Vibe #${post.vibeTag}`,
-	vibeTag: post.vibeTag,
-	images: post.mediaUrls,
-	caption: post.content,
-	likes: post.likesCount,
-	comments: post.commentsCount,
-	shares: post.sharesCount,
-	rewardCoins: Math.max(1, post.likesCount),
-	createdAt: post.createdAt,
-});
+const extractMediaItems = (post: any): { url: string; type: 'image' | 'video'; objectKey: string }[] => {
+	const media = post.media || post.Media;
+	if (media && media.length > 0) {
+		return media.map((item: any) => {
+			const url = item.url || item.Url || item.publicUrl || item.PublicUrl;
+			const type = (item.mediaType === 2 || item.MediaType === 2) ? 'video' : 'image';
+			const objectKey = item.objectKey || item.ObjectKey || '';
+			return { url, type, objectKey };
+		}).filter((item: any) => Boolean(item.url));
+	}
+
+	const mediaUrls = post.mediaUrls || post.MediaUrls || [];
+	return mediaUrls.map((url: string) => ({ url, type: 'image', objectKey: '' }));
+};
+
+const toSocialPost = (post: any, vibeTags: Map<number, string> = new Map()): SocialPost => {
+	const vibeTag = post.vibeTag ?? post.VibeTag;
+	const likesCount = post.likesCount ?? post.LikesCount ?? 0;
+	return {
+		id: post.id || post.Id,
+		userId: post.userId || post.UserId,
+		author: `User ${(post.userId || post.UserId || '').slice(0, 8)}`,
+		avatar: `https://api.dicebear.com/8.x/initials/svg?seed=${post.userId || post.UserId}`,
+		timeAgo: formatTimeAgo(post.createdAt || post.CreatedAt),
+		location: post.checkinLocationName || post.CheckinLocationName,
+		checkinLocationId: post.checkinLocationId || post.CheckinLocationId,
+		vibe: vibeTag > 0 ? (vibeTags.get(vibeTag) ?? `Vibe #${vibeTag}`) : undefined,
+		vibeTag: vibeTag,
+		images: [], // Kept for type safety
+		media: extractMediaItems(post),
+		aspectRatio: post.aspectRatio || post.AspectRatio || 'square',
+		caption: post.content ?? post.Content,
+		likes: likesCount,
+		comments: post.commentsCount ?? post.CommentsCount ?? 0,
+		shares: post.sharesCount ?? post.SharesCount ?? 0,
+		rewardCoins: Math.max(1, likesCount),
+		createdAt: post.createdAt || post.CreatedAt,
+	};
+};
 
 export const useUserSocialPosts = (userId: string) => {
 	const { data: vibeTags = [] } = useVibeTags();
