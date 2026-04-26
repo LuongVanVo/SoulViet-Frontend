@@ -47,16 +47,22 @@ export const SocialPostHeader = ({
 					<p className="truncate text-base font-semibold text-[#1F2937]">{author}</p>
 					<p className="truncate text-xs text-[#6B7280]">
 						{timeAgo}
-						<span className="mx-1">•</span>
-						{location}
+						{location && (
+							<>
+								<span className="mx-1">•</span>
+								{location}
+							</>
+						)}
 					</p>
 				</div>
 			</div>
 
 			<div className="flex items-center gap-3">
-				<span className="rounded-full bg-[#E9EEF7] px-3 py-1 text-xs font-medium text-[#42618B]">
-					{vibe}
-				</span>
+				{vibe && (
+					<span className="rounded-full bg-[#E9EEF7] px-3 py-1 text-xs font-medium text-[#42618B]">
+						{vibe}
+					</span>
+				)}
 
 				{(onEdit || onDelete) && (
 					<div ref={menuRef} className="relative">

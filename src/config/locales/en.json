@@ -71,7 +71,17 @@
         "vibeLabelPrefix": "is feeling",
         "vibeSelectHint": "Select a vibe",
         "locationEmptySearch": "No matching locations found",
-        "locationSearchPlaceholder": "Search for your location..."
+        "locationSearchPlaceholder": "Search for your location...",
+        "locationPickerTitle": "Choose location on map",
+        "locationPickerHint": "Tap a pin on the map or pick from the location list",
+        "locationPickerLoading": "Loading location map...",
+        "locationPickerEmpty": "Unable to render map pins yet. You can still choose from the list below.",
+        "locationPickerConfirm": "Use this location",
+        "locationPickerSearchPlaceholder": "Where are you now?",
+        "locationPickerSearching": "Searching locations...",
+        "locationPickerNoSearchResult": "No matching locations found",
+        "locationPickerSuggestions": "Suggestions",
+        "locationPickerCurrentLocation": "Current location"
       },
       "wallet": {
         "label": "Your SoulCoins",

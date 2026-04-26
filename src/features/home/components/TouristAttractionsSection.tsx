@@ -12,7 +12,7 @@ export const TouristAttractionsSection = () => {
   const sliderRef = React.useRef<HTMLDivElement>(null);
 
   const getTagInfo = (tagId: string) => {
-    return tags.find(t => t.id === tagId);
+    return tags.find((t) => String(t.id) === tagId);
   };
 
   const scrollStories = (direction: 'left' | 'right') => {
