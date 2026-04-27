@@ -206,9 +206,11 @@
       "confirmPasswordPlaceholder": "••••••••",
       "signUpButton": "Sign up",
       "continueWith": "Or continue with",
-      "loginWithGoogle": "Login with Google",
+      "signUpWithGoogle": "Sign up with Google",
       "haveAccount": "Already have an account?",
-      "login": "Login"
+      "login": "Login",
+      "heroText": "Start your heritage journey",
+      "heroSubText": "EXPERIENCE AUTHENTIC VIETNAM"
     },
     "forgotPassword": {
       "title": "Forgot password",
@@ -225,7 +227,8 @@
       "title": "OAuth sign in",
       "subtitle": "Choose a provider to continue",
       "googleButton": "Login with Google",
-      "backToSignIn": "Back to sign in"
+      "backToSignIn": "Back to sign in",
+      "connecting": "Connecting to Google..."
     },
     "verifyEmail": {
       "title": "Verify your email",
@@ -248,6 +251,18 @@
       "missingToken": "Missing verification token in the URL.",
       "backToLogin": "Back to login",
       "backToRegister": "Back to register"
+    },
+    "resetPassword": {
+      "title": "Reset password",
+      "subtitle": "Enter your new password below to reset your account password",
+      "passwordLabel": "New password",
+      "passwordPlaceholder": "••••••••",
+      "confirmPasswordLabel": "Confirm new password",
+      "confirmPasswordPlaceholder": "••••••••",
+      "resetButton": "Reset password",
+      "resetingButton": "Resetting...",
+      "successMessage": "Password reset successful. You can now sign in with your new password.",
+      "backToLogin": "Back to login"
     }
   },
   "profile": {

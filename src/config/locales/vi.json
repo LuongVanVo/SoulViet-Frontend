@@ -197,8 +197,8 @@
       "loginButton": "Đăng nhập",
       "continueWith": "Hoặc tiếp tục với",
       "loginWithGoogle": "Đăng nhập với Google",
-      "noAccount": "Chưa có tài khoản?",
-      "signUp": "Đăng ký"
+      "noAccount": "Bạn chưa có tài khoản ?",
+      "signUp": "Đăng ký ngay"
     },
     "signUp": {
       "title": "Đăng ký tài khoản",
@@ -213,9 +213,11 @@
       "confirmPasswordPlaceholder": "••••••••",
       "signUpButton": "Đăng ký",
       "continueWith": "Hoặc tiếp tục với",
-      "loginWithGoogle": "Đăng nhập với Google",
+      "signUpWithGoogle": "Đăng ký với Google",
       "haveAccount": "Đã có tài khoản?",
-      "login": "Đăng nhập"
+      "login": "Đăng nhập",
+      "heroText": "Bắt đầu hành trình di sản",
+      "heroSubText": "TRẢI NGHIỆM VIỆT NAM ĐÍCH THỰC"
     },
     "forgotPassword": {
       "title": "Quên mật khẩu",
@@ -232,7 +234,8 @@
       "title": "Đăng nhập OAuth",
       "subtitle": "Chọn nhà cung cấp để tiếp tục",
       "googleButton": "Đăng nhập với Google",
-      "backToSignIn": "Quay lại đăng nhập"
+      "backToSignIn": "Quay lại đăng nhập",
+      "connecting": "Đang kết nối với Google..."
     },
     "verifyEmail": {
       "title": "Xác thực email",
@@ -255,6 +258,18 @@
       "missingToken": "Thiếu token xác thực trong đường dẫn.",
       "backToLogin": "Quay lại đăng nhập",
       "backToRegister": "Quay lại đăng ký"
+    },
+    "resetPassword": {
+      "title": "Đặt lại mật khẩu",
+      "subtitle": "Nhập mật khẩu mới bên dưới để đặt lại mật khẩu tài khoản của bạn",
+      "passwordLabel": "Mật khẩu mới",
+      "passwordPlaceholder": "••••••••",
+      "confirmPasswordLabel": "Xác nhận mật khẩu mới",
+      "confirmPasswordPlaceholder": "••••••••",
+      "resetButton": "Đặt lại mật khẩu",
+      "resetingButton": "Đang đặt lại...",
+      "successMessage": "Đặt lại mật khẩu thành công. Bây giờ bạn có thể đăng nhập với mật khẩu mới.",
+      "backToLogin": "Quay lại đăng nhập"
     }
   },
   "profile": {

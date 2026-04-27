@@ -12,7 +12,8 @@ import {
   OAuthPage, 
   SignInPage, 
   SignUpPage, 
-  VerifyEmailNoticePage 
+  VerifyEmailNoticePage,
+  ResetPasswordPage
 } from '@/pages';
 
 export const router = createBrowserRouter([
@@ -59,6 +60,10 @@ export const router = createBrowserRouter([
       {
         path: 'forgot-password',
         element: <ForgotPasswordPage />,
+      },
+      {
+        path: 'reset-password',
+        element: <ResetPasswordPage />,
       },
       {
         path: 'oauth2',
