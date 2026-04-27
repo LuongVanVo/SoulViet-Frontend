@@ -2,7 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import { MainLayout } from '@/layouts/MainLayout';
 import { MyPost } from '@/pages/profile/MyPost';
 import { 
-  Home, 
+  HomePage,
   Map, 
   AIPlan, 
   Social, 
@@ -22,7 +22,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Home />,
+        element: <HomePage />,
       },
       {
         path: 'map',

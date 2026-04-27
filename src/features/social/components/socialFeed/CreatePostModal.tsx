@@ -239,7 +239,7 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
         AspectRatio: aspectRatio,
         taggedProductIds: [],
         vibeTag: selectedVibe ?? 0,
-        checkinLocationId: selectedLocation?.id,
+        checkinLocationId: resolvedCheckinLocationId,
       };
 
       console.log('Publishing post with payload:', payload);

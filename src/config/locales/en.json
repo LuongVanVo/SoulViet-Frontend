@@ -1,4 +1,68 @@
 {
+  "navbar": {
+    "logo": "SOULVIET",
+    "login": "Login",
+    "cart": "Cart"
+  },
+  "bottomNav": {
+    "home": "Home",
+    "map": "Map",
+    "aiPlan": "AI Plan",
+    "social": "Social",
+    "marketplace": "Marketplace"
+  },
+  "hero": {
+    "title": "Experience the True Soul of Vietnam",
+    "subtitle": "Discover heritage stays, authentic local tours and curated artisan souvenirs."
+  },
+  "searchBar": {
+    "tabs": {
+      "stays": "Stays",
+      "tours": "Tours",
+      "souvenirs": "Souvenirs"
+    },
+    "locationPlaceholder": "Where are you going?",
+    "locationLabel": "LOCATION",
+    "datePlaceholder": "Add dates",
+    "dateLabel": "DATES",
+    "tourLocationLabel": "DESTINATION",
+    "tourDateLabel": "DEPARTURE DATE",
+    "tourPeopleLabel": "PEOPLE",
+    "tourLocationPlaceholder": "Where do you want to go?",
+    "tourDatePlaceholder": "Select date",
+    "tourPeoplePlaceholder": "2 adults",
+    "souvenirProductLabel": "SEARCH PRODUCT",
+    "souvenirCategoryLabel": "CATEGORY",
+    "souvenirBudgetLabel": "BUDGET",
+    "souvenirProductPlaceholder": "Non la, embroidery,...",
+    "souvenirCategoryPlaceholder": "Select a Category",
+    "souvenirCategorySearchPlaceholder": "Type a category...",
+    "souvenirCategoryPleaseSelect": "Please select:",
+    "souvenirBudgetPlaceholder": "Select budget",
+    "noResults": "No results found",
+    "cta": "EXPLORE"
+  },
+  "productSection": {
+    "heading": "Authentic Local Finds",
+    "subheading": "Handcrafted treasures and immersive experiences."
+  },
+  "storiesSection": {
+    "heading": "Traveler Stories",
+    "subheading": "Get inspired by the SoulViet community."
+  },
+  "footer": {
+    "tagline": "Heritage. Modernity in every journey.",
+    "copyright": "© 2024 SoulViet.",
+    "newsletter": {
+      "heading": "Join Newsletter",
+      "placeholder": "Email address",
+      "button": "Subscribe"
+    },
+    "links": {
+      "col1": ["Partner Portal", "Eco-initiatives"],
+      "col2": ["Cultural Preservation", "Privacy"]
+    }
+  },
   "sidebar": {
     "home": "Home",
     "map": "Map",
