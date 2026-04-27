@@ -1,9 +1,10 @@
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, Link } from 'react-router-dom';
 import { Button } from '@/components/ui';
 import { Badge } from '@/components/ui/Badge';
 import type { BottomNavTab } from '@/types/home';
+import { useAuthStore } from '@/store';
 
 const desktopNavItems: Array<{ tab: BottomNavTab; labelKey: string; to: string }> = [
   { tab: 'map', labelKey: 'bottomNav.map', to: '/map' },
@@ -15,6 +16,7 @@ const desktopNavItems: Array<{ tab: BottomNavTab; labelKey: string; to: string }
 export const Navbar = () => {
   const { t } = useTranslation();
   const location = useLocation();
+  const user = useAuthStore((state) => state.user);
   const isHomePage = location.pathname === '/';
 
   return (
@@ -26,12 +28,12 @@ export const Navbar = () => {
       }`}
     >
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <a
-          href="/"
+        <Link
+          to="/"
           className={`text-lg font-bold tracking-[0.18em] md:text-xl ${isHomePage ? 'text-white' : 'text-brand'}`}
         >
           {t('navbar.logo')}
-        </a>
+        </Link>
 
         <nav
           className={`hidden items-center gap-1 lg:flex ${
@@ -62,29 +64,48 @@ export const Navbar = () => {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            className={`h-10 px-4 text-sm font-medium ${
-              isHomePage
-                ? 'border border-white/40 bg-transparent text-white hover:bg-white/10'
-                : 'border border-gray-200 text-gray-700'
-            }`}
-          >
-            {t('navbar.login')}
-          </Button>
+        <div className="flex items-center gap-2 sm:gap-3">
+          {user ? (
+            <Link
+              to="/profile"
+              className={`flex h-9 w-9 md:h-10 md:w-10 items-center justify-center rounded-full border transition-all hover:scale-105 active:scale-95 ${
+                isHomePage
+                  ? 'border-white/40 bg-white/10 text-white'
+                  : 'border-gray-200 bg-gray-50 text-brand shadow-sm'
+              }`}
+            >
+              {user.avatarUrl ? (
+                <img src={user.avatarUrl} alt={user.name} className="h-full w-full rounded-full object-cover" />
+              ) : (
+                <User className="h-4 w-4 md:h-5 md:w-5" />
+              )}
+            </Link>
+          ) : (
+            <Link to="/login">
+              <Button
+                variant="ghost"
+                className={`h-9 md:h-10 px-3 md:px-4 text-[10px] md:text-sm font-bold tracking-widest uppercase transition-all hover:scale-105 ${
+                  isHomePage
+                    ? 'border border-white/40 bg-transparent text-white hover:bg-white/20'
+                    : 'border border-gray-200 text-gray-700 bg-white hover:bg-gray-50 shadow-sm'
+                }`}
+              >
+                {t('navbar.login')}
+              </Button>
+            </Link>
+          )}
 
           <button
             type="button"
-            className={`relative inline-flex h-10 w-10 items-center justify-center rounded-full border transition ${
+            className={`relative inline-flex h-9 w-9 md:h-10 md:w-10 items-center justify-center rounded-full border transition-all hover:scale-105 active:scale-95 ${
               isHomePage
                 ? 'border-white/40 text-white hover:bg-white/10'
-                : 'border-gray-200 text-gray-700 hover:border-brand hover:text-brand'
+                : 'border-gray-200 text-gray-700 hover:border-brand hover:text-brand bg-white shadow-sm'
             }`}
             aria-label={t('navbar.cart')}
           >
-            <ShoppingBag className="h-5 w-5" />
-            <Badge className="absolute -right-1 -top-1 h-5 min-w-5 justify-center px-1 text-[10px] leading-none">2</Badge>
+            <ShoppingBag className="h-4 w-4 md:h-5 md:w-5" />
+            <Badge className="absolute -right-1 -top-1 h-4 min-w-4 md:h-5 md:min-w-5 justify-center px-1 text-[8px] md:text-[10px] leading-none bg-brand">2</Badge>
           </button>
         </div>
       </div>

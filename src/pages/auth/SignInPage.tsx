@@ -1,6 +1,7 @@
 import { useState, type SubmitEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Mail, Lock } from 'lucide-react';
 import { authApi, userApi } from '@/services';
 import { getValidationMessage, isValidInput } from '@/utils/validation';
 import type { UserProfile } from '@/types';
@@ -18,6 +19,7 @@ export default function SignInPage({ embedded = false, onAuthSuccess, onSwitchTo
   const navigate = useNavigate();
   const location = useLocation();
   const setUser = useAuthStore((state) => state.setUser);
+
   const [emailOrUsername, setEmailOrUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -44,6 +46,7 @@ export default function SignInPage({ embedded = false, onAuthSuccess, onSwitchTo
       if (token) {
         authApi.setToken(token);
       }
+
       const refreshToken = response.refreshToken || response.refresh;
       if (refreshToken) {
         authApi.setRefreshToken(refreshToken);
@@ -94,88 +97,124 @@ export default function SignInPage({ embedded = false, onAuthSuccess, onSwitchTo
     }
   }
 
-  const content = (
-    <>
-      <form onSubmit={handleSubmit} className="space-y-3">
-          {error && <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+  const formContent = (
+    <div className="bg-white rounded-[2rem] p-8 lg:p-10 shadow-xl shadow-black/5">
+      <div className="mb-8 text-center">
+        <h1 className="text-[24px] font-bold text-gray-900 leading-tight mb-2">
+          {t('auth.signIn.title')}
+        </h1>
+        <p className="text-[13px] text-gray-500 font-normal">
+          {t('auth.signIn.subtitle')}
+        </p>
+      </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">{t('auth.signIn.emailLabel')}</label>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {error && (
+          <div className="rounded-2xl bg-red-50 p-4 text-xs font-medium text-red-600 border border-red-100 animate-in shake duration-500">
+            {error}
+          </div>
+        )}
+
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-gray-900 ml-1">
+            {t('auth.signIn.emailLabel')}
+          </label>
+          <div className="relative group">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+              <Mail className="h-4 w-4" />
+            </div>
             <input
               type="text"
               value={emailOrUsername}
-              onChange={(event) => setEmailOrUsername(event.target.value)}
-              className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+              onChange={(e) => setEmailOrUsername(e.target.value)}
+              className="w-full rounded-full bg-[#FDF8F4] border-none px-12 py-3.5 text-[13px] outline-none focus:ring-2 focus:ring-[#0D5C46]/20 transition-all text-gray-800 placeholder:text-gray-400 font-medium"
               placeholder={t('auth.signIn.emailPlaceholder')}
               required
             />
           </div>
+        </div>
 
-          <div>
-            <div className="mb-1 flex items-center justify-between">
-              <label className="block text-sm font-medium text-gray-600">{t('auth.signIn.passwordLabel')}</label>
-              <Link to="/forgot-password" className="text-sm font-medium text-primary hover:underline">
-                {t('auth.signIn.forgotPassword')}
-              </Link>
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-gray-900 ml-1">
+            {t('auth.signIn.passwordLabel')}
+          </label>
+          <div className="relative group">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+              <Lock className="h-4 w-4" />
             </div>
             <input
               type="password"
               value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-full bg-[#FDF8F4] border-none px-12 py-3.5 text-[13px] outline-none focus:ring-2 focus:ring-[#0D5C46]/20 transition-all text-gray-800 placeholder:text-gray-400 font-medium"
               placeholder={t('auth.signIn.passwordPlaceholder')}
               required
             />
           </div>
+          <div className="flex justify-end pt-1">
+            <Link to="/forgot-password" className="text-[12px] font-medium text-[#0D5C46] hover:underline">
+              {t('auth.signIn.forgotPassword')}
+            </Link>
+          </div>
+        </div>
 
-          <button
-            type="submit"
-            disabled={loading || !isValidInput(emailOrUsername)}
-            className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white shadow-soft disabled:opacity-50"
-          >
-            {loading ? t('profile.auth.form.loadingLogin') : t('auth.signIn.loginButton')}
-          </button>
+        <button
+          type="submit"
+          disabled={loading || !isValidInput(emailOrUsername)}
+          className="w-full rounded-full bg-[#0D5C46] px-6 py-4 text-[13.5px] font-medium text-white shadow-lg shadow-[#0D5C46]/20 transition-transform active:scale-[0.98] disabled:opacity-70 mt-2"
+        >
+          {loading ? (
+            <div className="h-4 w-4 mx-auto animate-spin rounded-full border-2 border-white/30 border-t-white" />
+          ) : (
+            t('auth.signIn.loginButton')
+          )}
+        </button>
       </form>
 
-      <div className="mt-5 flex items-center gap-3">
-        <div className="h-px flex-1 bg-gray-200" />
-        <span className="text-xs text-gray-400">{t('auth.signIn.continueWith')}</span>
-        <div className="h-px flex-1 bg-gray-200" />
+      <div className="mt-6 flex items-center gap-3">
+        <div className="h-px flex-1 bg-gray-100" />
+        <span className="text-[11px] font-medium text-gray-400">
+          {t('auth.signIn.continueWith')}
+        </span>
+        <div className="h-px flex-1 bg-gray-100" />
       </div>
 
-      <Link
-        to="/oauth2"
-        className="mt-4 inline-flex w-full items-center justify-center rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+      <button
+        type="button"
+        className="mt-6 flex w-full items-center justify-center gap-3 rounded-full border border-gray-200 bg-white px-6 py-3.5 text-[12px] font-medium text-gray-700 transition-all hover:bg-gray-50 active:scale-[0.98]"
       >
+        <img src="https://www.google.com/favicon.ico" alt="Google" className="h-4 w-4" />
         {t('auth.signIn.loginWithGoogle')}
-      </Link>
+      </button>
 
-      <p className="mt-5 text-center text-sm text-gray-500">
+      <p className="mt-8 text-center text-[13px] font-medium text-gray-500">
         {t('auth.signIn.noAccount')}{' '}
-        {embedded ? (
-          <button type="button" onClick={onSwitchToSignUp} className="font-semibold text-primary hover:underline">
+        {embedded && onSwitchToSignUp ? (
+          <button type="button" onClick={onSwitchToSignUp} className="font-medium text-[#0D5C46] hover:underline">
             {t('auth.signIn.signUp')}
           </button>
         ) : (
-          <Link to="/register" className="font-semibold text-primary hover:underline">
+          <Link to="/register" className="font-bold text-[#0D5C46] hover:underline">
             {t('auth.signIn.signUp')}
           </Link>
         )}
       </p>
-    </>
+    </div>
   );
 
   if (embedded) {
-    return content;
+    return formContent;
   }
 
   return (
     <AuthShell
-      title={t('profile.auth.loginTitle')}
-      subtitle={t('profile.auth.loginSubtitle')}
-      activeMode="login"
+      image="https://images.unsplash.com/photo-1755657763706-cb23214f2d0e?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      imageTitle={t('auth.signIn.heroText', 'Khám phá văn hóa đích thực')}
+      imageTitleUnderline="green"
+      reverse={true}
+      formBg="cream"
     >
-      {content}
+      {formContent}
     </AuthShell>
   );
 }
