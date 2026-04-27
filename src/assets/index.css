@@ -33,12 +33,14 @@
 .badge-no-shrink {
   flex-shrink: 0 !important;
 }
+
 .responsive-row {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
   min-width: 0;
 }
+
 @media (min-width: 768px) {
   .responsive-row {
     flex-direction: row;
@@ -51,11 +53,13 @@
   grid-template-columns: 1fr;
   gap: 1.5rem;
 }
+
 @media (min-width: 768px) {
   .responsive-section {
     grid-template-columns: 1fr 1fr;
   }
 }
+
 @media (min-width: 1024px) {
   .responsive-section {
     grid-template-columns: 1fr 1fr 1fr;
@@ -65,11 +69,13 @@
 .responsive-text {
   font-size: 1rem;
 }
+
 @media (min-width: 768px) {
   .responsive-text {
     font-size: 1.125rem;
   }
 }
+
 @media (min-width: 1024px) {
   .responsive-text {
     font-size: 1.25rem;
@@ -86,15 +92,20 @@
 .overflow-x-scroll-row::-webkit-scrollbar {
   display: none;
 }
+
 @media (min-width: 768px) {
   .overflow-x-scroll-row {
     overflow-x: visible;
     flex-wrap: wrap;
   }
 }
+
 @import "tailwindcss";
 
 @theme {
+  --color-brand: #1A7A5E;
+  --color-brand-dark: #0D3D2E;
+
   --color-primary: #36656B;
   --color-primary-dark: #2A5055;
   --color-primary-deep: #203D41;
@@ -119,7 +130,7 @@
   --color-purple-dark: #7C3AED;
 
   --shadow-input-inner: inset 0 1px 0 #ffffff8a;
-  
+
   --font-sans: 'Inter', system-ui, sans-serif;
 }
 
@@ -127,9 +138,11 @@
   .sidebar-responsive {
     display: none !important;
   }
+
   .main-responsive {
     margin-left: 0 !important;
   }
+
   .bottom-bar-responsive {
     display: flex !important;
   }
@@ -146,17 +159,17 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-  
+
   @media (min-width: 1025px) {
     .scrollbar-hide {
       -ms-overflow-style: auto;
       scrollbar-width: auto;
     }
-    
+
     .scrollbar-hide::-webkit-scrollbar {
       display: block;
     }
@@ -167,8 +180,13 @@
   body {
     @apply bg-background text-text-dark font-sans;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-sans text-primary;
   }
 }

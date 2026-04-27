@@ -2,7 +2,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import i18n from '@/config/i18n';
 import { postApi } from '@/services';
 import { useVibeTags } from './useVibeTags';
-import type { SocialPost, SocialPostApiItem } from '@/types';
+import type { SocialPost } from '@/types';
 
 const PAGE_SIZE = 10;
 

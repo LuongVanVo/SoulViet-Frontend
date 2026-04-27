@@ -1,4 +1,4 @@
-export * from './home';
+export * from './home/HomePage';
 export * from './auth';
 export * from './map';
 export * from './profile';

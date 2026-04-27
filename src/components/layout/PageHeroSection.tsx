@@ -13,7 +13,7 @@ export const PageHeroSection = ({ title, subtitle, badge, children, className }:
   return (
     <section
       className={cn(
-        'relative overflow-hidden rounded-b-4xl bg-[linear-gradient(135deg,_#36656B_0%,_#75B06F_100%)] text-white shadow-lg px-6 pt-15 pb-8 sm:px-8 sm:pt-8 sm:pb-10',
+        'relative overflow-hidden rounded-b-4xl bg-[linear-gradient(135deg,_#36656B_0%,_#75B06F_100%)] text-white shadow-lg px-6 pt-15 pb-8 sm:px-8 sm:pt-8 sm:pb-10 font-montserrat',
         className
       )}
     >

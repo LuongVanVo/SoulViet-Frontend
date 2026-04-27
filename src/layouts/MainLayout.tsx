@@ -1,23 +1,24 @@
+import type { ReactNode } from 'react';
 import { Outlet } from 'react-router-dom';
-import * as Layout from '@/components';
-import { useAuthStore } from '@/store';
+import { BottomNav } from '@/layouts/BottomNav';
+import { Footer } from '@/layouts/Footer';
+import { Navbar } from '@/layouts/Navbar';
+import { ScrollToTop } from '@/components/layout';
 
-export const MainLayout = () => {
-  const isLoading = useAuthStore((state) => state.isLoading);
+interface MainLayoutProps {
+  children?: ReactNode;
+}
 
+export const MainLayout = ({ children }: MainLayoutProps) => {
   return (
-    <div className="h-screen bg-background flex overflow-hidden">
-      <div className="sidebar-responsive">
-        <Layout.Sidebar />
-      </div>
-      <main className="flex-1 ml-64 main-responsive overflow-y-auto scrollbar-hide h-full pb-24">
-        <div className="max-w-7xl mx-auto">
-          {isLoading ? <Layout.PageLoadingPlaceholder /> : <Outlet />}
-        </div>
+    <div className="min-h-screen bg-white text-gray-900">
+      <Navbar />
+      <main className="pb-24 md:pb-28 lg:pb-20">
+        {children ?? <Outlet />}
       </main>
-      <div className="bottom-bar-responsive">
-        <Layout.BottomBar />
-      </div>
+      <ScrollToTop />
+      <Footer />
+      <BottomNav />
     </div>
   );
 };

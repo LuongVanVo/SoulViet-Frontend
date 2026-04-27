@@ -1,4 +1,74 @@
 {
+  "navbar": {
+    "logo": "SOULVIET",
+    "login": "Đăng nhập",
+    "cart": "Giỏ hàng"
+  },
+  "bottomNav": {
+    "home": "Trang chủ",
+    "map": "Bản đồ",
+    "aiPlan": "AI Plan",
+    "social": "Cộng đồng",
+    "marketplace": "Mua sắm"
+  },
+  "hero": {
+    "title": "Khám phá linh hồn thật sự của Việt Nam",
+    "subtitle": "Trải nghiệm lưu trú di sản, tour địa phương và quà lưu niệm thủ công tinh tế."
+  },
+  "searchBar": {
+    "tabs": {
+      "stays": "Lưu trú",
+      "tours": "Tour",
+      "souvenirs": "Quà lưu niệm"
+    },
+    "locationPlaceholder": "Bạn muốn đến đâu?",
+    "locationLabel": "VỊ TRÍ",
+    "datePlaceholder": "Chọn ngày",
+    "dateLabel": "NGÀY",
+    "tourLocationLabel": "ĐIỂM ĐẾN",
+    "tourDateLabel": "NGÀY KHỞI HÀNH",
+    "tourPeopleLabel": "SỐ NGƯỜI",
+    "tourLocationPlaceholder": "Bạn muốn đi đâu?",
+    "tourDatePlaceholder": "Chọn ngày",
+    "tourPeoplePlaceholder": "2 người lớn",
+    "souvenirProductLabel": "TÌM SẢN PHẨM",
+    "souvenirCategoryLabel": "DANH MỤC",
+    "souvenirBudgetLabel": "NGÂN SÁCH",
+    "souvenirProductPlaceholder": "Nón lá, tranh thêu,...",
+    "souvenirCategoryPlaceholder": "Chọn danh mục",
+    "souvenirCategorySearchPlaceholder": "Nhập danh mục...",
+    "souvenirCategoryPleaseSelect": "Vui lòng chọn:",
+    "souvenirBudgetPlaceholder": "Chọn ngân sách",
+    "noResults": "Không tìm thấy kết quả",
+    "cta": "KHÁM PHÁ"
+  },
+  "productSection": {
+    "heading": "Khám phá bản địa",
+    "subheading": "Đồ thủ công và trải nghiệm bản địa."
+  },
+  "storiesSection": {
+    "heading": "Câu chuyện hành trình",
+    "subheading": "Cảm hứng từ cộng đồng SoulViet."
+  },
+  "footer": {
+    "tagline": "Di sản. Hiện đại. Từng hành trình.",
+    "copyright": "© 2026 SoulViet.",
+    "newsletter": {
+      "heading": "Nhận bản tin",
+      "placeholder": "Địa chỉ email",
+      "button": "Đăng ký"
+    },
+    "links": {
+      "col1": [
+        "Cổng đối tác",
+        "Sáng kiến xanh"
+      ],
+      "col2": [
+        "Bảo tồn văn hóa",
+        "Chính sách"
+      ]
+    }
+  },
   "sidebar": {
     "logo": "Soul Viet",
     "home": "Trang chủ",
