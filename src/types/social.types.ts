@@ -6,11 +6,15 @@ export interface CoinBannerProps {
 
 export interface CreatePostProps {
 	onClick: () => void;
+  onPhotoClick?: () => void;
+  onLocationClick?: () => void;
+  onVibeClick?: () => void;
 }
 
 export interface CreatePostModalProps {
 	isOpen: boolean;
 	onClose: () => void;
+  initialAction?: 'photo' | 'location' | 'vibe' | null;
 }
 
 export interface PostMediaPayload {

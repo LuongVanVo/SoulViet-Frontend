@@ -2,7 +2,8 @@
   "navbar": {
     "logo": "SOULVIET",
     "login": "Đăng nhập",
-    "cart": "Giỏ hàng"
+    "cart": "Giỏ hàng",
+    "notifications": "Thông báo"
   },
   "bottomNav": {
     "home": "Trang chủ",
@@ -104,13 +105,17 @@
       "localMarket": "Chợ địa phương"
     },
     "feed": {
+      "header": {
+        "title": "Cộng đồng SoulViet",
+        "subtitle": "Chia sẻ hành trình, khám phá những bí mật địa phương."
+      },
       "createPost": "Chia sẻ câu chuyện của bạn",
       "createModal": {
         "title": "Tạo bài viết mới",
         "close": "Đóng",
-        "defaultUserName": "Bao Nguyen",
+        "defaultUserName": "User",
         "captionLabel": "Nội dung",
-        "captionPlaceholder": "{{name}} ơi, bạn đang nghĩ gì thế?",
+        "captionPlaceholder": "Lưu lại dấu chân mới nhất của bạn nào!",
         "addToPost": "Thêm vào bài viết của bạn",
         "mediaLabel": "Thêm media",
         "mediaButton": "Chọn ảnh/video",
@@ -343,7 +348,7 @@
           "close": "Đóng",
           "privacyLabel": "Chỉ mình tôi",
           "captionLabel": "Nội dung bài viết",
-          "captionPlaceholder": "{{name}} ơi, bạn đang nghĩ gì thế?",
+          "captionPlaceholder": "Lưu lại dấu chân mới nhất của bạn nào!",
           "mediaPreviewAlt": "Ảnh bài viết",
           "changeMedia": "Chỉnh sửa",
           "removeMedia": "Xóa ảnh",

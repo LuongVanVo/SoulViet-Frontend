@@ -3,4 +3,5 @@ export * from './auth';
 export * from './map';
 export * from './profile';
 export * from './social';
+export * from './marketPlace';
 export * from './AIplan';

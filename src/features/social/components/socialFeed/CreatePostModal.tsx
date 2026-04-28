@@ -26,7 +26,7 @@ const GUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-
 
 
 
-export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
+export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: CreatePostModalProps) => {
   const { t } = useTranslation();
   const inputId = useId();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -47,6 +47,7 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
 
   const [isSelectingVibe, setIsSelectingVibe] = useState(false);
   const [vibeSearchQuery, setVibeSearchQuery] = useState('');
+  const appliedInitialActionRef = useRef<'photo' | 'location' | 'vibe' | null>(null);
 
   const vibeConfig: Record<number, { icon: LucideIcon; color: string; bgColor: string }> = {
     1: { icon: Sprout, color: 'text-[#16A34A]', bgColor: 'bg-[#EAF7EF]' },
@@ -66,6 +67,7 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
 
   useEffect(() => {
     if (!isOpen) {
+      appliedInitialActionRef.current = null;
       return;
     }
 
@@ -120,6 +122,32 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
       cancelled = true;
     };
   }, [isOpen, touristLocations.length]);
+
+  useEffect(() => {
+    if (!isOpen || !initialAction) {
+      return;
+    }
+
+    if (appliedInitialActionRef.current === initialAction) {
+      return;
+    }
+
+    appliedInitialActionRef.current = initialAction;
+
+    if (initialAction === 'photo') {
+      fileInputRef.current?.click();
+      return;
+    }
+
+    if (initialAction === 'location') {
+      setIsLocationPickerOpen(true);
+      return;
+    }
+
+    if (initialAction === 'vibe') {
+      setIsSelectingVibe(true);
+    }
+  }, [initialAction, isOpen]);
 
   if (!isOpen) {
     return null;
@@ -286,10 +314,10 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
   const primaryPreview = mediaPreviewUrls[0];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#6B728099] p-4">
-      <div className="relative w-full max-w-[360px] overflow-hidden rounded-3xl bg-[#FCFCFD] shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#6B728099] p-4 sm:items-center">
+      <div className="relative w-full max-w-[360px] overflow-hidden rounded-3xl bg-[#FCFCFD] shadow-2xl max-h-[calc(100dvh-2rem)] sm:max-w-[420px]">
         {isSelectingVibe ? (
-          <div className="flex h-[640px] flex-col bg-[#FCFCFD]">
+          <div className="flex max-h-[calc(100dvh-2rem)] flex-col bg-[#FCFCFD]">
             <div className="flex items-center gap-3 border-b border-[#EAECF0] px-5 py-4">
               <button
                 type="button"
@@ -346,7 +374,7 @@ export const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
             </div>
           </div>
         ) : (
-          <div className="p-4">
+          <div className="max-h-[calc(100dvh-2rem)] overflow-y-auto p-4">
             <div className="flex items-center gap-2 border-b border-[#EAECF0] pb-3">
               <button
                 type="button"

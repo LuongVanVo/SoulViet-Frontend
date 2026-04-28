@@ -30,7 +30,7 @@ export const AuthShell = ({
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem)] md:min-h-[calc(100vh-4rem)] w-full font-sans -mb-24 md:-mb-28 lg:-mb-20">
+    <div className="flex min-h-[calc(100vh-3.5rem)] md:min-h-[calc(100vh-4rem)] w-full font-sans">
       <div
         className={cn(
           "flex w-full flex-col lg:w-1/2 relative",

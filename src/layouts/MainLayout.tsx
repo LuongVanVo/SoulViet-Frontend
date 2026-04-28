@@ -11,9 +11,9 @@ interface MainLayoutProps {
 
 export const MainLayout = ({ children }: MainLayoutProps) => {
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className="flex min-h-screen flex-col bg-background text-gray-900">
       <Navbar />
-      <main className="pb-24 md:pb-28 lg:pb-20">
+      <main className="flex-1">
         {children ?? <Outlet />}
       </main>
       <ScrollToTop />

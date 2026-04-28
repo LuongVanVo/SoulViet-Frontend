@@ -1,4 +1,4 @@
-import { ShoppingBag, User } from 'lucide-react';
+import { Bell, ShoppingBag, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useLocation, Link } from 'react-router-dom';
 import { Button } from '@/components/ui';
@@ -10,7 +10,7 @@ const desktopNavItems: Array<{ tab: BottomNavTab; labelKey: string; to: string }
   { tab: 'map', labelKey: 'bottomNav.map', to: '/map' },
   { tab: 'aiPlan', labelKey: 'bottomNav.aiPlan', to: '/ai-plan' },
   { tab: 'social', labelKey: 'bottomNav.social', to: '/social' },
-  { tab: 'marketplace', labelKey: 'bottomNav.marketplace', to: '/community' }
+  { tab: 'marketplace', labelKey: 'bottomNav.marketplace', to: '/marketplace' }
 ];
 
 export const Navbar = () => {
@@ -66,47 +66,80 @@ export const Navbar = () => {
 
         <div className="flex items-center gap-2 sm:gap-3">
           {user ? (
-            <Link
-              to="/profile"
-              className={`flex h-9 w-9 md:h-10 md:w-10 items-center justify-center rounded-full border transition-all hover:scale-105 active:scale-95 ${
-                isHomePage
-                  ? 'border-white/40 bg-white/10 text-white'
-                  : 'border-gray-200 bg-gray-50 text-brand shadow-sm'
-              }`}
-            >
-              {user.avatarUrl ? (
-                <img src={user.avatarUrl} alt={user.name} className="h-full w-full rounded-full object-cover" />
-              ) : (
-                <User className="h-4 w-4 md:h-5 md:w-5" />
-              )}
-            </Link>
-          ) : (
-            <Link to="/login">
-              <Button
-                variant="ghost"
-                className={`h-9 md:h-10 px-3 md:px-4 text-[10px] md:text-sm font-bold tracking-widest uppercase transition-all hover:scale-105 ${
+            <>
+              <button
+                type="button"
+                className={`relative inline-flex h-9 w-9 md:h-10 md:w-10 items-center justify-center rounded-full border transition-all hover:scale-105 active:scale-95 ${
                   isHomePage
-                    ? 'border border-white/40 bg-transparent text-white hover:bg-white/20'
-                    : 'border border-gray-200 text-gray-700 bg-white hover:bg-gray-50 shadow-sm'
+                    ? 'border-white/40 text-white hover:bg-white/10'
+                    : 'border-gray-200 text-gray-700 hover:border-brand hover:text-brand bg-white shadow-sm'
+                }`}
+                aria-label={t('navbar.notifications')}
+              >
+                <Bell className="h-4 w-4 md:h-5 md:w-5" />
+              </button>
+
+              <button
+                type="button"
+                className={`relative inline-flex h-9 w-9 md:h-10 md:w-10 items-center justify-center rounded-full border transition-all hover:scale-105 active:scale-95 ${
+                  isHomePage
+                    ? 'border-white/40 text-white hover:bg-white/10'
+                    : 'border-gray-200 text-gray-700 hover:border-brand hover:text-brand bg-white shadow-sm'
+                }`}
+                aria-label={t('navbar.cart')}
+              >
+                <ShoppingBag className="h-4 w-4 md:h-5 md:w-5" />
+                <Badge className="absolute -right-1 -top-1 h-4 min-w-4 justify-center bg-brand px-1 text-[8px] leading-none md:h-5 md:min-w-5 md:text-[10px]">
+                  2
+                </Badge>
+              </button>
+
+              <Link
+                to="/profile"
+                className={`flex h-9 w-9 md:h-10 md:w-10 items-center justify-center rounded-full border transition-all hover:scale-105 active:scale-95 ${
+                  isHomePage
+                    ? 'border-white/40 bg-white/10 text-white'
+                    : 'border-gray-200 bg-gray-50 text-brand shadow-sm'
                 }`}
               >
-                {t('navbar.login')}
-              </Button>
-            </Link>
-          )}
+                {user.avatarUrl ? (
+                  <img src={user.avatarUrl} alt={user.name} className="h-full w-full rounded-full object-cover" />
+                ) : (
+                  <User className="h-4 w-4 md:h-5 md:w-5" />
+                )}
+              </Link>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                className={`relative inline-flex h-9 w-9 md:h-10 md:w-10 items-center justify-center rounded-full border transition-all hover:scale-105 active:scale-95 ${
+                  isHomePage
+                    ? 'border-white/40 text-white hover:bg-white/10'
+                    : 'border-gray-200 text-gray-700 hover:border-brand hover:text-brand bg-white shadow-sm'
+                }`}
+                aria-label={t('navbar.cart')}
+              >
+                <ShoppingBag className="h-4 w-4 md:h-5 md:w-5" />
+                <Badge className="absolute -right-1 -top-1 h-4 min-w-4 justify-center bg-brand px-1 text-[8px] leading-none md:h-5 md:min-w-5 md:text-[10px]">
+                  2
+                </Badge>
+              </button>
 
-          <button
-            type="button"
-            className={`relative inline-flex h-9 w-9 md:h-10 md:w-10 items-center justify-center rounded-full border transition-all hover:scale-105 active:scale-95 ${
-              isHomePage
-                ? 'border-white/40 text-white hover:bg-white/10'
-                : 'border-gray-200 text-gray-700 hover:border-brand hover:text-brand bg-white shadow-sm'
-            }`}
-            aria-label={t('navbar.cart')}
-          >
-            <ShoppingBag className="h-4 w-4 md:h-5 md:w-5" />
-            <Badge className="absolute -right-1 -top-1 h-4 min-w-4 md:h-5 md:min-w-5 justify-center px-1 text-[8px] md:text-[10px] leading-none bg-brand">2</Badge>
-          </button>
+              <Link to="/login">
+                <Button
+                  variant="ghost"
+                  className={`h-9 md:h-10 px-3 md:px-4 text-[10px] md:text-sm font-bold tracking-widest uppercase transition-all hover:scale-105 ${
+                    isHomePage
+                      ? 'border border-white/40 bg-transparent text-white hover:bg-white/20'
+                      : 'border border-gray-200 text-gray-700 bg-white hover:bg-gray-50 shadow-sm'
+                  }`}
+                >
+                  {t('navbar.login')}
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>
