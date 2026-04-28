@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { useSocialPosts } from '@/hooks';
+import { useTranslation } from 'react-i18next';
+import { authApi } from '@/services';
+import { useSocialPostActions, useSocialPosts } from '@/hooks';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/store';
 import { CreatePost } from './CreatePost';
@@ -8,10 +10,12 @@ import { PostFeedList } from './PostFeedList';
 import { SocialFeedHeader } from './SocialFeedHeader';
 
 export const SocialFeed = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const { data: posts = [] } = useSocialPosts();
+  const { data: posts = [], isLoading, isError } = useSocialPosts();
+  const { likePost, isLiking } = useSocialPostActions();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [createPostAction, setCreatePostAction] = useState<'photo' | 'location' | 'vibe' | null>(null);
 
@@ -31,6 +35,23 @@ export const SocialFeed = () => {
     setCreatePostAction(null);
   };
 
+  const handleLikePost = async (postId: string) => {
+    const accessToken = authApi.getToken();
+
+    if (!isLoggedIn || !accessToken) {
+      const redirect = encodeURIComponent(`${location.pathname}${location.search}${location.hash}`);
+      navigate(`/login?redirect=${redirect}`);
+      return;
+    }
+
+    try {
+      await likePost(postId);
+    } catch (error) {
+      const redirect = encodeURIComponent(`${location.pathname}${location.search}${location.hash}`);
+      navigate(`/login?redirect=${redirect}`);
+    }
+  };
+
   return (
     <>
       <div className="mx-auto w-full max-w-2xl space-y-4">
@@ -41,7 +62,28 @@ export const SocialFeed = () => {
           onLocationClick={() => handleCreatePostAction('location')}
           onVibeClick={() => handleCreatePostAction('vibe')}
         />
-        <PostFeedList posts={posts} />
+        {isLoading ? (
+          <div className="rounded-3xl border border-dashed border-[#D8DEE6] bg-white px-4 py-10 text-center text-sm text-[#6B7280] shadow-sm">
+            {t('social.feed.loading', { defaultValue: 'Đang tải social feed...' })}
+          </div>
+        ) : isError ? (
+          <div className="rounded-3xl border border-dashed border-[#FBCACA] bg-white px-4 py-10 text-center text-sm text-[#B42318] shadow-sm">
+            {t('social.feed.error', { defaultValue: 'Không thể tải social feed. Vui lòng thử lại.' })}
+          </div>
+        ) : (
+          <PostFeedList
+            posts={posts}
+            onLikePost={(postId) => {
+              void handleLikePost(postId);
+            }}
+            isLiking={isLiking}
+            emptyState={(
+              <div className="rounded-3xl border border-dashed border-[#D8DEE6] bg-white px-4 py-10 text-center text-sm text-[#6B7280] shadow-sm">
+                {t('social.feed.empty', { defaultValue: 'Chưa có bài viết nào.' })}
+              </div>
+            )}
+          />
+        )}
       </div>
 
       <CreatePostModal

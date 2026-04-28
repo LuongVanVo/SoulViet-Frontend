@@ -2,8 +2,11 @@ import { Heart, MessageCircle, Share2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { PostActionProps } from '@/types';
 
-export const SocialPostActions = ({ likes, comments }: PostActionProps) => {
+export const SocialPostActions = ({ likes, comments, postId, onLike, isLiking, isLiked }: PostActionProps) => {
 	const { t } = useTranslation();
+	const likeButtonClass = isLiked
+		? 'text-[#DC2626] hover:bg-[#FEF2F2]'
+		: 'text-[#334155] hover:bg-[#F8FAFC]';
 
 	return (
 		<>
@@ -17,8 +20,17 @@ export const SocialPostActions = ({ likes, comments }: PostActionProps) => {
 			</div>
 
 			<div className="grid grid-cols-3 border-t border-[#E5E7EB] px-2 py-2">
-				<button type="button" className="inline-flex items-center justify-center gap-2 rounded-lg px-2 py-2 text-sm font-semibold text-[#334155] hover:bg-[#F8FAFC]">
-					<Heart className="h-4 w-4 text-[#EF4444]" />
+				<button
+					type="button"
+					onClick={() => {
+						if (postId && onLike && !isLiking) {
+							onLike(postId);
+						}
+					}}
+					disabled={!onLike || isLiking}
+					className={`inline-flex items-center justify-center gap-2 rounded-lg px-2 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${likeButtonClass}`}
+				>
+					<Heart className="h-4 w-4" fill={isLiked ? 'currentColor' : 'none'} />
 					{t('social.feed.post.actions.like')}
 				</button>
 				<button type="button" className="inline-flex items-center justify-center gap-2 rounded-lg px-2 py-2 text-sm font-semibold text-[#334155] hover:bg-[#F8FAFC]">

@@ -1,6 +1,7 @@
 import { useState, useRef, type ReactNode } from 'react';
 import { Coins, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useSocialPostLikesStream } from '@/hooks';
 import type { PostCardProps } from '@/types';
 import { SocialPostActions } from './SocialPostActions';
 import { SocialPostHeader } from './SocialPostHeader';
@@ -9,12 +10,15 @@ export interface SocialPostCardProps extends PostCardProps {
 	footer?: ReactNode;
 	onEditPost?: (postId: string) => void;
 	onDeletePost?: (postId: string) => void;
+	onLikePost?: (postId: string) => void;
+	isLiking?: boolean;
 }
 
-export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost }: SocialPostCardProps) => {
+export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost, onLikePost, isLiking }: SocialPostCardProps) => {
 	const { t } = useTranslation();
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const scrollRef = useRef<HTMLDivElement>(null);
+	useSocialPostLikesStream(post.id);
 
 	const mediaItems = post.media && post.media.length > 0 
 		? post.media 
@@ -123,7 +127,14 @@ export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost }: Socia
 				</div>
 			)}
 
-			<SocialPostActions likes={post.likes} comments={post.comments} />
+			<SocialPostActions
+				likes={post.likes}
+				comments={post.comments}
+				postId={post.id}
+				onLike={onLikePost}
+				isLiking={isLiking}
+				isLiked={post.isLiked}
+			/>
 
 			<div className="px-4 pb-4">
 				<div className="flex items-center gap-2 rounded-full border border-[#E9D57A] bg-[#FFFBE6] px-3 py-2 text-sm text-[#4B5563]">

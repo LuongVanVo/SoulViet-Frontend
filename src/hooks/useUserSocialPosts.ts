@@ -1,8 +1,10 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import i18n from '@/config/i18n';
 import { postApi } from '@/services';
+import { useAuthStore } from '@/store';
 import { useVibeTags } from './useVibeTags';
 import type { SocialPost } from '@/types';
+import { mergeLikedStateForUser } from '@/utils/socialLikes';
 
 const PAGE_SIZE = 10;
 
@@ -42,7 +44,7 @@ const extractMediaItems = (post: any): { url: string; type: 'image' | 'video'; o
 
 const toSocialPost = (post: any, vibeTags: Map<number, string> = new Map()): SocialPost => {
 	const vibeTag = post.vibeTag ?? post.VibeTag;
-	const likesCount = post.likesCount ?? post.LikesCount ?? 0;
+	const likesCount = post.likesCount ?? 0;
 	return {
 		id: post.id || post.Id,
 		userId: post.userId || post.UserId,
@@ -60,12 +62,14 @@ const toSocialPost = (post: any, vibeTags: Map<number, string> = new Map()): Soc
 		likes: likesCount,
 		comments: post.commentsCount ?? post.CommentsCount ?? 0,
 		shares: post.sharesCount ?? post.SharesCount ?? 0,
+		isLiked: post.isLiked ?? post.IsLiked ?? false,
 		rewardCoins: Math.max(1, likesCount),
 		createdAt: post.createdAt || post.CreatedAt,
 	};
 };
 
 export const useUserSocialPosts = (userId: string) => {
+	const currentUser = useAuthStore((state) => state.user);
 	const { data: vibeTags = [] } = useVibeTags();
 	const vibeTagMap = new Map(vibeTags.map((tag) => [tag.id, tag.name]));
 
@@ -84,8 +88,11 @@ export const useUserSocialPosts = (userId: string) => {
 	});
 
 	const posts =
-		query.data?.pages.flatMap((page) =>
-			page.edges.map((edge) => toSocialPost(edge.node, vibeTagMap))
+		mergeLikedStateForUser(
+			query.data?.pages.flatMap((page) =>
+				page.edges.map((edge) => toSocialPost(edge.node, vibeTagMap))
+			) ?? [],
+			currentUser?.id,
 		) ?? [];
 
 	return {
