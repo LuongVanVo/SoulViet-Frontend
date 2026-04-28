@@ -5,7 +5,8 @@ import {
   HomePage,
   Map, 
   AIPlan, 
-  Social, 
+  Social,
+  MarketPlace, 
   Profile,
   ConfirmEmailPage, 
   ForgotPasswordPage, 
@@ -38,8 +39,8 @@ export const router = createBrowserRouter([
         element: <Social />,
       },
       {
-        path: 'community',
-        element: <Social />,
+        path: 'marketplace',
+        element: <MarketPlace />,
       },
       {
         path: 'profile',

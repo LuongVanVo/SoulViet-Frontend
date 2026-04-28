@@ -2,7 +2,8 @@
   "navbar": {
     "logo": "SOULVIET",
     "login": "Login",
-    "cart": "Cart"
+    "cart": "Cart",
+    "notifications": "Notifications"
   },
   "bottomNav": {
     "home": "Home",
@@ -59,8 +60,14 @@
       "button": "Subscribe"
     },
     "links": {
-      "col1": ["Partner Portal", "Eco-initiatives"],
-      "col2": ["Cultural Preservation", "Privacy"]
+      "col1": [
+        "Partner Portal",
+        "Eco-initiatives"
+      ],
+      "col2": [
+        "Cultural Preservation",
+        "Privacy"
+      ]
     }
   },
   "sidebar": {
@@ -97,13 +104,17 @@
       "localMarket": "Local Market"
     },
     "feed": {
+      "header": {
+        "title": "SoulViet Social",
+        "subtitle": "Share your journey, discover local secrets."
+      },
       "createPost": "Share your story",
       "createModal": {
         "title": "Create a new post",
         "close": "Close",
-        "defaultUserName": "Bao Nguyen",
+        "defaultUserName": "User",
         "captionLabel": "Caption",
-        "captionPlaceholder": "{{name}}, what's on your mind?",
+        "captionPlaceholder": "What's your latest discovery?",
         "addToPost": "Add to your post",
         "mediaLabel": "Add media",
         "mediaButton": "Choose image/video",
@@ -336,7 +347,7 @@
           "close": "Close",
           "privacyLabel": "Only me",
           "captionLabel": "Post content",
-          "captionPlaceholder": "{{name}}, what's on your mind?",
+          "captionPlaceholder": "What's your latest discovery?",
           "mediaPreviewAlt": "Post media",
           "changeMedia": "Edit",
           "removeMedia": "Remove media",

@@ -12,7 +12,7 @@ export const Footer = () => {
   };
 
   return (
-    <footer className="border-t border-gray-100 bg-white pb-24 lg:pb-0">
+    <footer className="border-t border-gray-100 bg-white pb-28 lg:pb-0">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1.3fr_1fr_1fr_1.2fr] lg:px-8">
         <div>
           <p className="text-lg font-bold tracking-[0.18em] text-brand">{t('navbar.logo')}</p>
