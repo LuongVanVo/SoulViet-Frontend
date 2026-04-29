@@ -87,7 +87,7 @@ export const useSocialPosts = (params: GetSocialFeedParams = {}) => {
 	};
 
 	const query = useQuery({
-		queryKey: ['socialPosts', requestParams.radiusKm, requestParams.sortBy, requestParams.first, requestParams.after ?? ''],
+		queryKey: ['socialPosts', currentUser?.id, requestParams.radiusKm, requestParams.sortBy, requestParams.first, requestParams.after ?? ''],
 		queryFn: () => socialFeedApi.getSocialFeed(requestParams),
 		staleTime: 1000 * 60 * 5,
 	});

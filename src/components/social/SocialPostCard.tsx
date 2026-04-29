@@ -1,10 +1,12 @@
 import { useState, useRef, type ReactNode, useEffect } from 'react';
 import { Coins, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useSocialPostLikesStream } from '@/hooks';
+import { useLocation, useNavigate } from 'react-router-dom';
 import type { PostCardProps } from '@/types';
+import { useAuthStore } from '@/store';
 import { SocialPostActions } from './SocialPostActions';
 import { SocialPostHeader } from './SocialPostHeader';
+import { CommentModal } from '@/features/social/components/comments';
 
 export interface SocialPostCardProps extends PostCardProps {
 	footer?: ReactNode;
@@ -16,27 +18,13 @@ export interface SocialPostCardProps extends PostCardProps {
 
 export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost, onLikePost, isLiking }: SocialPostCardProps) => {
 	const { t } = useTranslation();
+	const navigate = useNavigate();
+	const location = useLocation();
+	const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const scrollRef = useRef<HTMLDivElement>(null);
-	const [isIntersecting, setIsIntersecting] = useState(false);
-	const cardRef = useRef<HTMLElement>(null);
-
-	useEffect(() => {
-		const observer = new IntersectionObserver(
-			([entry]) => {
-				setIsIntersecting(entry.isIntersecting);
-			},
-			{ threshold: 0.1 }
-		);
-
-		if (cardRef.current) {
-			observer.observe(cardRef.current);
-		}
-
-		return () => observer.disconnect();
-	}, []);
-
-	useSocialPostLikesStream(isIntersecting ? post.id : undefined);
+	const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
 
 	const mediaItems = post.media && post.media.length > 0
 		? post.media
@@ -64,8 +52,16 @@ export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost, onLikeP
 		}
 	};
 
+	const handleCommentClick = () => {
+		if (!isLoggedIn) {
+			navigate(`/login?redirect=${encodeURIComponent(location.pathname + location.search)}`);
+			return;
+		}
+		setIsCommentModalOpen(true);
+	};
+
 	return (
-		<article ref={cardRef} className="overflow-hidden rounded-3xl border border-[#ECEEF1] bg-white shadow-[0_10px_25px_-18px_rgba(15,23,42,0.45)]">
+		<article className="overflow-hidden rounded-3xl border border-[#ECEEF1] bg-white shadow-[0_10px_25px_-18px_rgba(15,23,42,0.45)]">
 			<SocialPostHeader
 				avatar={post.avatar}
 				author={post.author}
@@ -73,6 +69,7 @@ export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost, onLikeP
 				location={post.location}
 				vibe={post.vibe ?? ''}
 				postId={post.id}
+				authorId={post.userId}
 				onEdit={onEditPost}
 				onDelete={onDeletePost}
 			/>
@@ -141,7 +138,7 @@ export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost, onLikeP
 
 			{post.caption && (
 				<div className="px-4 py-4">
-					<p className="text-[15px] leading-6 text-[#334155]">{post.caption}</p>
+					<p className="text-[15px] leading-6 text-[#334155] break-words whitespace-pre-wrap">{post.caption}</p>
 				</div>
 			)}
 
@@ -152,6 +149,7 @@ export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost, onLikeP
 				onLike={onLikePost}
 				isLiking={isLiking}
 				isLiked={post.isLiked}
+				onComment={handleCommentClick}
 			/>
 
 			<div className="px-4 pb-4">
@@ -166,6 +164,12 @@ export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost, onLikeP
 
 				{footer ? <div className="pt-3">{footer}</div> : null}
 			</div>
+
+			<CommentModal
+				isOpen={isCommentModalOpen}
+				onClose={() => setIsCommentModalOpen(false)}
+				post={post}
+			/>
 		</article>
 	);
 };

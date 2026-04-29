@@ -84,7 +84,7 @@ export const useUserSocialPosts = (userId: string) => {
 	const vibeTagMap = new Map(vibeTags.map((tag) => [tag.id, tag.name]));
 
 	const query = useInfiniteQuery({
-		queryKey: ['user-posts', userId],
+		queryKey: ['user-posts', userId, currentUser?.id],
 		queryFn: ({ pageParam }) =>
 			postApi.getUserPosts({
 				userId,

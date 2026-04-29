@@ -26,6 +26,7 @@ const updateSocialFeedLikeState = (
 				node: {
 					...edge.node,
 					likesCount,
+					likes: likesCount,
 					isLiked,
 				},
 			};
@@ -40,11 +41,11 @@ export const useSocialPostActions = () => {
 	const updateSocialFeedLikeCollections = (response: { postId: string; isLiked: boolean; likesCount: number }) => {
 		queryClient.setQueriesData(
 			{ queryKey: ['socialPosts'] },
-			(data) => updateSocialFeedLikeState(data as Connection<SocialPostApiItem> | undefined, response.postId, response.isLiked, response.likesCount),
+			(data: any) => updateSocialFeedLikeState(data as Connection<SocialPostApiItem> | undefined, response.postId, response.isLiked, response.likesCount),
 		);
 		queryClient.setQueriesData(
 			{ queryKey: ['user-posts'] },
-			(data) => {
+			(data: any) => {
 				if (!data) return data;
 				const dataAny = data as any;
 				const pages = (dataAny.pages as Array<Connection<SocialPostApiItem>> | undefined) ?? undefined;
@@ -60,34 +61,37 @@ export const useSocialPostActions = () => {
 
 	const findCachedPost = (postId: string) => {
 		const cachedCollections = [
-			...queryClient.getQueriesData<Connection<SocialPostApiItem>>({ queryKey: ['socialPosts'] }),
+			...queryClient.getQueriesData<Connection<SocialPostApiItem>>({ queryKey: ['socialPosts', currentUser?.id] }),
+			...queryClient.getQueriesData<any>({ queryKey: ['user-posts', currentUser?.id] }),
 			...queryClient.getQueriesData<any>({ queryKey: ['user-posts'] }),
+			...queryClient.getQueriesData<any>({ queryKey: ['my-social-posts'] }),
 		];
 
-		for (const [, data] of cachedCollections) {
+		for (const [queryKey, data] of cachedCollections) {
 			const dataAny = data as any;
-			if (!dataAny) {
-				continue;
-			}
+			if (!dataAny) continue;
 
+			let foundNode = null;
 			if (Array.isArray(dataAny.edges)) {
 				const matchedEdge = dataAny.edges.find((edge: any) => edge.node?.id === postId);
-				if (matchedEdge) {
-					return matchedEdge.node;
+				if (matchedEdge) foundNode = matchedEdge.node;
+			} else if (Array.isArray(dataAny.pages)) {
+				for (const page of dataAny.pages as any[]) {
+					if (!page || !Array.isArray(page.edges)) continue;
+					const matchedEdge = page.edges.find((edge: any) => edge.node?.id === postId);
+					if (matchedEdge) {
+						foundNode = matchedEdge.node;
+						break;
+					}
 				}
 			}
 
-			if (Array.isArray(dataAny.pages)) {
-				for (const page of dataAny.pages as any[]) {
-					if (!page || !Array.isArray(page.edges)) {
-						continue;
-					}
-
-					const matchedEdge = page.edges.find((edge: any) => edge.node?.id === postId);
-					if (matchedEdge) {
-						return matchedEdge.node;
-					}
-				}
+			if (foundNode) {
+				console.log(`[Cache] Found post ${postId} in query:`, queryKey, {
+					likes: foundNode.likesCount ?? foundNode.likes,
+					isLiked: foundNode.isLiked
+				});
+				return foundNode;
 			}
 		}
 
@@ -95,23 +99,27 @@ export const useSocialPostActions = () => {
 	};
 
 	const likeMutation = useMutation({
-		mutationFn: async (postId: string) => {
-			if (!currentUser) throw new Error('Not authenticated');
-			const currentPost = findCachedPost(postId);
-			const isCurrentlyLiked = currentPost?.isLiked ?? isPostLikedForUser(currentUser?.id, postId);
+		mutationFn: async ({ postId, isCurrentlyLiked }: { postId: string; isCurrentlyLiked: boolean }) => {
+			const token = localStorage.getItem('access_token');
+			if (!currentUser && !token) throw new Error('Not authenticated');
+
+			console.log('[Like] Decided Action:', isCurrentlyLiked ? 'UNLIKE (DELETE)' : 'LIKE (POST)');
 			return isCurrentlyLiked ? socialFeedApi.unlikePost(postId) : socialFeedApi.likePost(postId);
 		},
-		onMutate: async (postId) => {
+		onMutate: async ({ postId, isCurrentlyLiked }) => {
 			if (!currentUser) return;
 
 			await queryClient.cancelQueries({ queryKey: ['socialPosts'] });
 			await queryClient.cancelQueries({ queryKey: ['user-posts'] });
 
 			const currentPost = findCachedPost(postId);
-			const isCurrentlyLiked = currentPost?.isLiked ?? isPostLikedForUser(currentUser?.id, postId);
+			const totalLikes = currentPost?.likesCount ?? currentPost?.likes ?? 0;
+
 			const newLikesCount = isCurrentlyLiked
-				? Math.max(0, (currentPost?.likesCount ?? 0) - 1)
-				: (currentPost?.likesCount ?? 0) + 1;
+				? Math.max(0, totalLikes - 1)
+				: totalLikes + 1;
+
+			console.log('[Like] Optimistic Update:', { postId, isLiked: !isCurrentlyLiked, newLikesCount });
 
 			updateSocialFeedLikeCollections({
 				postId,
@@ -121,16 +129,18 @@ export const useSocialPostActions = () => {
 
 			return { prevPost: currentPost };
 		},
-		onError: (_err, postId, context) => {
+		onError: (err, variables, context) => {
+			console.error('[Like] Mutation Error:', err);
 			if (context?.prevPost) {
 				updateSocialFeedLikeCollections({
-					postId,
+					postId: variables.postId,
 					isLiked: context.prevPost.isLiked,
-					likesCount: context.prevPost.likesCount
+					likesCount: context.prevPost.likesCount ?? context.prevPost.likes
 				});
 			}
 		},
 		onSuccess: (response) => {
+			console.log('[Like] Server Success:', response);
 			if (response.isLiked) {
 				markPostLikedForUser(currentUser?.id, response.postId);
 			} else {
@@ -142,7 +152,26 @@ export const useSocialPostActions = () => {
 	});
 
 	const likePost = async (postId: string) => {
-		await likeMutation.mutateAsync(postId);
+		const token = localStorage.getItem('access_token');
+		console.log('[Like] Auth Check:', {
+			hasUserInStore: !!currentUser,
+			userId: currentUser?.id,
+			hasTokenInStorage: !!token
+		});
+
+		if (!currentUser && !token) {
+			console.warn('[Like] Aborted: No user and no token found.');
+			return;
+		}
+
+		const currentPost = findCachedPost(postId);
+		const totalLikes = currentPost?.likesCount ?? currentPost?.likes ?? 0;
+		const isCurrentlyLiked = totalLikes > 0
+			? (currentPost?.isLiked ?? isPostLikedForUser(currentUser?.id || 'unknown', postId) ?? false)
+			: false;
+
+		console.log('[Like] Triggering mutation...', { postId, isCurrentlyLiked });
+		await likeMutation.mutateAsync({ postId, isCurrentlyLiked });
 	};
 
 	return {
