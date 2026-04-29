@@ -17,7 +17,7 @@ const updateSocialFeedLikeState = (
 	return {
 		...data,
 		edges: data.edges.map((edge) => {
-			if (edge.node.id !== postId && edge.node.Id !== postId) {
+			if (edge.node.id !== postId) {
 				return edge;
 			}
 
@@ -45,13 +45,14 @@ export const useSocialPostActions = () => {
 		queryClient.setQueriesData(
 			{ queryKey: ['user-posts'] },
 			(data) => {
-				if (!data || !('pages' in data)) {
-					return data;
-				}
+				if (!data) return data;
+				const dataAny = data as any;
+				const pages = (dataAny.pages as Array<Connection<SocialPostApiItem>> | undefined) ?? undefined;
+				if (!pages) return data;
 
 				return {
 					...data,
-					pages: data.pages.map((page) => updateSocialFeedLikeState(page as Connection<SocialPostApiItem>, response.postId, response.isLiked, response.likesCount)),
+					pages: pages.map((page) => updateSocialFeedLikeState(page, response.postId, response.isLiked, response.likesCount)),
 				};
 			},
 		);
@@ -64,24 +65,25 @@ export const useSocialPostActions = () => {
 		];
 
 		for (const [, data] of cachedCollections) {
-			if (!data) {
+			const dataAny = data as any;
+			if (!dataAny) {
 				continue;
 			}
 
-			if ('edges' in data && Array.isArray(data.edges)) {
-				const matchedEdge = data.edges.find((edge: { node: SocialPostApiItem }) => edge.node.id === postId || edge.node.Id === postId);
+			if (Array.isArray(dataAny.edges)) {
+				const matchedEdge = dataAny.edges.find((edge: any) => edge.node?.id === postId);
 				if (matchedEdge) {
 					return matchedEdge.node;
 				}
 			}
 
-			if ('pages' in data && Array.isArray(data.pages)) {
-				for (const page of data.pages) {
+			if (Array.isArray(dataAny.pages)) {
+				for (const page of dataAny.pages as any[]) {
 					if (!page || !Array.isArray(page.edges)) {
 						continue;
 					}
 
-					const matchedEdge = page.edges.find((edge: { node: SocialPostApiItem }) => edge.node.id === postId || edge.node.Id === postId);
+					const matchedEdge = page.edges.find((edge: any) => edge.node?.id === postId);
 					if (matchedEdge) {
 						return matchedEdge.node;
 					}
@@ -94,14 +96,41 @@ export const useSocialPostActions = () => {
 
 	const likeMutation = useMutation({
 		mutationFn: async (postId: string) => {
+			if (!currentUser) throw new Error('Not authenticated');
 			const currentPost = findCachedPost(postId);
 			const isCurrentlyLiked = currentPost?.isLiked ?? isPostLikedForUser(currentUser?.id, postId);
 			return isCurrentlyLiked ? socialFeedApi.unlikePost(postId) : socialFeedApi.likePost(postId);
 		},
-		onSuccess: async (response) => {
-			const prevPost = findCachedPost(response.postId);
-			const prevLikes = prevPost ? prevPost.likesCount : undefined;
+		onMutate: async (postId) => {
+			if (!currentUser) return;
 
+			await queryClient.cancelQueries({ queryKey: ['socialPosts'] });
+			await queryClient.cancelQueries({ queryKey: ['user-posts'] });
+
+			const currentPost = findCachedPost(postId);
+			const isCurrentlyLiked = currentPost?.isLiked ?? isPostLikedForUser(currentUser?.id, postId);
+			const newLikesCount = isCurrentlyLiked
+				? Math.max(0, (currentPost?.likesCount ?? 0) - 1)
+				: (currentPost?.likesCount ?? 0) + 1;
+
+			updateSocialFeedLikeCollections({
+				postId,
+				isLiked: !isCurrentlyLiked,
+				likesCount: newLikesCount
+			});
+
+			return { prevPost: currentPost };
+		},
+		onError: (_err, postId, context) => {
+			if (context?.prevPost) {
+				updateSocialFeedLikeCollections({
+					postId,
+					isLiked: context.prevPost.isLiked,
+					likesCount: context.prevPost.likesCount
+				});
+			}
+		},
+		onSuccess: (response) => {
 			if (response.isLiked) {
 				markPostLikedForUser(currentUser?.id, response.postId);
 			} else {
@@ -109,10 +138,6 @@ export const useSocialPostActions = () => {
 			}
 
 			updateSocialFeedLikeCollections(response);
-
-			if (response.likesCount === 0 && response.isLiked && typeof prevLikes === 'number' && prevLikes > 0) {
-				queryClient.invalidateQueries({ queryKey: ['socialPosts'] });
-			}
 		},
 	});
 

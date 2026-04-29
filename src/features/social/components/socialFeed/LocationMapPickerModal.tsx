@@ -230,7 +230,7 @@ export const LocationMapPickerModal = ({
   }
 
   return (
-    <div className="absolute inset-0 z-10 flex flex-col bg-[#FCFCFD]">
+    <div className="fixed inset-0 z-[110] flex flex-col bg-[#FCFCFD] sm:absolute sm:z-10">
       <div className="flex items-center gap-3 border-b border-[#EAECF0] px-5 py-4">
         <button
           type="button"
@@ -286,11 +286,10 @@ export const LocationMapPickerModal = ({
                     setSelectedSearchResult(result);
                     setActiveLocationId(null);
                   }}
-                  className={`flex w-full items-start justify-between rounded-xl border px-3 py-3 text-left transition-colors ${
-                    isActive
+                  className={`flex w-full items-start justify-between rounded-xl border px-3 py-3 text-left transition-colors ${isActive
                       ? 'border-[#1F58A5] bg-[#EDF4FF]'
                       : 'border-[#E5E7EB] bg-white hover:border-[#CBD5E1]'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-start gap-2">
                     <MapPin className={`mt-0.5 h-4 w-4 ${isActive ? 'text-[#1F58A5]' : 'text-[#6B7280]'}`} />
@@ -320,11 +319,10 @@ export const LocationMapPickerModal = ({
                   setSelectedSearchResult(currentLocationSuggestion);
                   setActiveLocationId(null);
                 }}
-                className={`flex w-full items-start justify-between rounded-xl border px-3 py-3 text-left transition-colors ${
-                  selectedSearchResult?.id === currentLocationSuggestion.id
+                className={`flex w-full items-start justify-between rounded-xl border px-3 py-3 text-left transition-colors ${selectedSearchResult?.id === currentLocationSuggestion.id
                     ? 'border-[#1F58A5] bg-[#EDF4FF]'
                     : 'border-[#E5E7EB] bg-white hover:border-[#CBD5E1]'
-                }`}
+                  }`}
               >
                 <div className="flex items-start gap-2">
                   <MapPin className={`mt-0.5 h-4 w-4 ${selectedSearchResult?.id === currentLocationSuggestion.id ? 'text-[#1F58A5]' : 'text-[#6B7280]'}`} />
@@ -348,11 +346,10 @@ export const LocationMapPickerModal = ({
                     setActiveLocationId(location.id);
                     setSelectedSearchResult(null);
                   }}
-                  className={`flex w-full items-start justify-between rounded-xl border px-3 py-3 text-left transition-colors ${
-                    isActive
+                  className={`flex w-full items-start justify-between rounded-xl border px-3 py-3 text-left transition-colors ${isActive
                       ? 'border-[#1F58A5] bg-[#EDF4FF]'
                       : 'border-[#E5E7EB] bg-white hover:border-[#CBD5E1]'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-start gap-2">
                     <MapPin className={`mt-0.5 h-4 w-4 ${isActive ? 'text-[#1F58A5]' : 'text-[#6B7280]'}`} />
@@ -373,7 +370,7 @@ export const LocationMapPickerModal = ({
         ) : null}
       </div>
 
-      <div className="border-t border-[#EAECF0] p-4">
+      <div className="relative z-20 border-t border-[#EAECF0] bg-[#FCFCFD] p-4 pb-6 sm:pb-4">
         <button
           type="button"
           disabled={!canConfirm}

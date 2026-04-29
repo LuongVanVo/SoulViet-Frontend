@@ -45,21 +45,28 @@ export const SocialPostHeader = ({
 				<img src={avatar} alt={author} className="h-10 w-10 rounded-full object-cover" />
 				<div className="min-w-0">
 					<p className="truncate text-base font-semibold text-[#1F2937]">{author}</p>
-					<p className="truncate text-xs text-[#6B7280]">
-						{timeAgo}
-						{location && (
-							<>
-								<span className="mx-1">•</span>
-								{location}
-							</>
+					<div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#6B7280]">
+						<div className="flex min-w-0 items-center">
+							<span className="truncate">{timeAgo}</span>
+							{location && (
+								<>
+									<span className="mx-1 shrink-0">•</span>
+									<span className="truncate">{location}</span>
+								</>
+							)}
+						</div>
+						{vibe && (
+							<span className="shrink-0 rounded-full bg-[#E9EEF7] px-2 py-0.5 text-[10px] font-medium text-[#42618B] sm:hidden">
+								{vibe}
+							</span>
 						)}
-					</p>
+					</div>
 				</div>
 			</div>
 
-			<div className="flex items-center gap-3">
+			<div className="flex shrink-0 items-center gap-2">
 				{vibe && (
-					<span className="rounded-full bg-[#E9EEF7] px-3 py-1 text-xs font-medium text-[#42618B]">
+					<span className="hidden rounded-full bg-[#E9EEF7] px-3 py-1 text-xs font-medium text-[#42618B] sm:inline-block">
 						{vibe}
 					</span>
 				)}

@@ -28,7 +28,7 @@ const updateSocialFeedLikeState = (
 	return {
 		...data,
 		edges: data.edges.map((edge) => {
-			if (edge.node.id !== postId && edge.node.Id !== postId) {
+			if (edge.node.id !== postId) {
 				return edge;
 			}
 
@@ -184,15 +184,16 @@ export const useSocialPostLikesStream = (postId?: string) => {
 								...queryClient.getQueriesData<any>({ queryKey: ['user-posts'] }),
 							];
 							for (const [, d] of entries) {
-								if (!d) continue;
-								if ('edges' in d && Array.isArray(d.edges)) {
-									const m = d.edges.find((e: any) => e.node.id === resolvedPostId || e.node.Id === resolvedPostId);
+								const dataAny = d as any;
+								if (!dataAny) continue;
+								if (Array.isArray(dataAny.edges)) {
+									const m = dataAny.edges.find((e: any) => e.node?.id === resolvedPostId);
 									if (m) return m.node as SocialPostApiItem;
 								}
-								if ('pages' in d && Array.isArray(d.pages)) {
-									for (const p of d.pages) {
+								if (Array.isArray(dataAny.pages)) {
+									for (const p of dataAny.pages as any[]) {
 										if (!p || !Array.isArray(p.edges)) continue;
-										const m = p.edges.find((e: any) => e.node.id === resolvedPostId || e.node.Id === resolvedPostId);
+										const m = p.edges.find((e: any) => e.node?.id === resolvedPostId);
 										if (m) return m.node as SocialPostApiItem;
 									}
 								}
@@ -208,13 +209,14 @@ export const useSocialPostLikesStream = (postId?: string) => {
 						queryClient.setQueriesData(
 							{ queryKey: ['user-posts'] },
 							(data) => {
-								if (!data || !('pages' in data)) {
-									return data;
-								}
+								if (!data) return data;
+								const dataAny = data as any;
+								const pages = (dataAny.pages as Array<Connection<SocialPostApiItem>> | undefined) ?? undefined;
+								if (!pages) return data;
 
 								return {
 									...data,
-									pages: data.pages.map((page) => updateSocialFeedLikeState(page as Connection<SocialPostApiItem>, resolvedPostId, isLikedForCache, likesCount)),
+									pages: pages.map((page) => updateSocialFeedLikeState(page, resolvedPostId, isLikedForCache, likesCount)),
 								};
 							},
 						);

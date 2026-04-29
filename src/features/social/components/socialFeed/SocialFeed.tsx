@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { authApi } from '@/services';
 import { useSocialPostActions, useSocialPosts } from '@/hooks';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/store';
@@ -36,9 +35,7 @@ export const SocialFeed = () => {
   };
 
   const handleLikePost = async (postId: string) => {
-    const accessToken = authApi.getToken();
-
-    if (!isLoggedIn || !accessToken) {
+    if (!isLoggedIn) {
       const redirect = encodeURIComponent(`${location.pathname}${location.search}${location.hash}`);
       navigate(`/login?redirect=${redirect}`);
       return;
@@ -47,8 +44,7 @@ export const SocialFeed = () => {
     try {
       await likePost(postId);
     } catch (error) {
-      const redirect = encodeURIComponent(`${location.pathname}${location.search}${location.hash}`);
-      navigate(`/login?redirect=${redirect}`);
+      console.error('Like error:', error);
     }
   };
 

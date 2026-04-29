@@ -21,10 +21,7 @@ import { apiService, postApi, touristApi, mediaApi } from '@/services';
 import { useAuthStore } from '@/store';
 import type { CreatePostModalProps, PostMediaPayload, TouristAttractionCardItem, FileUploadRequest } from '@/types';
 import { LocationMapPickerModal } from './LocationMapPickerModal';
-
-const GUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
-
+import { SOCIAL_LOCATION_ID_REGEX } from '@/utils/socialLocation';
 
 export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: CreatePostModalProps) => {
   const { t } = useTranslation();
@@ -234,19 +231,12 @@ export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: Creat
           await mediaApi.uploadFileToR2(presignedInfo.uploadUrl, file, presignedInfo.fileName);
           return {
             url: presignedInfo.publicUrl,
-            Url: presignedInfo.publicUrl,
             objectKey: presignedInfo.objectKey,
-            ObjectKey: presignedInfo.objectKey,
             mediaType: presignedInfo.mediaType,
-            MediaType: presignedInfo.mediaType,
             width: 0,
-            Width: 0,
             height: 0,
-            Height: 0,
             fileSizeBytes: file.size,
-            FileSizeBytes: file.size,
             sortOrder: index,
-            SortOrder: index,
           };
         });
 
@@ -254,23 +244,20 @@ export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: Creat
       }
 
       const normalizedContent = caption.trim();
-      const resolvedCheckinLocationId =
-        selectedLocation?.id && GUID_REGEX.test(selectedLocation.id)
-          ? selectedLocation.id
-          : undefined;
+      const rawLocationId = selectedLocation?.id;
+      const isIdValidGuid = rawLocationId ? SOCIAL_LOCATION_ID_REGEX.test(rawLocationId.trim()) : false;
+      const finalLocationId = isIdValidGuid && rawLocationId ? rawLocationId.trim() : undefined;
 
       const payload: any = {
+        userId: user?.id,
         content: normalizedContent || undefined,
         media: uploadedMedia,
-        Media: uploadedMedia,
-        aspectRatio: aspectRatio,
-        AspectRatio: aspectRatio,
         taggedProductIds: [],
         vibeTag: selectedVibe ?? 0,
-        checkinLocationId: resolvedCheckinLocationId,
+        checkinLocationId: finalLocationId || null,
+        checkinLocationName: selectedLocation?.name || undefined,
+        aspectRatio: aspectRatio,
       };
-
-      console.log('Publishing post with payload:', payload);
 
       await postApi.createPost(payload);
       handleClose();
@@ -314,10 +301,10 @@ export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: Creat
   const primaryPreview = mediaPreviewUrls[0];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#6B728099] p-4 sm:items-center">
-      <div className="relative w-full max-w-[360px] overflow-hidden rounded-3xl bg-[#FCFCFD] shadow-2xl max-h-[calc(100dvh-2rem)] sm:max-w-[420px]">
+    <div className="fixed inset-0 z-[100] flex items-end justify-center bg-[#6B728099] p-0 sm:items-center sm:p-4">
+      <div className="relative flex w-full max-w-full max-h-[calc(100dvh-0.5rem)] flex-col overflow-hidden rounded-t-[2rem] bg-[#FCFCFD] shadow-2xl sm:max-w-[420px] sm:max-h-[calc(100dvh-2rem)] sm:rounded-3xl">
         {isSelectingVibe ? (
-          <div className="flex max-h-[calc(100dvh-2rem)] flex-col bg-[#FCFCFD]">
+          <div className="min-h-0 flex-1 flex flex-col bg-[#FCFCFD]">
             <div className="flex items-center gap-3 border-b border-[#EAECF0] px-5 py-4">
               <button
                 type="button"
@@ -367,14 +354,14 @@ export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: Creat
                     );
                   })}
                 {vibeOptions.filter((tag) => tag.label.toLowerCase().includes(vibeSearchQuery.toLowerCase())).length === 0 &&
-                vibeSearchQuery.length > 0 ? (
+                  vibeSearchQuery.length > 0 ? (
                   <p className="px-1 text-center text-base text-[#6B7280]">{t('social.feed.createModal.vibeEmptySearch')}</p>
                 ) : null}
               </div>
             </div>
           </div>
         ) : (
-          <div className="max-h-[calc(100dvh-2rem)] overflow-y-auto p-4">
+          <div className="min-h-0 flex-1 overflow-y-auto p-4 scrollbar-hide">
             <div className="flex items-center gap-2 border-b border-[#EAECF0] pb-3">
               <button
                 type="button"
@@ -504,11 +491,10 @@ export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: Creat
                       type="button"
                       onClick={() => setIsLocationPickerOpen(true)}
                       aria-label={t('social.feed.createModal.locationLabel')}
-                      className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
-                        isLocationPickerOpen || selectedLocation
-                          ? 'bg-[#1F58A5] text-white'
-                          : 'bg-[#DCE7F5] text-[#1F58A5] hover:bg-[#CADBF2]'
-                      }`}
+                      className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${isLocationPickerOpen || selectedLocation
+                        ? 'bg-[#1F58A5] text-white'
+                        : 'bg-[#DCE7F5] text-[#1F58A5] hover:bg-[#CADBF2]'
+                        }`}
                     >
                       <MapPin className="h-4 w-4" />
                     </button>
@@ -516,9 +502,8 @@ export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: Creat
                       type="button"
                       onClick={() => setIsSelectingVibe(true)}
                       aria-label={t('social.feed.createModal.tagLabel')}
-                      className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
-                        selectedVibe ? 'bg-[#1F58A5] text-white' : 'bg-[#DCE7F5] text-[#1F58A5] hover:bg-[#CADBF2]'
-                      }`}
+                      className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${selectedVibe ? 'bg-[#1F58A5] text-white' : 'bg-[#DCE7F5] text-[#1F58A5] hover:bg-[#CADBF2]'
+                        }`}
                     >
                       <Tag className="h-4 w-4" />
                     </button>
