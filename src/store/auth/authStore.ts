@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { UserProfile } from '@/types'
 
-interface AuthState {
+export interface AuthState {
   user: UserProfile | null
   isLoggedIn: boolean
   isLoading: boolean

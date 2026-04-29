@@ -96,14 +96,41 @@ export const useSocialPostActions = () => {
 
 	const likeMutation = useMutation({
 		mutationFn: async (postId: string) => {
+			if (!currentUser) throw new Error('Not authenticated');
 			const currentPost = findCachedPost(postId);
 			const isCurrentlyLiked = currentPost?.isLiked ?? isPostLikedForUser(currentUser?.id, postId);
 			return isCurrentlyLiked ? socialFeedApi.unlikePost(postId) : socialFeedApi.likePost(postId);
 		},
-		onSuccess: async (response) => {
-			const prevPost = findCachedPost(response.postId);
-			const prevLikes = prevPost ? prevPost.likesCount : undefined;
+		onMutate: async (postId) => {
+			if (!currentUser) return;
 
+			await queryClient.cancelQueries({ queryKey: ['socialPosts'] });
+			await queryClient.cancelQueries({ queryKey: ['user-posts'] });
+
+			const currentPost = findCachedPost(postId);
+			const isCurrentlyLiked = currentPost?.isLiked ?? isPostLikedForUser(currentUser?.id, postId);
+			const newLikesCount = isCurrentlyLiked
+				? Math.max(0, (currentPost?.likesCount ?? 0) - 1)
+				: (currentPost?.likesCount ?? 0) + 1;
+
+			updateSocialFeedLikeCollections({
+				postId,
+				isLiked: !isCurrentlyLiked,
+				likesCount: newLikesCount
+			});
+
+			return { prevPost: currentPost };
+		},
+		onError: (_err, postId, context) => {
+			if (context?.prevPost) {
+				updateSocialFeedLikeCollections({
+					postId,
+					isLiked: context.prevPost.isLiked,
+					likesCount: context.prevPost.likesCount
+				});
+			}
+		},
+		onSuccess: (response) => {
 			if (response.isLiked) {
 				markPostLikedForUser(currentUser?.id, response.postId);
 			} else {
@@ -111,10 +138,6 @@ export const useSocialPostActions = () => {
 			}
 
 			updateSocialFeedLikeCollections(response);
-
-			if (response.likesCount === 0 && response.isLiked && typeof prevLikes === 'number' && prevLikes > 0) {
-				queryClient.invalidateQueries({ queryKey: ['socialPosts'] });
-			}
 		},
 	});
 

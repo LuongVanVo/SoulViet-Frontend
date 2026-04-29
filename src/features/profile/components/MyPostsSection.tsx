@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ConfirmationDialog, PostFeedList } from '@/components';
-import { useMyPostActions, useUserSocialPosts } from '@/hooks';
+import { useMyPostActions, useUserSocialPosts, useSocialPostActions } from '@/hooks';
+import { useAuthStore, type AuthState } from '@/store';
 import type { SocialPost } from '@/types';
 import { EditPostModal } from './EditPostModal';
 
@@ -11,6 +13,8 @@ interface MyPostsSectionProps {
 
 export const MyPostsSection = ({ userId }: MyPostsSectionProps) => {
 	const { t } = useTranslation();
+	const navigate = useNavigate();
+	const location = useLocation();
 	const loadMoreRef = useRef<HTMLDivElement | null>(null);
 	const [editingPostId, setEditingPostId] = useState<string | null>(null);
 	const [deletingPostId, setDeletingPostId] = useState<string | null>(null);
@@ -23,6 +27,8 @@ export const MyPostsSection = ({ userId }: MyPostsSectionProps) => {
 		fetchNextPage,
 	} = useUserSocialPosts(userId);
 	const { updateMyPost, deleteMyPost, isUpdating, isDeleting } = useMyPostActions(userId);
+	const { likePost, isLiking: isLikingPost } = useSocialPostActions();
+	const isLoggedIn = useAuthStore((state: AuthState) => state.isLoggedIn);
 
 	const editingPost = useMemo<SocialPost | null>(
 		() => posts.find((item) => item.id === editingPostId) ?? null,
@@ -57,6 +63,14 @@ export const MyPostsSection = ({ userId }: MyPostsSectionProps) => {
 		await deleteMyPost(deletingPostId);
 		setDeletingPostId(null);
 	};
+	const handleLikePost = async (postId: string) => {
+		try {
+			await likePost(postId);
+		} catch (error) {
+			console.error('Failed to like post:', error);
+		}
+	};
+
 	useEffect(() => {
 		const target = loadMoreRef.current;
 		if (!target || !hasNextPage || isFetchingNextPage) {
@@ -104,6 +118,8 @@ export const MyPostsSection = ({ userId }: MyPostsSectionProps) => {
 						)}
 						onEditPost={handleEditPost}
 						onDeletePost={handleDeletePost}
+						onLikePost={handleLikePost}
+						isLiking={isLikingPost}
 					/>
 				)}
 

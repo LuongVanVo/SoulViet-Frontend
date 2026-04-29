@@ -1,4 +1,4 @@
-import { useState, useRef, type ReactNode } from 'react';
+import { useState, useRef, type ReactNode, useEffect } from 'react';
 import { Coins, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useSocialPostLikesStream } from '@/hooks';
@@ -18,16 +18,34 @@ export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost, onLikeP
 	const { t } = useTranslation();
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const scrollRef = useRef<HTMLDivElement>(null);
-	useSocialPostLikesStream(post.id);
+	const [isIntersecting, setIsIntersecting] = useState(false);
+	const cardRef = useRef<HTMLElement>(null);
 
-	const mediaItems = post.media && post.media.length > 0 
-		? post.media 
-		: (post.images && post.images.length > 0 
+	useEffect(() => {
+		const observer = new IntersectionObserver(
+			([entry]) => {
+				setIsIntersecting(entry.isIntersecting);
+			},
+			{ threshold: 0.1 }
+		);
+
+		if (cardRef.current) {
+			observer.observe(cardRef.current);
+		}
+
+		return () => observer.disconnect();
+	}, []);
+
+	useSocialPostLikesStream(isIntersecting ? post.id : undefined);
+
+	const mediaItems = post.media && post.media.length > 0
+		? post.media
+		: (post.images && post.images.length > 0
 			? post.images.map(url => ({ url, type: 'image' as const }))
 			: (post.image ? [{ url: post.image, type: 'image' as const }] : []));
 
-	const aspectRatioClass = post.aspectRatio === 'vertical' 
-		? 'aspect-[4/5]' 
+	const aspectRatioClass = post.aspectRatio === 'vertical'
+		? 'aspect-[4/5]'
 		: (post.aspectRatio === 'horizontal' ? 'aspect-[16/9]' : 'aspect-square');
 
 	const scroll = (direction: 'left' | 'right') => {
@@ -47,7 +65,7 @@ export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost, onLikeP
 	};
 
 	return (
-		<article className="overflow-hidden rounded-3xl border border-[#ECEEF1] bg-white shadow-[0_10px_25px_-18px_rgba(15,23,42,0.45)]">
+		<article ref={cardRef} className="overflow-hidden rounded-3xl border border-[#ECEEF1] bg-white shadow-[0_10px_25px_-18px_rgba(15,23,42,0.45)]">
 			<SocialPostHeader
 				avatar={post.avatar}
 				author={post.author}
@@ -61,7 +79,7 @@ export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost, onLikeP
 
 			{mediaItems.length > 0 ? (
 				<div className="relative group overflow-hidden bg-[#F8FAFC] flex items-center justify-center">
-					<div 
+					<div
 						ref={scrollRef}
 						onScroll={handleScroll}
 						className={`flex snap-x snap-mandatory overflow-x-auto scrollbar-hide w-full ${aspectRatioClass}`}
@@ -69,16 +87,16 @@ export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost, onLikeP
 						{mediaItems.map((item, idx) => (
 							<div key={idx} className="w-full shrink-0 snap-center relative flex items-center justify-center overflow-hidden">
 								{item.type === 'video' ? (
-									<video 
-										src={item.url} 
+									<video
+										src={item.url}
 										className="h-full w-full object-contain bg-black"
 										controls
 										playsInline
 									/>
 								) : (
-									<img 
-										src={item.url} 
-										alt={`${post.author} - ${idx + 1}`} 
+									<img
+										src={item.url}
+										alt={`${post.author} - ${idx + 1}`}
 										className="h-full w-full object-contain"
 										onError={(e) => {
 											(e.target as HTMLImageElement).src = 'https://via.placeholder.com/400?text=Image+Not+Found';
@@ -88,16 +106,16 @@ export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost, onLikeP
 							</div>
 						))}
 					</div>
-					
+
 					{mediaItems.length > 1 && (
 						<>
-							<button 
+							<button
 								onClick={(e) => { e.preventDefault(); scroll('left'); }}
 								className={`absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-1.5 shadow-md backdrop-blur-sm transition-all hover:bg-white z-10 hidden md:flex ${currentIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-0 group-hover:opacity-100'}`}
 							>
 								<ChevronLeft className="h-5 w-5 text-gray-800" />
 							</button>
-							<button 
+							<button
 								onClick={(e) => { e.preventDefault(); scroll('right'); }}
 								className={`absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-1.5 shadow-md backdrop-blur-sm transition-all hover:bg-white z-10 hidden md:flex ${currentIndex === mediaItems.length - 1 ? 'opacity-0 pointer-events-none' : 'opacity-0 group-hover:opacity-100'}`}
 							>
@@ -106,9 +124,9 @@ export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost, onLikeP
 
 							<div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-1.5 px-2 py-1 transition-opacity z-10">
 								{mediaItems.map((_, idx) => (
-									<div 
-										key={idx} 
-										className={`h-1.5 w-1.5 rounded-full transition-all duration-300 shadow-sm ${idx === currentIndex ? 'bg-blue-600 w-3' : 'bg-gray-300'}`} 
+									<div
+										key={idx}
+										className={`h-1.5 w-1.5 rounded-full transition-all duration-300 shadow-sm ${idx === currentIndex ? 'bg-blue-600 w-3' : 'bg-gray-300'}`}
 									/>
 								))}
 							</div>

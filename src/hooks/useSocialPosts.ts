@@ -1,39 +1,29 @@
 import { useQuery } from '@tanstack/react-query';
-import i18n from '@/config/i18n';
 import { socialFeedApi } from '@/services';
 import { useAuthStore } from '@/store';
 import { useVibeTags } from './useVibeTags';
 import type { GetSocialFeedParams, SocialPost } from '@/types';
 import { mergeLikedStateForUser } from '@/utils/socialLikes';
+import { getPostCheckinLocationId, getPostLocationName } from '@/utils/socialLocation';
+import { formatSocialTime } from '@/utils/date';
 
-const formatTimeAgo = (createdAt: string) => {
-	const createdTime = new Date(createdAt).getTime();
-	if (Number.isNaN(createdTime)) {
-		return createdAt;
-	}
 
-	const diffInSeconds = Math.max(0, Math.floor((Date.now() - createdTime) / 1000));
-	if (diffInSeconds < 60) return i18n.t('profile.user.posts.timeAgo.justNow');
 
-	const diffInMinutes = Math.floor(diffInSeconds / 60);
-	if (diffInMinutes < 60) return i18n.t('profile.user.posts.timeAgo.minutesAgo', { count: diffInMinutes });
-
-	const diffInHours = Math.floor(diffInMinutes / 60);
-	if (diffInHours < 24) return i18n.t('profile.user.posts.timeAgo.hoursAgo', { count: diffInHours });
-
-	const diffInDays = Math.floor(diffInHours / 24);
-	return i18n.t('profile.user.posts.timeAgo.daysAgo', { count: diffInDays });
-};
-
-const extractMediaItems = (post: any): { url: string; type: 'image' | 'video'; objectKey: string }[] => {
+const extractMediaItems = (post: any): { url: string; type: 'image' | 'video'; objectKey: string; sortOrder?: number }[] => {
 	const media = post.media || post.Media;
 	if (media && media.length > 0) {
-		return media.map((item: any) => {
-			const url = item.url || item.Url || item.publicUrl || item.PublicUrl;
-			const type = (item.mediaType === 2 || item.MediaType === 2) ? 'video' : 'image';
-			const objectKey = item.objectKey || item.ObjectKey || '';
-			return { url, type, objectKey };
-		}).filter((item: any) => Boolean(item.url));
+		const sortedMedia = [...media].sort(
+			(a, b) => (a.sortOrder ?? a.SortOrder ?? 0) - (b.sortOrder ?? b.SortOrder ?? 0)
+		);
+		return sortedMedia
+			.map((item: any) => {
+				const url = item.url || item.Url || item.publicUrl || item.PublicUrl;
+				const type = (item.mediaType === 2 || item.MediaType === 2 ? 'video' : 'image') as 'image' | 'video';
+				const objectKey = item.objectKey || item.ObjectKey || '';
+				const sortOrder = item.sortOrder ?? item.SortOrder;
+				return { url, type, objectKey, sortOrder };
+			})
+			.filter((item: any) => Boolean(item.url));
 	}
 
 	const mediaUrls = post.mediaUrls || post.MediaUrls || [];
@@ -67,12 +57,12 @@ const toSocialPost = (
 		userId,
 		author: post.author || post.Author || authorName,
 		avatar: post.avatar || post.Avatar || avatarUrl,
-		timeAgo: formatTimeAgo(post.createdAt || post.CreatedAt),
-		location: post.checkinLocationName || post.CheckinLocationName,
-		checkinLocationId: post.checkinLocationId || post.CheckinLocationId,
+		timeAgo: formatSocialTime(post.createdAt || post.CreatedAt),
+		location: getPostLocationName(post),
+		checkinLocationId: getPostCheckinLocationId(post),
 		vibe: vibeTag > 0 ? (vibeTags.get(vibeTag) ?? `Vibe #${vibeTag}`) : undefined,
 		vibeTag: vibeTag,
-		images: [], // Kept for type safety
+		images: [],
 		media: extractMediaItems(post),
 		aspectRatio: post.aspectRatio || post.AspectRatio || 'square',
 		caption: post.content ?? post.Content,

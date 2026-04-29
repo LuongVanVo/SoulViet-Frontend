@@ -127,7 +127,7 @@ export interface SocialPost {
   vibe?: string;
   vibeTag?: number;
   images: string[];
-  media?: { url: string; type: 'image' | 'video'; objectKey: string }[];
+  media?: { url: string; type: 'image' | 'video'; objectKey: string; sortOrder?: number }[];
   aspectRatio?: 'horizontal' | 'vertical' | 'square';
   image?: string;
   caption?: string;
