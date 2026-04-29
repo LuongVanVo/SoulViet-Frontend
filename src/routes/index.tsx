@@ -14,7 +14,8 @@ import {
   SignInPage, 
   SignUpPage, 
   VerifyEmailNoticePage,
-  ResetPasswordPage
+  ResetPasswordPage,
+  MarketplaceProductDetailPage,
 } from '@/pages';
 
 export const router = createBrowserRouter([
@@ -41,6 +42,10 @@ export const router = createBrowserRouter([
       {
         path: 'marketplace',
         element: <MarketPlace />,
+      },
+      {
+        path: 'marketplace/:productId',
+        element: <MarketplaceProductDetailPage />,
       },
       {
         path: 'profile',

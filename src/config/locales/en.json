@@ -372,5 +372,84 @@
         "favorites": "Favorites"
       }
     }
+  },
+  "marketplace": {
+    "hero": {
+      "title": "Discover Local Specialties & Tours",
+      "subtitle": "Immerse yourself in the vibrant culture of Vietnam. Shop authentic handcrafted souvenirs or book unforgettable local experiences.",
+      "imageAlt": "Vietnam landscape"
+    },
+    "filters": {
+      "categoryLabel": "Category",
+      "priceLabel": "Price",
+      "locationLabel": "Location",
+      "searchPlaceholder": "Search experiences or products...",
+      "searchButton": "Search",
+      "allCategories": "All Categories",
+      "locationDefault": "Location",
+      "dropdownSearchPlaceholder": "Search {{label}}...",
+      "noResults": "No results found",
+      "priceTiers": {
+        "free": "Any Price",
+        "premium": "0 - 500.000₫",
+        "exclusive": "500.000₫+"
+      }
+    },
+    "products": {
+      "noResults": "No results found"
+    },
+    "card": {
+      "likeAria": "Like",
+      "badge": {
+        "tour": "TOUR",
+        "product": "PRODUCT"
+      },
+      "tourCta": "Book Experience",
+      "productCta": "Add to Cart"
+    },
+    "detail": {
+      "loading": "Loading...",
+      "notFound": "Product not found",
+      "saved": "Saved",
+      "breadcrumb": {
+        "home": "Home",
+        "marketplace": "Marketplace"
+      },
+      "gallery": {
+        "showAll": "Show all"
+      },
+      "partner": {
+        "hostedBy": "Hosted by {{name}}",
+        "chatWithHost": "Chat with Host",
+        "defaultName": "Local Partner",
+        "defaultSubtitle": "Trusted partner"
+      },
+      "about": {
+        "experienceTitle": "About this experience",
+        "productTitle": "About this product",
+        "showMore": "Show more"
+      },
+      "purchase": {
+        "securePayment": "Secure payment with VnPay",
+        "physical": {
+          "inStock": "In stock: {{stock}}",
+          "quantityLabel": "Quantity",
+          "noteLabel": "Note",
+          "notePlaceholder": "Optional message for seller...",
+          "addToCart": "Add to Cart"
+        },
+        "tour": {
+          "perTicket": "per ticket",
+          "availableDaily": "Available daily",
+          "ticketQuantityHint": "Ticket quantity = number of travelers",
+          "travelDateLabel": "Travel date",
+          "ticketsLabel": "Tickets",
+          "noteLabel": "Note",
+          "notePlaceholder": "Optional note for your booking...",
+          "bookNow": "Book Now",
+          "addToCart": "Add to Cart"
+        }
+      }
+    }
   }
 }

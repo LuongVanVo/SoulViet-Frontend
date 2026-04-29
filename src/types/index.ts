@@ -4,3 +4,4 @@ export * from './vibe.types';
 export * from './craft.types';
 export * from './social.types';
 export * from './media.types';
+export * from './marketplace.type';

@@ -373,5 +373,85 @@
         "favorites": "Yêu thích"
       }
     }
+  },
+
+  "marketplace": {
+    "hero": {
+      "title": "Khám phá đặc sản địa phương & Tour trải nghiệm",
+      "subtitle": "Đắm chìm trong văn hóa sôi động của Việt Nam. Mua đồ thủ công chính gốc hoặc đặt những trải nghiệm địa phương khó quên.",
+      "imageAlt": "Phong cảnh Việt Nam"
+    },
+    "filters": {
+      "categoryLabel": "Danh mục",
+      "priceLabel": "Giá",
+      "locationLabel": "Vị trí",
+      "searchPlaceholder": "Tìm kiếm trải nghiệm hoặc sản phẩm...",
+      "searchButton": "Tìm kiếm",
+      "allCategories": "Tất cả danh mục",
+      "locationDefault": "Vị trí",
+      "dropdownSearchPlaceholder": "Tìm kiếm {{label}}...",
+      "noResults": "Không tìm thấy kết quả",
+      "priceTiers": {
+        "free": "Mức giá",
+        "premium": "0 - 500.000₫",
+        "exclusive": "500.000₫+"
+      }
+    },
+    "products": {
+      "noResults": "Không tìm thấy kết quả"
+    },
+    "card": {
+      "likeAria": "Yêu thích",
+      "badge": {
+        "tour": "TOUR",
+        "product": "SẢN PHẨM"
+      },
+      "tourCta": "Đặt trải nghiệm",
+      "productCta": "Thêm vào giỏ"
+    },
+    "detail": {
+      "loading": "Đang tải...",
+      "notFound": "Không tìm thấy sản phẩm",
+      "saved": "Đã lưu",
+      "breadcrumb": {
+        "home": "Trang chủ",
+        "marketplace": "Mua sắm"
+      },
+      "gallery": {
+        "showAll": "Xem tất cả"
+      },
+      "partner": {
+        "hostedBy": "Được cung cấp bởi {{name}}",
+        "chatWithHost": "Nhắn với đối tác",
+        "defaultName": "Đối tác địa phương",
+        "defaultSubtitle": "Đối tác tin cậy"
+      },
+      "about": {
+        "experienceTitle": "Về trải nghiệm này",
+        "productTitle": "Về sản phẩm này",
+        "showMore": "Xem thêm"
+      },
+      "purchase": {
+        "securePayment": "Thanh toán an toàn với VnPay",
+        "physical": {
+          "inStock": "Còn hàng: {{stock}}",
+          "quantityLabel": "Số lượng",
+          "noteLabel": "Ghi chú",
+          "notePlaceholder": "Ghi chú thêm cho người bán...",
+          "addToCart": "Thêm vào giỏ"
+        },
+        "tour": {
+          "perTicket": "mỗi vé",
+          "availableDaily": "Có lịch mỗi ngày",
+          "ticketQuantityHint": "Số vé = số người tham gia",
+          "travelDateLabel": "Ngày đi",
+          "ticketsLabel": "Số vé",
+          "noteLabel": "Ghi chú",
+          "notePlaceholder": "Ghi chú thêm cho đặt chỗ...",
+          "bookNow": "Đặt ngay",
+          "addToCart": "Thêm vào giỏ hàng"
+        }
+      }
+    }
   }
 }
