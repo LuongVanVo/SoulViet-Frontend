@@ -23,7 +23,7 @@ export const StoryCard = ({ story }: StoryCardProps) => {
         </div>
 
         <div className="space-y-2">
-          <p className="text-sm leading-6 text-gray-600">{story.content}</p>
+          <p className="text-sm leading-6 text-gray-600 break-words whitespace-pre-wrap">{story.content}</p>
         </div>
 
         <div className="flex items-center gap-4 text-sm text-gray-500">

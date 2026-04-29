@@ -160,3 +160,29 @@ export interface Connection<T> {
   pageInfo: PageInfo;
   totalCount: number;
 }
+
+export interface PostComment {
+  id: string;
+  postId: string;
+  userId: string;
+  fullName: string;
+  avatarUrl?: string;
+  content: string;
+  parentCommentId?: string;
+  createdAt: string;
+  updatedAt?: string;
+  repliesCount: number;
+  replies?: PostComment[];
+}
+
+export interface CreateCommentPayload {
+  postId: string;
+  content: string;
+  parentCommentId?: string;
+}
+
+export interface UpdateCommentPayload extends CreateCommentPayload {
+  id: string;
+}
+
+export interface CommentConnection extends Connection<PostComment> {}

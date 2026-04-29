@@ -2,9 +2,11 @@ import { useState, useRef, useEffect } from 'react';
 import { Edit3, Trash2, EllipsisVertical } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { PostHeaderProps } from '@/types';
+import { useAuthStore } from '@/store';
 
 export interface SocialPostHeaderExtProps extends PostHeaderProps {
 	postId?: string;
+	authorId?: string;
 	onEdit?: (postId: string) => void;
 	onDelete?: (postId: string) => void;
 }
@@ -16,10 +18,13 @@ export const SocialPostHeader = ({
 	location,
 	vibe,
 	postId,
+	authorId,
 	onEdit,
 	onDelete,
 }: SocialPostHeaderExtProps) => {
 	const { t } = useTranslation();
+	const currentUserId = useAuthStore((state) => state.user?.id);
+	const isOwnPost = currentUserId === authorId;
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const menuRef = useRef<HTMLDivElement>(null);
 
@@ -44,7 +49,14 @@ export const SocialPostHeader = ({
 			<div className="flex min-w-0 items-center gap-3">
 				<img src={avatar} alt={author} className="h-10 w-10 rounded-full object-cover" />
 				<div className="min-w-0">
-					<p className="truncate text-base font-semibold text-[#1F2937]">{author}</p>
+					<div className="flex items-center gap-2">
+						<p className="truncate text-base font-semibold text-[#1F2937]">{author}</p>
+						{!isOwnPost && (
+							<button className="text-sm font-bold text-blue-500 hover:text-blue-600 transition-colors">
+								• {t('social.feed.follow', { defaultValue: 'Theo dõi' })}
+							</button>
+						)}
+					</div>
 					<div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#6B7280]">
 						<div className="flex min-w-0 items-center">
 							<span className="truncate">{timeAgo}</span>
