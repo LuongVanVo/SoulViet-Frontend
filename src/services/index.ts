@@ -7,3 +7,4 @@ export * from './axios';
 export * from './apiService';
 export * from './media.api';
 export * from './home';
+export * from './marketplace';
