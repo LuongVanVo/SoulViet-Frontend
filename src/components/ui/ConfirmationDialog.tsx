@@ -35,8 +35,11 @@ export const ConfirmationDialog = ({
 			: 'bg-[#1F58A5] text-white hover:bg-[#174888]';
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4">
-			<div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-2xl">
+		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4" onClick={onCancel}>
+			<div 
+				className="w-full max-w-md rounded-2xl bg-white p-5 shadow-2xl"
+				onClick={(e) => e.stopPropagation()}
+			>
 				<h3 className="text-lg font-semibold text-[#111827]">{title}</h3>
 				<p className="mt-2 text-sm text-[#4B5563]">{message}</p>
 				<div className="mt-5 flex justify-end gap-3">

@@ -16,6 +16,7 @@ import {
   VerifyEmailNoticePage,
   ResetPasswordPage,
   MarketplaceProductDetailPage,
+  PostDetailPage,
 } from '@/pages';
 
 export const router = createBrowserRouter([
@@ -38,6 +39,10 @@ export const router = createBrowserRouter([
       {
         path: 'social',
         element: <Social />,
+      },
+      {
+        path: 'posts/:postId',
+        element: <PostDetailPage />,
       },
       {
         path: 'marketplace',

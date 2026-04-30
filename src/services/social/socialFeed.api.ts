@@ -17,4 +17,9 @@ export const socialFeedApi = {
             .delete<LikePostResponse>(`/posts/${postId}/likes`)
             .then((res) => res.data);
     },
+    getPostById: (postId: string): Promise<SocialPostApiItem> => {
+        return apiClient
+            .get<SocialPostApiItem>(`/Post/${postId}`)
+            .then((res) => res.data);
+    },
 };
