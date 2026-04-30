@@ -32,7 +32,6 @@ const writeLikedPostIds = (userId: string | null | undefined, likedIds: Set<stri
 	try {
 		window.localStorage.setItem(getStorageKey(userId), JSON.stringify(Array.from(likedIds)));
 	} catch {
-		// Ignore storage failures; the UI still reflects the latest server response.
 	}
 };
 
@@ -52,25 +51,29 @@ export const markPostUnlikedForUser = (userId: string | null | undefined, postId
 	writeLikedPostIds(userId, likedIds);
 };
 
-export const mergeLikedStateForUser = <T extends { id?: string; Id?: string; isLiked?: boolean }>(
+export const mergeLikedStateForUser = <T extends { id?: string; Id?: string; isLiked?: boolean; originalPost?: any }>(
 	posts: T[],
 	userId: string | null | undefined,
-) => {
+): T[] => {
 	if (!userId) {
 		return posts;
 	}
 
 	return posts.map((post) => {
 		const postId = post.id ?? post.Id;
-		if (!postId) {
-			return post;
+		const originalPost = post.originalPost;
+
+		let mergedPost = { ...post };
+
+		if (postId) {
+			const persistedLiked = isPostLikedForUser(userId, postId);
+			mergedPost.isLiked = persistedLiked || Boolean(post.isLiked);
 		}
 
-		const persistedLiked = isPostLikedForUser(userId, postId);
+		if (originalPost) {
+			mergedPost.originalPost = mergeLikedStateForUser([originalPost], userId)[0];
+		}
 
-		return {
-			...post,
-			isLiked: persistedLiked || Boolean(post.isLiked),
-		};
+		return mergedPost;
 	});
 };

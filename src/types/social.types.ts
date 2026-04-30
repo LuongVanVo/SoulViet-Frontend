@@ -91,6 +91,14 @@ export interface SocialPostApiItem {
   isLiked?: boolean;
   success?: boolean;
   message?: string;
+  type?: 'post' | 'shared-post';
+  originalPost?: SocialPostApiItem;
+  sharedByUser?: {
+    id: string;
+    name: string;
+    avatar?: string;
+  };
+  sharedAt?: string;
 }
 
 export interface LikePostResponse {
@@ -110,6 +118,7 @@ export interface PostHeaderProps {
 export interface PostActionProps {
   likes: number;
   comments: number;
+  shares: number;
   postId?: string;
   onLike?: (postId: string) => void;
   isLiking?: boolean;
@@ -137,6 +146,14 @@ export interface SocialPost {
   isLiked?: boolean;
   rewardCoins: number;
   createdAt: string;
+  type?: 'post' | 'shared-post';
+  originalPost?: SocialPost;
+  sharedByUser?: {
+    id: string;
+    name: string;
+    avatar?: string;
+  };
+  sharedAt?: string;
 }
 
 export interface PostCardProps {
@@ -185,4 +202,38 @@ export interface UpdateCommentPayload extends CreateCommentPayload {
   id: string;
 }
 
-export interface CommentConnection extends Connection<PostComment> {}
+export interface CommentConnection extends Connection<PostComment> { }
+
+export const ShareType = {
+  Timeline: 1,
+  Message: 2,
+  External: 3,
+} as const;
+
+export type ShareType = typeof ShareType[keyof typeof ShareType];
+
+export interface PostShare {
+  id: string;
+  postId: string;
+  userId: string;
+  caption?: string;
+  createdAt: string;
+  shareType: ShareType;
+}
+
+export interface SharePostPayload {
+  caption?: string;
+  shareType: ShareType;
+}
+
+export interface SharePostResponse {
+  shareId: string;
+  totalShares: number;
+  shareUrl: string;
+}
+
+export interface ShareStreamEvent {
+  success: boolean;
+  sharesCount: number;
+  postId: string;
+}
