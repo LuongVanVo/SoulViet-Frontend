@@ -3,12 +3,14 @@ import { Edit3, Trash2, EllipsisVertical } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { PostHeaderProps } from '@/types';
 import { useAuthStore } from '@/store';
+import { Link } from 'react-router-dom';
 
 export interface SocialPostHeaderExtProps extends PostHeaderProps {
 	postId?: string;
 	authorId?: string;
 	onEdit?: (postId: string) => void;
 	onDelete?: (postId: string) => void;
+	isShared?: boolean;
 }
 
 export const SocialPostHeader = ({
@@ -21,6 +23,7 @@ export const SocialPostHeader = ({
 	authorId,
 	onEdit,
 	onDelete,
+	isShared,
 }: SocialPostHeaderExtProps) => {
 	const { t } = useTranslation();
 	const currentUserId = useAuthStore((state) => state.user?.id);
@@ -44,13 +47,24 @@ export const SocialPostHeader = ({
 		};
 	}, [isMenuOpen]);
 
+	const profileLink = authorId ? `/profile/${authorId}` : '#';
+
 	return (
 		<div className="flex items-start justify-between gap-3 p-4">
 			<div className="flex min-w-0 items-center gap-3">
-				<img src={avatar} alt={author} className="h-10 w-10 rounded-full object-cover" />
+				<Link to={profileLink} className="shrink-0 transition-opacity hover:opacity-80">
+					<img src={avatar} alt={author} className="h-10 w-10 rounded-full object-cover" />
+				</Link>
 				<div className="min-w-0">
 					<div className="flex items-center gap-2">
-						<p className="truncate text-base font-semibold text-[#1F2937]">{author}</p>
+						<Link to={profileLink} className="truncate text-base font-semibold text-[#1F2937] hover:underline">
+							{author}
+						</Link>
+						{isShared && (
+							<span className="text-sm text-gray-500 font-normal">
+								 {t('social.feed.sharedPost.shared', { defaultValue: 'đã chia sẻ bài viết này' })}
+							</span>
+						)}
 						{!isOwnPost && (
 							<button className="text-sm font-bold text-blue-500 hover:text-blue-600 transition-colors">
 								• {t('social.feed.follow', { defaultValue: 'Theo dõi' })}

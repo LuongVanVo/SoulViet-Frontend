@@ -184,7 +184,7 @@
         "location": "Hội An",
         "caption": "Xin chào"
       },
-      "post": {
+    "post": {
         "likes": "yêu thích",
         "comments": "bình luận",
         "shares": "chia sẻ",
@@ -205,6 +205,14 @@
         "rewardSuffix": "từ bài viết này",
         "vibes": {
           "calm": "Bình yên"
+        }
+      },
+      "comments": {
+        "author": "Tác giả",
+        "empty": "Chưa có bình luận nào.",
+        "guest": {
+          "title": "Vui lòng đăng nhập để xem thêm",
+          "loginButton": "Đăng nhập ngay"
         }
       }
     },
@@ -345,7 +353,7 @@
       "quickMenu": {
         "journey": "Hành trình của tôi",
         "bookings": "Đặt chỗ của tôi",
-        "posts": "Bài đăng của tôi",
+        "posts": "Trang cá nhân",
         "settings": "Cài đặt",
         "support": "Trợ giúp & Hỗ trợ"
       },
@@ -396,6 +404,20 @@
         "visitedPlaces": "Địa điểm đã thăm",
         "favorites": "Yêu thích"
       }
+    },
+    "public": {
+      "profileTitle": "Trang cá nhân",
+      "error": "Không tìm thấy người dùng hoặc có lỗi xảy ra.",
+      "posts": "Bài viết",
+      "followers": "Người theo dõi",
+      "following": "Đang theo dõi",
+      "users": "người dùng",
+      "follow": "Theo dõi",
+      "message": "Nhắn tin",
+      "noPosts": "Chưa có bài viết nào",
+      "noPostsDesc": "Người dùng này chưa chia sẻ bài viết nào.",
+      "basedIn": "Đến từ {{location}}.",
+      "editProfile": "Chỉnh sửa trang cá nhân"
     }
   },
 

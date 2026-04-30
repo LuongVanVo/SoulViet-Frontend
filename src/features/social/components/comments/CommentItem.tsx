@@ -8,6 +8,8 @@ import { useAuthStore } from '@/store';
 import { useMemo, useState } from 'react';
 import { useCommentReplies } from '@/hooks';
 
+import { Link } from 'react-router-dom';
+
 interface CommentItemProps {
     comment: PostComment;
     postAuthorId?: string;
@@ -79,10 +81,15 @@ export const CommentItem = ({ comment, postAuthorId, isAuthor, isReply, onReply,
         });
     };
 
+    const profileLink = `/profile/${comment.userId}`;
+
     return (
         <div className="flex flex-col">
             <div className={`group flex gap-3 px-4 py-2 transition-colors ${isReply ? 'pl-14' : ''}`}>
-                <div className={`${isReply ? 'h-6 w-6' : 'h-8 w-8'} shrink-0 overflow-hidden rounded-full bg-gray-100`}>
+                <Link 
+                    to={profileLink}
+                    className={`${isReply ? 'h-6 w-6' : 'h-8 w-8'} shrink-0 overflow-hidden rounded-full bg-gray-100 transition-opacity hover:opacity-80`}
+                >
                     {comment.avatarUrl ? (
                         <img
                             src={comment.avatarUrl}
@@ -94,15 +101,15 @@ export const CommentItem = ({ comment, postAuthorId, isAuthor, isReply, onReply,
                             {comment.fullName?.charAt(0).toUpperCase()}
                         </div>
                     )}
-                </div>
+                </Link>
 
                 <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                         <div className="text-[13px] leading-[1.4] break-words">
                             <div className="flex items-center gap-1 mb-0.5">
-                                <span className="font-bold text-[#1E293B] cursor-pointer">
+                                <Link to={profileLink} className="font-bold text-[#1E293B] hover:underline">
                                     {comment.fullName}
-                                </span>
+                                </Link>
                                 {isAuthor && (
                                     <span className="text-[12px] text-[#64748B]">
                                         • {t('social.comments.author', { defaultValue: 'Tác giả' })}

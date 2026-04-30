@@ -1,6 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { MainLayout } from '@/layouts/MainLayout';
-import { MyPost } from '@/pages/profile/MyPost';
 import { 
   HomePage,
   Map, 
@@ -17,6 +16,7 @@ import {
   ResetPasswordPage,
   MarketplaceProductDetailPage,
   PostDetailPage,
+  PublicProfilePage,
 } from '@/pages';
 
 export const router = createBrowserRouter([
@@ -57,8 +57,8 @@ export const router = createBrowserRouter([
         element: <Profile />,
       },
       {
-        path: 'profile/my-posts',
-        element: <MyPost />,
+        path: 'profile/:userId',
+        element: <PublicProfilePage />,
       },
       {
         path: 'login',
