@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, X, Heart, MessageCircle, Share2, MoreHorizontal } from 'lucide-react';
 import { usePostById } from '@/hooks/usePostById';
 import { CommentSection } from '@/features/social/components/comments/CommentSection';
@@ -92,7 +92,7 @@ export const PostDetailPage = () => {
     };
 
     return (
-        <div 
+        <div
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black md:bg-black/95"
             onClick={() => navigate(-1)}
         >
@@ -103,7 +103,7 @@ export const PostDetailPage = () => {
                 <X className="h-8 w-8" />
             </button>
 
-            <div 
+            <div
                 className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between p-4 md:hidden"
                 onClick={(e) => e.stopPropagation()}
             >
@@ -115,7 +115,7 @@ export const PostDetailPage = () => {
                 </button>
             </div>
 
-            <div 
+            <div
                 className="flex h-full w-full overflow-hidden bg-black md:h-[90vh] md:w-[90vw] md:max-w-[1200px] md:flex-row md:rounded-lg"
                 onClick={(e) => e.stopPropagation()}
             >
@@ -170,7 +170,6 @@ export const PostDetailPage = () => {
                                 </button>
                             )}
 
-                            {/* Indicators */}
                             <div className="absolute bottom-40 md:bottom-4 left-1/2 flex -translate-x-1/2 gap-1.5">
                                 {mediaList.map((_, i) => (
                                     <div
@@ -186,13 +185,23 @@ export const PostDetailPage = () => {
                     <div className="absolute bottom-0 left-0 right-0 p-4 pt-10 bg-gradient-to-t from-black/80 to-transparent md:hidden">
                         <div className="flex flex-col gap-3">
                             <div className="flex items-center gap-2">
-                                <div className="h-9 w-9 overflow-hidden rounded-full border border-white/20">
+                                <Link
+                                    to={`/profile/${post.userId}`}
+                                    className="h-9 w-9 shrink-0 overflow-hidden rounded-full border border-white/20 transition-opacity hover:opacity-80"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
                                     <img src={post.avatar} alt="" className="h-full w-full object-cover" />
-                                </div>
+                                </Link>
                                 <div className="flex flex-col">
                                     <div className="flex items-center gap-2">
-                                        <span className="font-bold text-white text-sm">{post.author}</span>
-                                        <button className="text-blue-400 text-xs font-semibold">Theo dõi</button>
+                                        <Link
+                                            to={`/profile/${post.userId}`}
+                                            className="font-bold text-white text-sm hover:underline transition-all"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            {post.author}
+                                        </Link>
+                                        <button className="text-blue-400 text-xs font-semibold hover:text-blue-300 transition-colors">Theo dõi</button>
                                     </div>
                                     <span className="text-white/60 text-[10px]">{post.timeAgo}</span>
                                 </div>

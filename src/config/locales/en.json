@@ -205,6 +205,14 @@
         "vibes": {
           "calm": "Calm"
         }
+      },
+      "comments": {
+        "author": "Author",
+        "empty": "No comments yet.",
+        "guest": {
+          "title": "Please login to see more",
+          "loginButton": "Login Now"
+        }
       }
     },
     "localMarket": {
@@ -344,7 +352,7 @@
       "quickMenu": {
         "journey": "My journey",
         "bookings": "My bookings",
-        "posts": "My posts",
+        "posts": "My Profile",
         "settings": "Settings",
         "support": "Help & Support"
       },
@@ -395,6 +403,20 @@
         "visitedPlaces": "Visited places",
         "favorites": "Favorites"
       }
+    },
+    "public": {
+      "profileTitle": "Profile",
+      "error": "User not found or something went wrong.",
+      "posts": "Posts",
+      "followers": "Followers",
+      "following": "Following",
+      "users": "users",
+      "follow": "Follow",
+      "message": "Message",
+      "noPosts": "No posts yet",
+      "noPostsDesc": "This user hasn't shared any posts.",
+      "basedIn": "Based in {{location}}.",
+      "editProfile": "Edit Profile"
     }
   },
   "marketplace": {

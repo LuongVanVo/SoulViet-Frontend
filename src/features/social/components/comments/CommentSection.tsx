@@ -11,6 +11,8 @@ import i18next from 'i18next';
 import { useAuthStore } from '@/store';
 import { ShareModal } from '@/components/social/ShareModal';
 
+import { useNavigate } from 'react-router-dom';
+
 interface CommentSectionProps {
     post: SocialPost;
     onClose?: () => void;
@@ -21,6 +23,7 @@ export const CommentSection = ({
     onClose,
 }: CommentSectionProps) => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const currentLocale = i18next.language === 'vi' ? vi : enUS;
     const currentUserId = useAuthStore((state) => state.user?.id);
     const isOwnPost = currentUserId === post.userId;
@@ -33,7 +36,7 @@ export const CommentSection = ({
         updateComment,
         isSubmitting,
         isUpdating
-    } = usePostComments(post.id, true);
+    } = usePostComments(post.id, !currentUserId ? false : true);
 
     const { likePost, isLiking } = useSocialPostActions();
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -44,6 +47,10 @@ export const CommentSection = ({
     usePostCommentStream(post.id);
 
     const handleSendComment = async (content: string) => {
+        if (!currentUserId) {
+            navigate('/login');
+            return;
+        }
         try {
             if (editingComment) {
                 await updateComment({
@@ -73,7 +80,10 @@ export const CommentSection = ({
         <div className="flex h-full flex-col bg-white">
             <div className="flex items-center justify-between border-b border-[#F1F5F9] px-4 py-3 shrink-0">
                 <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 overflow-hidden rounded-full ring-1 ring-gray-100">
+                    <div 
+                        className="h-8 w-8 overflow-hidden rounded-full ring-1 ring-gray-100 cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={() => navigate(`/profile/${post.userId}`)}
+                    >
                         {post.avatar ? (
                             <img src={post.avatar} alt="" className="h-full w-full object-cover" />
                         ) : (
@@ -84,10 +94,15 @@ export const CommentSection = ({
                     </div>
                     <div>
                         <div className="flex items-center gap-1.5">
-                            <span className="text-[14px] font-bold text-[#1E293B]">{post.author}</span>
+                            <span 
+                                className="text-[14px] font-bold text-[#1E293B] cursor-pointer hover:underline"
+                                onClick={() => navigate(`/profile/${post.userId}`)}
+                            >
+                                {post.author}
+                            </span>
                             {!isOwnPost && (
                                 <span className="text-[14px] font-bold text-blue-500 hover:text-blue-600 cursor-pointer">
-                                    • {t('social.feed.follow', { defaultValue: 'Theo dõi' })}
+                                    • {t('social.feed.post.actions.follow', { defaultValue: 'Theo dõi' })}
                                 </span>
                             )}
                         </div>
@@ -101,18 +116,26 @@ export const CommentSection = ({
                 </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto scrollbar-hide">
-                <div className="divide-y divide-[#F1F5F9]/30">
+            <div className="flex-1 overflow-y-auto scrollbar-hide relative">
+                <div className={`divide-y divide-[#F1F5F9]/30 ${!currentUserId ? 'blur-[4px] select-none pointer-events-none' : ''}`}>
                     {post.caption && (
                         <div className="flex gap-3 px-4 py-4">
-                            <div className="h-8 w-8 shrink-0 overflow-hidden rounded-full ring-1 ring-gray-100">
+                            <div 
+                                className="h-8 w-8 shrink-0 overflow-hidden rounded-full ring-1 ring-gray-100 cursor-pointer hover:opacity-80 transition-opacity"
+                                onClick={() => navigate(`/profile/${post.userId}`)}
+                            >
                                 <img src={post.avatar} alt="" className="h-full w-full object-cover" />
                             </div>
                             <div className="flex-1 space-y-1">
                                 <div className="text-[14px]">
-                                    <span className="font-bold text-[#1E293B] mr-2">{post.author}</span>
+                                    <span 
+                                        className="font-bold text-[#1E293B] mr-2 cursor-pointer hover:underline"
+                                        onClick={() => navigate(`/profile/${post.userId}`)}
+                                    >
+                                        {post.author}
+                                    </span>
                                     <span className="text-[13px] text-[#64748B]">
-                                        • {t('social.comments.author', { defaultValue: 'Tác giả' })}
+                                        • {t('social.feed.comments.author', { defaultValue: 'Tác giả' })}
                                     </span>
                                     <div className="text-[#334155] leading-[1.4] whitespace-pre-wrap mt-1">
                                         {post.caption}
@@ -145,10 +168,24 @@ export const CommentSection = ({
                         ))
                     ) : !post.caption && (
                         <div className="py-20 text-center">
-                            <p className="text-sm text-gray-400">{t('social.comments.empty', { defaultValue: 'Chưa có bình luận nào.' })}</p>
+                            <p className="text-sm text-gray-400">{t('social.feed.comments.empty', { defaultValue: 'Chưa có bình luận nào.' })}</p>
                         </div>
                     )}
                 </div>
+
+                {!currentUserId && (
+                    <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/20">
+                        <div className="text-center p-6 bg-white/80 backdrop-blur-md shadow-xl rounded-2xl border border-white/20 max-w-[280px] mx-4">
+                            <p className="text-gray-800 font-medium text-sm mb-4">{t('social.feed.comments.guest.title', { defaultValue: 'Vui lòng đăng nhập để xem thêm' })}</p>
+                            <button
+                                onClick={() => navigate('/login')}
+                                className="w-45 bg-primary text-white py-2 rounded-xl font-semibold text-sm hover:bg-primary-hover transition-all shadow-lg active:scale-95"
+                            >
+                                {t('social.feed.comments.guest.loginButton', { defaultValue: 'Đăng nhập ngay' })}
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div className="border-t border-[#F1F5F9] shrink-0">

@@ -80,7 +80,7 @@ export const UserProfilePage = ({ user, onLoggedOut }: UserProfilePageProps) => 
               type="button"
               onClick={() => {
                 if (item.id === 'posts') {
-                  navigate('/profile/my-posts');
+                  navigate(`/profile/${user.id}`);
                 }
               }}
               className="flex w-full items-center justify-between rounded-2xl border border-gray-200 bg-white px-4 py-4 text-left shadow-sm transition hover:border-primary/30"
