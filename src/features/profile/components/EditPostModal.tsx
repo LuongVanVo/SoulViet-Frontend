@@ -326,8 +326,11 @@ export const EditPostModal = ({ isOpen, post, isSubmitting, onClose, onSubmit }:
 	}
 
 	return (
-		<div className="fixed inset-0 z-[100] flex items-end justify-center bg-[#6B728099] p-0 sm:items-center sm:p-4">
-			<div className="relative flex w-full max-w-full max-h-[calc(100dvh-0.5rem)] flex-col overflow-hidden rounded-t-[2rem] bg-[#FCFCFD] shadow-2xl sm:max-w-[360px] sm:max-h-[calc(100dvh-2rem)] sm:rounded-3xl">
+		<div className="fixed inset-0 z-[100] flex items-end justify-center bg-[#6B728099] p-0 sm:items-center sm:p-4" onClick={handleClose}>
+			<div 
+				className="relative flex w-full max-w-full max-h-[calc(100dvh-0.5rem)] flex-col overflow-hidden rounded-t-[2rem] bg-[#FCFCFD] shadow-2xl sm:max-w-[360px] sm:max-h-[calc(100dvh-2rem)] sm:rounded-3xl"
+				onClick={(e) => e.stopPropagation()}
+			>
 				<div className="flex items-center justify-between border-b border-[#EAECF0] px-4 py-4">
 					<h3 className="text-[18px] font-semibold text-[#2F3A48]">{t('profile.user.posts.editModal.title')}</h3>
 					<button

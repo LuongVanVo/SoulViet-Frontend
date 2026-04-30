@@ -301,8 +301,11 @@ export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: Creat
   const primaryPreview = mediaPreviewUrls[0];
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-end justify-center bg-[#6B728099] p-0 sm:items-center sm:p-4">
-      <div className="relative flex w-full max-w-full max-h-[calc(100dvh-0.5rem)] flex-col overflow-hidden rounded-t-[2rem] bg-[#FCFCFD] shadow-2xl sm:max-w-[420px] sm:max-h-[calc(100dvh-2rem)] sm:rounded-3xl">
+    <div className="fixed inset-0 z-[100] flex items-end justify-center bg-[#6B728099] p-0 sm:items-center sm:p-4" onClick={handleClose}>
+      <div 
+        className="relative flex w-full max-w-full max-h-[calc(100dvh-0.5rem)] flex-col overflow-hidden rounded-t-[2rem] bg-[#FCFCFD] shadow-2xl sm:max-w-[420px] sm:max-h-[calc(100dvh-2rem)] sm:rounded-3xl"
+        onClick={(e) => e.stopPropagation()}
+      >
         {isSelectingVibe ? (
           <div className="min-h-0 flex-1 flex flex-col bg-[#FCFCFD]">
             <div className="flex items-center gap-3 border-b border-[#EAECF0] px-5 py-4">

@@ -44,6 +44,17 @@ export const useSocialPostActions = () => {
 			(data: any) => updateSocialFeedLikeState(data as Connection<SocialPostApiItem> | undefined, response.postId, response.isLiked, response.likesCount),
 		);
 		queryClient.setQueriesData(
+			{ queryKey: ['post', response.postId] },
+			(data: SocialPostApiItem | undefined) => {
+				if (!data) return data;
+				return {
+					...data,
+					likesCount: response.likesCount,
+					isLiked: response.isLiked,
+				};
+			}
+		);
+		queryClient.setQueriesData(
 			{ queryKey: ['user-posts'] },
 			(data: any) => {
 				if (!data) return data;
