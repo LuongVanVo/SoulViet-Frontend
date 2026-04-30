@@ -158,6 +158,21 @@
         "locationPickerSuggestions": "Suggestions",
         "locationPickerCurrentLocation": "Current location"
       },
+      "shareModal": {
+        "title": "Share",
+        "subtitle": "Choose how you want to send this post",
+        "close": "Close",
+        "shareText": "Take a look at this post on SoulViet",
+        "defaultUserName": "You",
+        "feedLabel": "Feed",
+        "placeholder": "Say something about this content...",
+        "emojiLabel": "Pick an emoji",
+        "sendNow": "Share now",
+        "posting": "Posting..."
+      },
+      "sharedPost": {
+        "shared": "shared this post"
+      },
       "wallet": {
         "label": "Your SoulCoins",
         "action": "Details"
@@ -171,10 +186,19 @@
       "post": {
         "likes": "likes",
         "comments": "comments",
+        "shares": "shares",
         "actions": {
           "like": "Like",
           "comment": "Comment",
-          "share": "Share"
+          "share": "Share",
+          "shareToTimeline": "Share to Timeline",
+          "follow": "Follow"
+        },
+        "shareModal": {
+          "title": "Share",
+          "subtitle": "Choose how you want to send this post",
+          "close": "Close",
+          "shareText": "Take a look at this post on SoulViet"
         },
         "rewardPrefix": "Earn",
         "rewardSuffix": "from this post",

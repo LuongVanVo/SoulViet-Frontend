@@ -83,7 +83,6 @@ export const EditPostModal = ({ isOpen, post, isSubmitting, onClose, onSubmit }:
 		setShowVibePicker(false);
 		setVibeSearchQuery('');
 		clearSelectedUploads();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isOpen, post?.id]);
 
 	useEffect(() => {
@@ -348,10 +347,6 @@ export const EditPostModal = ({ isOpen, post, isSubmitting, onClose, onSubmit }:
 						</div>
 						<div>
 							<p className="text-[17px] font-semibold text-[#2F3A48]">{post.author}</p>
-							<div className="inline-flex items-center gap-2 rounded-full bg-[#E5E7EB] px-3 py-1 text-xs font-semibold text-[#111827]">
-								<Tag className="h-3.5 w-3.5" />
-								<span>{t('profile.user.posts.editModal.privacyLabel')}</span>
-							</div>
 						</div>
 					</div>
 
@@ -364,228 +359,232 @@ export const EditPostModal = ({ isOpen, post, isSubmitting, onClose, onSubmit }:
 						placeholder={t('profile.user.posts.editModal.captionPlaceholder', { name: post.author })}
 					/>
 
-					<div className="flex gap-2 px-1">
-						<button
-							type="button"
-							onClick={() => setAspectRatio('square')}
-							className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${aspectRatio === 'square' ? 'bg-[#1F58A5] text-white' : 'bg-[#F0F2F5] text-[#4B5563] hover:bg-[#E4E6E9]'}`}
-						>
-							{t('social.feed.createModal.aspectRatio.square', { defaultValue: '1:1' })}
-						</button>
-						<button
-							type="button"
-							onClick={() => setAspectRatio('horizontal')}
-							className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${aspectRatio === 'horizontal' ? 'bg-[#1F58A5] text-white' : 'bg-[#F0F2F5] text-[#4B5563] hover:bg-[#E4E6E9]'}`}
-						>
-							{t('social.feed.createModal.aspectRatio.horizontal', { defaultValue: '16:9' })}
-						</button>
-						<button
-							type="button"
-							onClick={() => setAspectRatio('vertical')}
-							className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${aspectRatio === 'vertical' ? 'bg-[#1F58A5] text-white' : 'bg-[#F0F2F5] text-[#4B5563] hover:bg-[#E4E6E9]'}`}
-						>
-							{t('social.feed.createModal.aspectRatio.vertical', { defaultValue: '4:5' })}
-						</button>
-					</div>
-
-					{mediaCount > 0 ? (
-						<div className="relative group overflow-hidden rounded-2xl border border-[#D9DEE6] bg-[#F8FAFC]">
-							<div
-								ref={scrollRef}
-								onScroll={handleScroll}
-								className={`flex snap-x snap-mandatory overflow-x-auto scrollbar-hide w-full ${aspectRatio === 'vertical'
-									? 'aspect-[4/5]'
-									: (aspectRatio === 'horizontal' ? 'aspect-[16/9]' : 'aspect-square')
-									}`}
-							>
-								{displayMedia.map((item, idx) => (
-									<div key={idx} className="w-full shrink-0 snap-center relative flex items-center justify-center overflow-hidden">
-										{item.type === 'video' ? (
-											<video src={item.url} className="h-full w-full object-contain bg-black" controls />
-										) : (
-											<img src={item.url} alt="" className="h-full w-full object-contain" />
-										)}
-
-										<div className="absolute left-3 top-3 z-10">
-											<button
-												type="button"
-												onClick={() => fileInputRef.current?.click()}
-												className="inline-flex items-center gap-2 rounded-2xl bg-white/90 px-3 py-2 text-sm font-semibold text-[#111827] shadow-sm backdrop-blur-sm"
-											>
-												<Pencil className="h-3.5 w-3.5" />
-												{t('profile.user.posts.editModal.changeMedia')}
-											</button>
-										</div>
-
-										<button
-											type="button"
-											onClick={() => removeMediaAtIndex(idx)}
-											className="absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#4B5563] shadow-sm backdrop-blur-sm"
-										>
-											<X className="h-5 w-5" />
-										</button>
-									</div>
-								))}
+					{post.type !== 'shared-post' && (
+						<>
+							<div className="flex gap-2 px-1">
+								<button
+									type="button"
+									onClick={() => setAspectRatio('square')}
+									className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${aspectRatio === 'square' ? 'bg-[#1F58A5] text-white' : 'bg-[#F0F2F5] text-[#4B5563] hover:bg-[#E4E6E9]'}`}
+								>
+									{t('social.feed.createModal.aspectRatio.square', { defaultValue: '1:1' })}
+								</button>
+								<button
+									type="button"
+									onClick={() => setAspectRatio('horizontal')}
+									className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${aspectRatio === 'horizontal' ? 'bg-[#1F58A5] text-white' : 'bg-[#F0F2F5] text-[#4B5563] hover:bg-[#E4E6E9]'}`}
+								>
+									{t('social.feed.createModal.aspectRatio.horizontal', { defaultValue: '16:9' })}
+								</button>
+								<button
+									type="button"
+									onClick={() => setAspectRatio('vertical')}
+									className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${aspectRatio === 'vertical' ? 'bg-[#1F58A5] text-white' : 'bg-[#F0F2F5] text-[#4B5563] hover:bg-[#E4E6E9]'}`}
+								>
+									{t('social.feed.createModal.aspectRatio.vertical', { defaultValue: '4:5' })}
+								</button>
 							</div>
 
-							{mediaCount > 1 && (
-								<>
-									<button
-										type="button"
-										onClick={() => scroll('left')}
-										className={`absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-1 shadow-md z-10 transition-opacity ${currentIndex === 0 ? 'opacity-0' : 'opacity-100'}`}
+							{mediaCount > 0 ? (
+								<div className="relative group overflow-hidden rounded-2xl border border-[#D9DEE6] bg-[#F8FAFC]">
+									<div
+										ref={scrollRef}
+										onScroll={handleScroll}
+										className={`flex snap-x snap-mandatory overflow-x-auto scrollbar-hide w-full ${aspectRatio === 'vertical'
+											? 'aspect-[4/5]'
+											: (aspectRatio === 'horizontal' ? 'aspect-[16/9]' : 'aspect-square')
+											}`}
 									>
-										<ChevronLeft className="h-4 w-4" />
-									</button>
-									<button
-										type="button"
-										onClick={() => scroll('right')}
-										className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-1 shadow-md z-10 transition-opacity ${currentIndex === mediaCount - 1 ? 'opacity-0' : 'opacity-100'}`}
-									>
-										<ChevronRight className="h-4 w-4" />
-									</button>
+										{displayMedia.map((item, idx) => (
+											<div key={idx} className="w-full shrink-0 snap-center relative flex items-center justify-center overflow-hidden">
+												{item.type === 'video' ? (
+													<video src={item.url} className="h-full w-full object-contain bg-black" controls />
+												) : (
+													<img src={item.url} alt="" className="h-full w-full object-contain" />
+												)}
 
-									<div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1 px-2 py-1 z-10">
-										{displayMedia.map((_, idx) => (
-											<div
-												key={idx}
-												className={`h-1 w-1 rounded-full transition-all ${idx === currentIndex ? 'bg-blue-600 w-2' : 'bg-gray-300'}`}
-											/>
+												<div className="absolute left-3 top-3 z-10">
+													<button
+														type="button"
+														onClick={() => fileInputRef.current?.click()}
+														className="inline-flex items-center gap-2 rounded-2xl bg-white/90 px-3 py-2 text-sm font-semibold text-[#111827] shadow-sm backdrop-blur-sm"
+													>
+														<Pencil className="h-3.5 w-3.5" />
+														{t('profile.user.posts.editModal.changeMedia')}
+													</button>
+												</div>
+
+												<button
+													type="button"
+													onClick={() => removeMediaAtIndex(idx)}
+													className="absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#4B5563] shadow-sm backdrop-blur-sm"
+												>
+													<X className="h-5 w-5" />
+												</button>
+											</div>
 										))}
 									</div>
-								</>
-							)}
-						</div>
-					) : null}
 
-					<div className="rounded-2xl bg-[#EEF2F6] p-2.5">
-						<div className="flex items-center justify-between gap-3">
-							<p className="text-sm font-semibold text-[#4B5563]">{t('profile.user.posts.editModal.addToPost')}</p>
-							<div className="flex items-center gap-2">
-								<input
-									ref={fileInputRef}
-									type="file"
-									accept="image/*"
-									multiple
-									onChange={handleMediaChange}
-									className="hidden"
-								/>
-								<button
-									type="button"
-									onClick={() => fileInputRef.current?.click()}
-									aria-label={t('profile.user.posts.editModal.addMedia')}
-									className="flex h-8 w-8 items-center justify-center rounded-full bg-[#DCE7F5] text-[#1F58A5] hover:bg-[#CADBF2]"
-								>
-									<ImagePlus className="h-4 w-4" />
-								</button>
-								<button
-									type="button"
-									onClick={() => setIsLocationPickerOpen(true)}
-									aria-label={t('social.feed.createModal.locationLabel')}
-									className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${isLocationPickerOpen || selectedLocation ? 'bg-[#1F58A5] text-white' : 'bg-[#DCE7F5] text-[#1F58A5] hover:bg-[#CADBF2]'
-										}`}
-								>
-									<MapPin className="h-4 w-4" />
-								</button>
-								<button
-									type="button"
-									onClick={() => setShowVibePicker((prev) => !prev)}
-									aria-label={t('social.feed.createModal.tagLabel')}
-									className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${showVibePicker || selectedVibe ? 'bg-[#1F58A5] text-white' : 'bg-[#DCE7F5] text-[#1F58A5] hover:bg-[#CADBF2]'
-										}`}
-								>
-									<Tag className="h-4 w-4" />
-								</button>
-							</div>
-						</div>
+									{mediaCount > 1 && (
+										<>
+											<button
+												type="button"
+												onClick={() => scroll('left')}
+												className={`absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-1 shadow-md z-10 transition-opacity ${currentIndex === 0 ? 'opacity-0' : 'opacity-100'}`}
+											>
+												<ChevronLeft className="h-4 w-4" />
+											</button>
+											<button
+												type="button"
+												onClick={() => scroll('right')}
+												className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-1 shadow-md z-10 transition-opacity ${currentIndex === mediaCount - 1 ? 'opacity-0' : 'opacity-100'}`}
+											>
+												<ChevronRight className="h-4 w-4" />
+											</button>
 
-						{selectedLocation ? (
-							<div className="mt-2 flex items-center justify-between rounded-xl border border-[#D9DEE6] bg-white px-3 py-2">
-								<div className="flex items-center gap-2 overflow-hidden">
-									<MapPin className="h-4 w-4 shrink-0 text-[#1F58A5]" />
-									<span className="truncate text-sm font-medium text-[#1F2937]">{selectedLocation.name}</span>
+											<div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1 px-2 py-1 z-10">
+												{displayMedia.map((_, idx) => (
+													<div
+														key={idx}
+														className={`h-1 w-1 rounded-full transition-all ${idx === currentIndex ? 'bg-blue-600 w-2' : 'bg-gray-300'}`}
+													/>
+												))}
+											</div>
+										</>
+									)}
 								</div>
-								<button
-									type="button"
-									onClick={() => setSelectedLocation(null)}
-									className="rounded-full p-1 text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#4B5563]"
-								>
-									<X className="h-3 w-3" />
-								</button>
-							</div>
-						) : null}
+							) : null}
 
-						{showVibePicker ? (
-							<div className="mt-2 flex h-[420px] flex-col overflow-hidden rounded-xl border border-[#D9DEE6] bg-white">
-								<div className="flex items-center gap-3 border-b border-[#EAECF0] px-4 py-3">
-									<button
-										type="button"
-										onClick={() => setShowVibePicker(false)}
-										className="rounded-full p-1.5 text-[#6B7280] transition-colors hover:bg-[#EEF2F7]"
-									>
-										<ArrowLeft className="h-5 w-5" />
-									</button>
-									<div className="min-w-0 flex-1">
-										<h3 className="text-[18px] font-semibold text-[#111827]">{t('social.feed.createModal.vibePickerTitle')}</h3>
-										<p className="truncate text-sm text-[#6B7280]">
-											{t('social.feed.createModal.vibePickerSubtitle', { defaultValue: 'Bạn đang cảm thấy thế nào?' })}{' '}
-											<span className="font-semibold text-[#1F58A5]">
-												{vibeTags.find((tag) => tag.id === selectedVibe)?.name ?? ''}
-											</span>
-										</p>
-									</div>
-								</div>
-
-								<div className="px-4 py-3">
-									<div className="relative">
-										<Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#6B7280]" />
+							<div className="rounded-2xl bg-[#EEF2F6] p-2.5">
+								<div className="flex items-center justify-between gap-3">
+									<p className="text-sm font-semibold text-[#4B5563]">{t('profile.user.posts.editModal.addToPost')}</p>
+									<div className="flex items-center gap-2">
 										<input
-											type="text"
-											value={vibeSearchQuery}
-											onChange={(event) => setVibeSearchQuery(event.target.value)}
-											placeholder={t('social.feed.createModal.vibeSearchPlaceholder')}
-											className="h-12 w-full rounded-[28px] border-none bg-[#E7E9EC] py-3 pl-12 pr-5 text-[15px] font-medium text-[#111827] outline-none placeholder:text-[#6B7280]"
+											ref={fileInputRef}
+											type="file"
+											accept="image/*"
+											multiple
+											onChange={handleMediaChange}
+											className="hidden"
 										/>
+										<button
+											type="button"
+											onClick={() => fileInputRef.current?.click()}
+											aria-label={t('profile.user.posts.editModal.addMedia')}
+											className="flex h-8 w-8 items-center justify-center rounded-full bg-[#DCE7F5] text-[#1F58A5] hover:bg-[#CADBF2]"
+										>
+											<ImagePlus className="h-4 w-4" />
+										</button>
+										<button
+											type="button"
+											onClick={() => setIsLocationPickerOpen(true)}
+											aria-label={t('social.feed.createModal.locationLabel')}
+											className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${isLocationPickerOpen || selectedLocation ? 'bg-[#1F58A5] text-white' : 'bg-[#DCE7F5] text-[#1F58A5] hover:bg-[#CADBF2]'
+												}`}
+										>
+											<MapPin className="h-4 w-4" />
+										</button>
+										<button
+											type="button"
+											onClick={() => setShowVibePicker((prev) => !prev)}
+											aria-label={t('social.feed.createModal.tagLabel')}
+											className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${showVibePicker || selectedVibe ? 'bg-[#1F58A5] text-white' : 'bg-[#DCE7F5] text-[#1F58A5] hover:bg-[#CADBF2]'
+												}`}
+										>
+											<Tag className="h-4 w-4" />
+										</button>
 									</div>
 								</div>
 
-								<div className="flex-1 overflow-y-auto pb-4">
-									<div className="flex flex-col px-4">
-										{vibeOptions
-											.filter((tag: any) => tag.label.toLowerCase().includes(vibeSearchQuery.toLowerCase()))
-											.map((tag: any) => {
-												const config = vibeConfig[tag.id];
-												const Icon = config?.icon || Tag;
-												const isSelected = selectedVibe === tag.id;
-												return (
-													<button
-														key={tag.id}
-														type="button"
-														onClick={() => {
-															setSelectedVibe(tag.id);
-															setShowVibePicker(false);
-														}}
-														ref={isSelected ? selectedVibeButtonRef : null}
-														className={`flex items-center gap-4 border-b border-[#D8DDE5] py-5 text-left transition-colors hover:bg-[#F9FAFB] ${isSelected ? 'bg-[#F6F9FF]' : ''
-															}`}
-													>
-														<div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${config?.bgColor || 'bg-gray-50'}`}>
-															<Icon className={`h-6 w-6 ${config?.color || 'text-gray-500'}`} />
-														</div>
-														<span className={`text-[16px] font-medium leading-[1.3] ${isSelected ? 'text-[#1F58A5]' : 'text-[#111827]'}`}>
-															{tag.label}
-														</span>
-													</button>
-												);
-											})}
-										{vibeOptions.filter((tag: any) => tag.label.toLowerCase().includes(vibeSearchQuery.toLowerCase())).length === 0 && vibeSearchQuery.length > 0 ? (
-											<p className="px-1 text-center text-base text-[#6B7280]">{t('social.feed.createModal.vibeEmptySearch')}</p>
-										) : null}
+								{selectedLocation ? (
+									<div className="mt-2 flex items-center justify-between rounded-xl border border-[#D9DEE6] bg-white px-3 py-2">
+										<div className="flex items-center gap-2 overflow-hidden">
+											<MapPin className="h-4 w-4 shrink-0 text-[#1F58A5]" />
+											<span className="truncate text-sm font-medium text-[#1F2937]">{selectedLocation.name}</span>
+										</div>
+										<button
+											type="button"
+											onClick={() => setSelectedLocation(null)}
+											className="rounded-full p-1 text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#4B5563]"
+										>
+											<X className="h-3 w-3" />
+										</button>
 									</div>
-								</div>
+								) : null}
+
+								{showVibePicker ? (
+									<div className="mt-2 flex h-[420px] flex-col overflow-hidden rounded-xl border border-[#D9DEE6] bg-white">
+										<div className="flex items-center gap-3 border-b border-[#EAECF0] px-4 py-3">
+											<button
+												type="button"
+												onClick={() => setShowVibePicker(false)}
+												className="rounded-full p-1.5 text-[#6B7280] transition-colors hover:bg-[#EEF2F7]"
+											>
+												<ArrowLeft className="h-5 w-5" />
+											</button>
+											<div className="min-w-0 flex-1">
+												<h3 className="text-[18px] font-semibold text-[#111827]">{t('social.feed.createModal.vibePickerTitle')}</h3>
+												<p className="truncate text-sm text-[#6B7280]">
+													{t('social.feed.createModal.vibePickerSubtitle', { defaultValue: 'Bạn đang cảm thấy thế nào?' })}{' '}
+													<span className="font-semibold text-[#1F58A5]">
+														{vibeTags.find((tag) => tag.id === selectedVibe)?.name ?? ''}
+													</span>
+												</p>
+											</div>
+										</div>
+
+										<div className="px-4 py-3">
+											<div className="relative">
+												<Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#6B7280]" />
+												<input
+													type="text"
+													value={vibeSearchQuery}
+													onChange={(event) => setVibeSearchQuery(event.target.value)}
+													placeholder={t('social.feed.createModal.vibeSearchPlaceholder')}
+													className="h-12 w-full rounded-[28px] border-none bg-[#E7E9EC] py-3 pl-12 pr-5 text-[15px] font-medium text-[#111827] outline-none placeholder:text-[#6B7280]"
+												/>
+											</div>
+										</div>
+
+										<div className="flex-1 overflow-y-auto pb-4">
+											<div className="flex flex-col px-4">
+												{vibeOptions
+													.filter((tag: any) => tag.label.toLowerCase().includes(vibeSearchQuery.toLowerCase()))
+													.map((tag: any) => {
+														const config = vibeConfig[tag.id];
+														const Icon = config?.icon || Tag;
+														const isSelected = selectedVibe === tag.id;
+														return (
+															<button
+																key={tag.id}
+																type="button"
+																onClick={() => {
+																	setSelectedVibe(tag.id);
+																	setShowVibePicker(false);
+																}}
+																ref={isSelected ? selectedVibeButtonRef : null}
+																className={`flex items-center gap-4 border-b border-[#D8DDE5] py-5 text-left transition-colors hover:bg-[#F9FAFB] ${isSelected ? 'bg-[#F6F9FF]' : ''
+																	}`}
+															>
+																<div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${config?.bgColor || 'bg-gray-50'}`}>
+																	<Icon className={`h-6 w-6 ${config?.color || 'text-gray-500'}`} />
+																</div>
+																<span className={`text-[16px] font-medium leading-[1.3] ${isSelected ? 'text-[#1F58A5]' : 'text-[#111827]'}`}>
+																	{tag.label}
+																</span>
+															</button>
+														);
+													})}
+												{vibeOptions.filter((tag: any) => tag.label.toLowerCase().includes(vibeSearchQuery.toLowerCase())).length === 0 && vibeSearchQuery.length > 0 ? (
+													<p className="px-1 text-center text-base text-[#6B7280]">{t('social.feed.createModal.vibeEmptySearch')}</p>
+												) : null}
+											</div>
+										</div>
+									</div>
+								) : null}
 							</div>
-						) : null}
-					</div>
+						</>
+					)}
 
 					<div className="pt-1">
 						<button

@@ -1,38 +1,29 @@
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Heart, MessageCircle, Share2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { usePostComments, usePostCommentStream } from '@/hooks';
-import type { PostComment } from '@/types';
+import { usePostComments, usePostCommentStream, useSocialPostActions } from '@/hooks';
+import type { SocialPost, PostComment } from '@/types';
 import { CommentItem } from './CommentItem';
 import { CommentInput } from './CommentInput';
 import { formatDistanceToNow } from 'date-fns';
 import { vi, enUS } from 'date-fns/locale';
 import i18next from 'i18next';
 import { useAuthStore } from '@/store';
+import { ShareModal } from '@/components/social/ShareModal';
 
 interface CommentSectionProps {
-    postId: string;
-    postAuthorId?: string;
+    post: SocialPost;
     onClose?: () => void;
-    authorName?: string;
-    authorAvatar?: string;
-    caption?: string;
-    createdAt?: string;
 }
 
 export const CommentSection = ({
-    postId,
-    postAuthorId,
+    post,
     onClose,
-    authorName,
-    authorAvatar,
-    caption,
-    createdAt
 }: CommentSectionProps) => {
     const { t } = useTranslation();
     const currentLocale = i18next.language === 'vi' ? vi : enUS;
     const currentUserId = useAuthStore((state) => state.user?.id);
-    const isOwnPost = currentUserId === postAuthorId;
+    const isOwnPost = currentUserId === post.userId;
 
     const {
         comments,
@@ -42,12 +33,15 @@ export const CommentSection = ({
         updateComment,
         isSubmitting,
         isUpdating
-    } = usePostComments(postId, true);
+    } = usePostComments(post.id, true);
+
+    const { likePost, isLiking } = useSocialPostActions();
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
     const [editingComment, setEditingComment] = useState<PostComment | null>(null);
     const [replyingTo, setReplyingTo] = useState<PostComment | null>(null);
 
-    usePostCommentStream(postId);
+    usePostCommentStream(post.id);
 
     const handleSendComment = async (content: string) => {
         try {
@@ -59,14 +53,14 @@ export const CommentSection = ({
                 setEditingComment(null);
             } else if (replyingTo) {
                 await addComment({
-                    postId,
+                    postId: post.id,
                     content,
                     parentCommentId: replyingTo.id,
                 });
                 setReplyingTo(null);
             } else {
                 await addComment({
-                    postId,
+                    postId: post.id,
                     content,
                 });
             }
@@ -80,17 +74,17 @@ export const CommentSection = ({
             <div className="flex items-center justify-between border-b border-[#F1F5F9] px-4 py-3 shrink-0">
                 <div className="flex items-center gap-3">
                     <div className="h-8 w-8 overflow-hidden rounded-full ring-1 ring-gray-100">
-                        {authorAvatar ? (
-                            <img src={authorAvatar} alt="" className="h-full w-full object-cover" />
+                        {post.avatar ? (
+                            <img src={post.avatar} alt="" className="h-full w-full object-cover" />
                         ) : (
                             <div className="flex h-full w-full items-center justify-center bg-gray-100 text-xs font-bold text-gray-400">
-                                {authorName?.charAt(0)}
+                                {post.author?.charAt(0)}
                             </div>
                         )}
                     </div>
                     <div>
                         <div className="flex items-center gap-1.5">
-                            <span className="text-[14px] font-bold text-[#1E293B]">{authorName}</span>
+                            <span className="text-[14px] font-bold text-[#1E293B]">{post.author}</span>
                             {!isOwnPost && (
                                 <span className="text-[14px] font-bold text-blue-500 hover:text-blue-600 cursor-pointer">
                                     • {t('social.feed.follow', { defaultValue: 'Theo dõi' })}
@@ -109,23 +103,23 @@ export const CommentSection = ({
 
             <div className="flex-1 overflow-y-auto scrollbar-hide">
                 <div className="divide-y divide-[#F1F5F9]/30">
-                    {caption && (
+                    {post.caption && (
                         <div className="flex gap-3 px-4 py-4">
                             <div className="h-8 w-8 shrink-0 overflow-hidden rounded-full ring-1 ring-gray-100">
-                                <img src={authorAvatar} alt="" className="h-full w-full object-cover" />
+                                <img src={post.avatar} alt="" className="h-full w-full object-cover" />
                             </div>
                             <div className="flex-1 space-y-1">
                                 <div className="text-[14px]">
-                                    <span className="font-bold text-[#1E293B] mr-2">{authorName}</span>
+                                    <span className="font-bold text-[#1E293B] mr-2">{post.author}</span>
                                     <span className="text-[13px] text-[#64748B]">
                                         • {t('social.comments.author', { defaultValue: 'Tác giả' })}
                                     </span>
                                     <div className="text-[#334155] leading-[1.4] whitespace-pre-wrap mt-1">
-                                        {caption}
+                                        {post.caption}
                                     </div>
                                 </div>
                                 <div className="text-[12px] text-[#64748B]">
-                                    {createdAt && formatDistanceToNow(new Date(createdAt), { locale: currentLocale })}
+                                    {post.createdAt && formatDistanceToNow(new Date(post.createdAt), { locale: currentLocale })}
                                 </div>
                             </div>
                         </div>
@@ -140,7 +134,7 @@ export const CommentSection = ({
                             <CommentItem
                                 key={comment.id}
                                 comment={comment}
-                                isAuthor={postAuthorId === comment.userId}
+                                isAuthor={post.userId === comment.userId}
                                 onDelete={(id) => deleteComment(id)}
                                 onEdit={(comment) => setEditingComment(comment)}
                                 onReply={(comment) => {
@@ -149,14 +143,63 @@ export const CommentSection = ({
                                 }}
                             />
                         ))
-                    ) : !caption && (
+                    ) : !post.caption && (
                         <div className="py-20 text-center">
                             <p className="text-sm text-gray-400">{t('social.comments.empty', { defaultValue: 'Chưa có bình luận nào.' })}</p>
                         </div>
                     )}
                 </div>
             </div>
+
             <div className="border-t border-[#F1F5F9] shrink-0">
+                <div className="flex items-center gap-4 px-4 pt-3">
+                    <button
+                        onClick={() => likePost(post.id)}
+                        disabled={isLiking}
+                        className={`transition-transform active:scale-125 ${post.isLiked ? 'text-red-500' : 'text-gray-700 hover:text-gray-400'}`}
+                    >
+                        <Heart className={`h-6 w-6 ${post.isLiked ? 'fill-current' : ''}`} />
+                    </button>
+                    <button className="text-[#2563EB] hover:text-blue-600 transition-colors">
+                        <MessageCircle className="h-6 w-6" />
+                    </button>
+                    <button
+                        onClick={() => setIsShareModalOpen(true)}
+                        className="text-[#15803D] hover:text-green-700 transition-colors"
+                    >
+                        <Share2 className="h-6 w-6" />
+                    </button>
+                </div>
+
+                <div className="px-4 py-2">
+                    {(post.likes > 0 || post.comments > 0 || post.shares > 0) && (
+                        <div className="flex items-center justify-between mb-1">
+                            <div>
+                                {post.likes > 0 && (
+                                    <p className="text-[13px] font-semibold text-gray-700">
+                                        {post.likes} {t('social.feed.post.likes')}
+                                    </p>
+                                )}
+                            </div>
+                            <div className="flex gap-4">
+                                {post.comments > 0 && (
+                                    <p className="text-[13px] text-gray-600">
+                                        {post.comments} {t('social.feed.post.comments')}
+                                    </p>
+                                )}
+                                {post.shares > 0 && (
+                                    <p className="text-[13px] text-gray-600">
+                                        {post.shares} {t('social.feed.post.shares')}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                    <p className="text-[10px] uppercase text-gray-400">
+                        {post.timeAgo}
+                    </p>
+                </div>
+
                 <CommentInput
                     onSend={handleSendComment}
                     isSubmitting={isSubmitting || isUpdating}
@@ -168,6 +211,12 @@ export const CommentSection = ({
                     }}
                 />
             </div>
+
+            <ShareModal
+                isOpen={isShareModalOpen}
+                onClose={() => setIsShareModalOpen(false)}
+                postId={post.id}
+            />
         </div>
     );
 };

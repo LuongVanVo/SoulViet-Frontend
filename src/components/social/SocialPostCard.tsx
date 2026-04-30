@@ -1,4 +1,4 @@
-import { useState, useRef, type ReactNode, useEffect } from 'react';
+import { useState, useRef, type ReactNode } from 'react';
 import { Coins, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -6,6 +6,7 @@ import type { PostCardProps } from '@/types';
 import { useAuthStore } from '@/store';
 import { SocialPostActions } from './SocialPostActions';
 import { SocialPostHeader } from './SocialPostHeader';
+import { ShareModal } from './ShareModal';
 import { CommentModal } from '@/features/social/components/comments';
 
 export interface SocialPostCardProps extends PostCardProps {
@@ -25,6 +26,7 @@ export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost, onLikeP
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+	const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
 	const mediaItems = post.media && post.media.length > 0
 		? post.media
@@ -54,10 +56,29 @@ export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost, onLikeP
 
 	const handleCommentClick = () => {
 		if (!isLoggedIn) {
-			navigate(`/login?redirect=${encodeURIComponent(location.pathname + location.search)}`);
+			const redirect = encodeURIComponent(`${location.pathname}${location.search}${location.hash}`);
+			navigate(`/login?redirect=${redirect}`);
 			return;
 		}
 		setIsCommentModalOpen(true);
+	};
+
+	const handleLikeClick = (postId: string) => {
+		if (!isLoggedIn) {
+			const redirect = encodeURIComponent(`${location.pathname}${location.search}${location.hash}`);
+			navigate(`/login?redirect=${redirect}`);
+			return;
+		}
+		onLikePost?.(postId);
+	};
+
+	const handleShareClick = () => {
+		if (!isLoggedIn) {
+			const redirect = encodeURIComponent(`${location.pathname}${location.search}${location.hash}`);
+			navigate(`/login?redirect=${redirect}`);
+			return;
+		}
+		setIsShareModalOpen(true);
 	};
 
 	return (
@@ -74,7 +95,7 @@ export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost, onLikeP
 				onDelete={onDeletePost}
 			/>
 
-			{mediaItems.length > 0 ? (
+			{mediaItems.length > 0 && (
 				<div className="relative group overflow-hidden bg-[#F8FAFC] flex items-center justify-center">
 					<div
 						ref={scrollRef}
@@ -130,10 +151,6 @@ export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost, onLikeP
 						</>
 					)}
 				</div>
-			) : (
-				<div className="flex h-64 items-center justify-center bg-gray-50">
-					<p className="text-sm text-gray-400">{t('social.feed.post.noMedia', { defaultValue: 'No media' })}</p>
-				</div>
 			)}
 
 			{post.caption && (
@@ -145,11 +162,13 @@ export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost, onLikeP
 			<SocialPostActions
 				likes={post.likes}
 				comments={post.comments}
+				shares={post.shares}
 				postId={post.id}
-				onLike={onLikePost}
+				onLike={handleLikeClick}
 				isLiking={isLiking}
 				isLiked={post.isLiked}
 				onComment={handleCommentClick}
+				onShare={handleShareClick}
 			/>
 
 			<div className="px-4 pb-4">
@@ -169,6 +188,13 @@ export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost, onLikeP
 				isOpen={isCommentModalOpen}
 				onClose={() => setIsCommentModalOpen(false)}
 				post={post}
+			/>
+
+			<ShareModal
+				isOpen={isShareModalOpen}
+				onClose={() => setIsShareModalOpen(false)}
+				postId={post.id}
+				postUrl={`${window.location.origin}/posts/${post.id}`}
 			/>
 		</article>
 	);

@@ -35,12 +35,6 @@ export const SocialFeed = () => {
   };
 
   const handleLikePost = async (postId: string) => {
-    if (!isLoggedIn) {
-      const redirect = encodeURIComponent(`${location.pathname}${location.search}${location.hash}`);
-      navigate(`/login?redirect=${redirect}`);
-      return;
-    }
-
     try {
       await likePost(postId);
     } catch (error) {

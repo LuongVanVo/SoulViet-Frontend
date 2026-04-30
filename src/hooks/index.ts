@@ -6,3 +6,5 @@ export * from './useVibeTags';
 export * from './usePostComments';
 export * from './usePostCommentStream';
 export * from './useCommentReplies';
+export * from './useSharePost';
+export * from './useShareStream';

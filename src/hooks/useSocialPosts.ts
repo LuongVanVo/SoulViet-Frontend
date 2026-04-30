@@ -52,7 +52,7 @@ const toSocialPost = (
 		post.AvatarUrl ||
 		(currentUser?.id && currentUser.id === userId ? currentUser.avatarUrl : undefined) ||
 		`https://api.dicebear.com/8.x/initials/svg?seed=${userId}`;
-	return {
+	const socialPost: SocialPost = {
 		id: post.id || post.Id,
 		userId,
 		author: post.author || post.Author || authorName,
@@ -73,6 +73,25 @@ const toSocialPost = (
 		rewardCoins: Math.max(1, likesCount),
 		createdAt: post.createdAt || post.CreatedAt,
 	};
+
+	if (post.type === 'shared-post' || post.Type === 'shared-post' || post.originalPost || post.OriginalPost) {
+		socialPost.type = 'shared-post';
+		const originalPostData = post.originalPost || post.OriginalPost;
+		if (originalPostData) {
+			socialPost.originalPost = toSocialPost(originalPostData, vibeTags, currentUser);
+		}
+
+		socialPost.sharedByUser = post.sharedByUser || post.SharedByUser || {
+			id: userId,
+			name: authorName,
+			avatar: avatarUrl
+		};
+		socialPost.sharedAt = socialPost.timeAgo;
+	} else {
+		socialPost.type = 'post';
+	}
+
+	return socialPost;
 };
 
 export const useSocialPosts = (params: GetSocialFeedParams = {}) => {

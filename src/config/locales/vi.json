@@ -159,6 +159,21 @@
         "locationPickerSuggestions": "Gợi ý",
         "locationPickerCurrentLocation": "Vị trí hiện tại"
       },
+      "shareModal": {
+        "title": "Chia sẻ",
+        "subtitle": "Chọn cách bạn muốn gửi bài viết này",
+        "close": "Đóng",
+        "shareText": "Cùng xem bài viết này trên SoulViet",
+        "defaultUserName": "Bạn",
+        "feedLabel": "Bảng feed",
+        "placeholder": "Hãy nói gì đó về nội dung này...",
+        "emojiLabel": "Chọn biểu tượng cảm xúc",
+        "sendNow": "Chia sẻ ngay",
+        "posting": "Đang chia sẻ..."
+      },
+      "sharedPost": {
+        "shared": "đã chia sẻ bài viết này"
+      },
       "wallet": {
         "label": "SoulCoins của bạn",
         "action": "Chi tiết"
@@ -172,10 +187,19 @@
       "post": {
         "likes": "yêu thích",
         "comments": "bình luận",
+        "shares": "chia sẻ",
         "actions": {
           "like": "Thích",
           "comment": "Bình luận",
-          "share": "Chia sẻ"
+          "share": "Chia sẻ",
+          "shareToTimeline": "Chia sẻ lên Timeline",
+          "follow": "Theo dõi"
+        },
+        "shareModal": {
+          "title": "Chia sẻ",
+          "subtitle": "Chọn cách bạn muốn gửi bài viết này",
+          "close": "Đóng",
+          "shareText": "Cùng xem bài viết này trên SoulViet"
         },
         "rewardPrefix": "Nhận được",
         "rewardSuffix": "từ bài viết này",
