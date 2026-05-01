@@ -3,7 +3,8 @@ import { Edit3, Trash2, EllipsisVertical } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { PostHeaderProps } from '@/types';
 import { useAuthStore } from '@/store';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useFollowUser } from '@/hooks/useFollowUser';
 
 export interface SocialPostHeaderExtProps extends PostHeaderProps {
 	postId?: string;
@@ -11,6 +12,7 @@ export interface SocialPostHeaderExtProps extends PostHeaderProps {
 	onEdit?: (postId: string) => void;
 	onDelete?: (postId: string) => void;
 	isShared?: boolean;
+	isFollowingAuthor?: boolean;
 }
 
 export const SocialPostHeader = ({
@@ -24,12 +26,16 @@ export const SocialPostHeader = ({
 	onEdit,
 	onDelete,
 	isShared,
+	isLocalPartner,
 }: SocialPostHeaderExtProps) => {
 	const { t } = useTranslation();
+	const navigate = useNavigate();
 	const currentUserId = useAuthStore((state) => state.user?.id);
 	const isOwnPost = currentUserId === authorId;
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const menuRef = useRef<HTMLDivElement>(null);
+
+	const { isFollowing, isFollower, followUser, unfollowUser, isLoading } = useFollowUser(authorId || '');
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -60,14 +66,37 @@ export const SocialPostHeader = ({
 						<Link to={profileLink} className="truncate text-base font-semibold text-[#1F2937] hover:underline">
 							{author}
 						</Link>
+						{isLocalPartner && (
+							<span className="bg-primary/5 text-primary text-[10px] px-1.5 py-0.5 rounded-md border border-primary/10 uppercase tracking-wider font-extrabold flex items-center shrink-0">
+								Partner
+							</span>
+						)}
 						{isShared && (
 							<span className="text-sm text-gray-500 font-normal">
 								 {t('social.feed.sharedPost.shared', { defaultValue: 'đã chia sẻ bài viết này' })}
 							</span>
 						)}
-						{!isOwnPost && (
-							<button className="text-sm font-bold text-blue-500 hover:text-blue-600 transition-colors">
-								• {t('social.feed.follow', { defaultValue: 'Theo dõi' })}
+						{!isOwnPost && authorId && (
+							<button 
+								onClick={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+									if (!currentUserId) {
+										const currentPath = window.location.pathname + window.location.search;
+										navigate(`/login?redirect=${encodeURIComponent(currentPath)}`);
+										return;
+									}
+									isFollowing ? unfollowUser() : followUser();
+								}}
+								disabled={isLoading}
+								className={`text-sm font-bold transition-colors ${
+									isFollowing ? 'text-gray-500 hover:text-gray-600' : 'text-[#4A8B8B] hover:text-[#3B6363]'
+								}`}
+							>
+								• {isFollowing
+                                    ? (t('profile.public.following') || 'Đang theo dõi')
+                                    : (isFollower ? (t('profile.public.followBack') || 'Theo dõi lại') : (t('profile.public.follow') || 'Theo dõi'))
+                                }
 							</button>
 						)}
 					</div>

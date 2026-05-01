@@ -201,7 +201,7 @@ export const PostDetailPage = () => {
                                         >
                                             {post.author}
                                         </Link>
-                                        <button className="text-blue-400 text-xs font-semibold hover:text-blue-300 transition-colors">Theo dõi</button>
+                                        <button className="text-[#4A8B8B] text-xs font-semibold hover:text-[#3B6363] transition-colors">Theo dõi</button>
                                     </div>
                                     <span className="text-white/60 text-[10px]">{post.timeAgo}</span>
                                 </div>
