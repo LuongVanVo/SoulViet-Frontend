@@ -420,6 +420,21 @@
       "editProfile": "Chỉnh sửa trang cá nhân"
     }
   },
+  "cart": {
+    "loading": "Đang tải giỏ hàng...",
+    "selectAll": "Chọn tất cả ({{count}})",
+    "total": "Tổng ({{count}} sản phẩm):",
+    "checkout": "Thanh toán",
+    "table": {
+      "product": "SẢN PHẨM",
+      "unitPrice": "ĐƠN GIÁ",
+      "quantity": "SỐ LƯỢNG",
+      "total": "TỔNG",
+      "actions": "THAO TÁC"
+    },
+    "partnerLabel": "Đối tác: {{name}}",
+    "partnerFallback": "Đối tác {{id}}"
+  },
 
   "marketplace": {
     "hero": {
