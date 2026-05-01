@@ -68,6 +68,10 @@ export const useSocialPostActions = () => {
 				};
 			},
 		);
+		queryClient.setQueriesData(
+			{ queryKey: ['userPosts'] },
+			(data: any) => updateSocialFeedLikeState(data as Connection<SocialPostApiItem> | undefined, response.postId, response.isLiked, response.likesCount),
+		);
 	};
 
 	const findCachedPost = (postId: string) => {
@@ -75,6 +79,7 @@ export const useSocialPostActions = () => {
 			...queryClient.getQueriesData<Connection<SocialPostApiItem>>({ queryKey: ['socialPosts', currentUser?.id] }),
 			...queryClient.getQueriesData<any>({ queryKey: ['user-posts', currentUser?.id] }),
 			...queryClient.getQueriesData<any>({ queryKey: ['user-posts'] }),
+			...queryClient.getQueriesData<any>({ queryKey: ['userPosts'] }),
 			...queryClient.getQueriesData<any>({ queryKey: ['my-social-posts'] }),
 		];
 
@@ -122,6 +127,7 @@ export const useSocialPostActions = () => {
 
 			await queryClient.cancelQueries({ queryKey: ['socialPosts'] });
 			await queryClient.cancelQueries({ queryKey: ['user-posts'] });
+			await queryClient.cancelQueries({ queryKey: ['userPosts'] });
 
 			const currentPost = findCachedPost(postId);
 			const totalLikes = currentPost?.likesCount ?? currentPost?.likes ?? 0;

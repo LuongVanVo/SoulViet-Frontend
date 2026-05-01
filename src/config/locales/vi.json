@@ -403,6 +403,9 @@
         "soulCoins": "SoulCoins",
         "visitedPlaces": "Địa điểm đã thăm",
         "favorites": "Yêu thích"
+      },
+      "followers": {
+        "remove": "Xóa"
       }
     },
     "public": {
@@ -413,11 +416,18 @@
       "following": "Đang theo dõi",
       "users": "người dùng",
       "follow": "Theo dõi",
+      "followBack": "Theo dõi lại",
       "message": "Nhắn tin",
       "noPosts": "Chưa có bài viết nào",
       "noPostsDesc": "Người dùng này chưa chia sẻ bài viết nào.",
       "basedIn": "Đến từ {{location}}.",
-      "editProfile": "Chỉnh sửa trang cá nhân"
+      "editProfile": "Chỉnh sửa trang cá nhân",
+      "auth": {
+        "titleFollowers": "Xem người theo dõi",
+        "titleFollowing": "Xem những người đang theo dõi",
+        "description": "Đăng nhập để xem danh sách đầy đủ và tương tác với mọi người trên SoulViet.",
+        "loginButton": "Đăng nhập ngay"
+      }
     }
   },
 

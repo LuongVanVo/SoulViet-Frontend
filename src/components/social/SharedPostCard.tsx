@@ -117,6 +117,8 @@ export const SharedPostCard = ({
 				authorId={sharePost.userId}
 				onEdit={onEditPost}
 				onDelete={onDeletePost}
+				isFollowingAuthor={sharePost.isFollowingAuthor}
+				isFollowerAuthor={sharePost.isFollowerAuthor}
 			/>
 
 			{sharePost.caption && (
@@ -205,10 +207,12 @@ export const SharedPostCard = ({
 							</div>
 						</div>
 						<button
-							className="text-[13px] font-bold text-blue-600 hover:text-blue-700 transition-colors"
+							className="text-[13px] font-bold text-[#4A8B8B] hover:text-[#3B6363] transition-colors"
 							onClick={(e) => { e.stopPropagation(); navigate(`/profile/${post.userId}`); }}
 						>
-							{t('social.feed.post.actions.follow', { defaultValue: 'Follow' })}
+							{post.isFollowingAuthor 
+								? t('profile.public.following', { defaultValue: 'Đang theo dõi' }) 
+								: (post.isFollowerAuthor ? t('profile.public.followBack', { defaultValue: 'Theo dõi lại' }) : t('profile.public.follow', { defaultValue: 'Theo dõi' }))}
 						</button>
 					</div>
 				</div>
