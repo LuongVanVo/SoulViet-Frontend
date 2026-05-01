@@ -482,7 +482,11 @@
           "quantityLabel": "Quantity",
           "noteLabel": "Note",
           "notePlaceholder": "Optional message for seller...",
-          "addToCart": "Add to Cart"
+          "addToCart": "Add to Cart",
+          "warnings": {
+            "selectAllAttributes": "Please select all variant options before adding to cart.",
+            "variantUnavailable": "This variant is unavailable. Please choose another combination."
+          }
         },
         "tour": {
           "perTicket": "per ticket",

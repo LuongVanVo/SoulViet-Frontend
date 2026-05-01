@@ -484,7 +484,11 @@
           "quantityLabel": "Số lượng",
           "noteLabel": "Ghi chú",
           "notePlaceholder": "Ghi chú thêm cho người bán...",
-          "addToCart": "Thêm vào giỏ"
+          "addToCart": "Thêm vào giỏ",
+          "warnings": {
+            "selectAllAttributes": "Vui lòng chọn đầy đủ phân loại trước khi thêm vào giỏ.",
+            "variantUnavailable": "Biến thể không khả dụng. Vui lòng chọn tổ hợp khác."
+          }
         },
         "tour": {
           "perTicket": "mỗi vé",
