@@ -1,6 +1,24 @@
 import { apiClient } from '@/services'
 import type { MarketplaceCategory } from '@/types'
 
+export interface MarketplaceProductAttributeDto {
+  id: string;
+  name: string;
+  optionsJson: string;
+  sortOrder: number;
+}
+
+export interface MarketplaceProductVariantDto {
+  id: string;
+  sku: string;
+  price: number;
+  promotionalPrice: number | null;
+  stock: number;
+  attributesJson: string;
+  imageUrl: string | null;
+  isActive: boolean;
+}
+
 export interface PublishedMarketplaceProductDto {
   id: string
   partnerId: string
@@ -22,6 +40,10 @@ export interface PublishedMarketplaceProductDto {
     videoUrl?: string | null
   }
   createdAt: string
+
+  hasVariants?: boolean;
+  attributes?: MarketplaceProductAttributeDto[];
+  variants?: MarketplaceProductVariantDto[];
 }
 
 export interface PublishedMarketplaceProductsResponse {

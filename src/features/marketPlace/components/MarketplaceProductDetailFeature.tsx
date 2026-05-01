@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Heart } from 'lucide-react'
 import { Card } from '@/components/ui'
 import type { MarketplaceProductDetailVM } from '@/hooks/useMarketplaceProductDetail'
@@ -15,6 +15,7 @@ export const MarketplaceProductDetailFeature = ({ productId }: { productId: stri
   const { data, isLoading } = useMarketplaceProductDetail(productId)
   const [activeIndex, setActiveIndex] = useState(0)
   const [showAllPhotos, setShowAllPhotos] = useState(false)
+  const [selectedVariantImage, setSelectedVariantImage] = useState<string | null>(null)
 
   const product: MarketplaceProductDetailVM | undefined = data
 
@@ -23,6 +24,12 @@ export const MarketplaceProductDetailFeature = ({ productId }: { productId: stri
     if (showAllPhotos) return images
     return images.slice(0, MAX_THUMBS)
   }, [images, showAllPhotos])
+
+  useEffect(() => {
+    setActiveIndex(0)
+    setShowAllPhotos(false)
+    setSelectedVariantImage(null)
+  }, [productId])
 
   if (isLoading) {
     return (
@@ -45,7 +52,7 @@ export const MarketplaceProductDetailFeature = ({ productId }: { productId: stri
   }
 
   const isTour = product.productType === 2
-  const mainImage = images[activeIndex] ?? images[0] ?? ''
+  const mainImage = selectedVariantImage ?? images[activeIndex] ?? images[0] ?? ''
   const partner = product.partner ?? {
     id: '',
     name: t('marketplace.detail.partner.defaultName'),
@@ -92,7 +99,10 @@ export const MarketplaceProductDetailFeature = ({ productId }: { productId: stri
                         className={`h-20 w-20 overflow-hidden rounded-2xl border ${
                           isActive ? 'border-[#006c49]' : 'border-gray-100'
                         }`}
-                        onClick={() => setActiveIndex(idx)}
+                        onClick={() => {
+                          setSelectedVariantImage(null)
+                          setActiveIndex(idx)
+                        }}
                       >
                         <img src={src} alt={`thumb-${idx}`} className="h-full w-full object-cover" />
                       </button>
@@ -118,7 +128,10 @@ export const MarketplaceProductDetailFeature = ({ productId }: { productId: stri
           {isTour ? (
             <MarketplaceTourPurchaseCard product={product} />
           ) : (
-            <MarketplacePhysicalGoodsPurchaseCard product={product} />
+            <MarketplacePhysicalGoodsPurchaseCard 
+            product={product} 
+            onVariantImageChange={setSelectedVariantImage}
+            />
           )}
         </div>
       </div>
