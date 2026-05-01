@@ -5,3 +5,4 @@ export * from './profile';
 export * from './social';
 export * from './marketPlace';
 export * from './AIplan';
+export * from './cart';

@@ -10,7 +10,7 @@ export const useMarketplaceCategories = () => {
         return await marketplaceApi.getMarketplaceCategories()
       } catch {
         return []
-      }
+      } 
     },
     staleTime: 1000 * 60 * 60, // 1h
   })

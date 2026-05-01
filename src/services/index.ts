@@ -8,3 +8,4 @@ export * from './apiService';
 export * from './media.api';
 export * from './home';
 export * from './marketplace';
+export * from './cart';

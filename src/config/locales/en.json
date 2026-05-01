@@ -421,6 +421,21 @@
       "editProfile": "Edit Profile"
     }
   },
+  "cart": {
+    "loading": "Loading cart...",
+    "selectAll": "Select all ({{count}})",
+    "total": "Total ({{count}} items):",
+    "checkout": "Checkout",
+    "table": {
+      "product": "PRODUCT",
+      "unitPrice": "UNIT PRICE",
+      "quantity": "QUANTITY",
+      "total": "TOTAL",
+      "actions": "ACTIONS"
+    },
+    "partnerLabel": "Partner: {{name}}",
+    "partnerFallback": "Partner {{id}}"
+  },
   "marketplace": {
     "hero": {
       "title": "Discover Local Specialties & Tours",

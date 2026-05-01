@@ -17,6 +17,7 @@ import {
   MarketplaceProductDetailPage,
   PostDetailPage,
   PublicProfilePage,
+  CartPage,
 } from '@/pages';
 
 export const router = createBrowserRouter([
@@ -47,6 +48,10 @@ export const router = createBrowserRouter([
       {
         path: 'marketplace',
         element: <MarketPlace />,
+      },
+      {
+        path: 'cart',
+        element: <CartPage />,
       },
       {
         path: 'marketplace/:productId',

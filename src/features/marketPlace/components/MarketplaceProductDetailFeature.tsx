@@ -1,12 +1,14 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Heart } from 'lucide-react'
 import { Card } from '@/components/ui'
 import type { MarketplaceProductDetailVM } from '@/hooks/useMarketplaceProductDetail'
 import { useMarketplaceProductDetail } from '@/hooks/useMarketplaceProductDetail'
-import { MarketplacePhysicalGoodsPurchaseCard } from './MarketplacePhysicalGoodsPurchaseCard'
-import { MarketplaceTourPurchaseCard } from './MarketplaceTourPurchaseCard'
+import { MarketplacePhysicalGoodsPurchaseCard, type MarketplacePhysicalAddToCartPayload } from './MarketplacePhysicalGoodsPurchaseCard'
+import { MarketplaceTourPurchaseCard, type MarketplaceTourAddToCartPayload } from './MarketplaceTourPurchaseCard'
 import { MarketplaceLocalPartnerCard } from './MarketplaceLocalPartnerCard'
 import { useTranslation } from 'react-i18next'
+import { useAddToCart } from '@/hooks/useCartMutations'
+import { flyToCart } from '@/utils/cartFly'
 
 const MAX_THUMBS = 5
 
@@ -16,6 +18,8 @@ export const MarketplaceProductDetailFeature = ({ productId }: { productId: stri
   const [activeIndex, setActiveIndex] = useState(0)
   const [showAllPhotos, setShowAllPhotos] = useState(false)
   const [selectedVariantImage, setSelectedVariantImage] = useState<string | null>(null)
+  const { mutateAsync: addToCartAsync } = useAddToCart()
+  const mainImageRef = useRef<HTMLImageElement | null>(null)
 
   const product: MarketplaceProductDetailVM | undefined = data
 
@@ -24,6 +28,10 @@ export const MarketplaceProductDetailFeature = ({ productId }: { productId: stri
     if (showAllPhotos) return images
     return images.slice(0, MAX_THUMBS)
   }, [images, showAllPhotos])
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' })
+  }, [productId])
 
   useEffect(() => {
     setActiveIndex(0)
@@ -62,6 +70,35 @@ export const MarketplaceProductDetailFeature = ({ productId }: { productId: stri
     description: '',
   }
 
+  
+
+  const handleAddToCart = async (payload: MarketplacePhysicalAddToCartPayload) => {
+    const metadata = {
+      selectedAttributes: payload.itemMetadata.selectedAttributes,
+      note: payload.note || '',
+    }
+
+    await addToCartAsync({
+      marketplaceProductId: payload.productId,
+      quantity: payload.quantity,
+      variantId: payload.itemMetadata.variantId,
+      itemMetadata: JSON.stringify(metadata),
+    });
+
+    flyToCart(mainImageRef.current, selectedVariantImage ?? images[activeIndex] ?? images[0] ?? null);
+  }
+
+  const handleAddTourToCart = async (payload: MarketplaceTourAddToCartPayload) => {
+    await addToCartAsync({
+      marketplaceProductId: payload.productId,
+      quantity: payload.quantity,
+      variantId: null,
+      itemMetadata: JSON.stringify(payload.itemMetadata),
+    })
+
+    flyToCart(mainImageRef.current, selectedVariantImage ?? images[activeIndex] ?? images[0] ?? null)
+  }
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 md:px-6">
       <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -80,7 +117,7 @@ export const MarketplaceProductDetailFeature = ({ productId }: { productId: stri
           <Card className="overflow-hidden rounded-3xl border border-gray-100 bg-white">
             {mainImage ? (
               <div className="relative">
-                <img src={mainImage} alt={product.title} className="h-[420px] w-full object-cover" />
+                <img ref={mainImageRef} src={mainImage} alt={product.title} className="h-[420px] w-full object-cover" />
               </div>
             ) : (
               <div className="h-[420px] bg-gray-100" />
@@ -126,11 +163,12 @@ export const MarketplaceProductDetailFeature = ({ productId }: { productId: stri
 
         <div className="lg:sticky lg:top-20">
           {isTour ? (
-            <MarketplaceTourPurchaseCard product={product} />
+            <MarketplaceTourPurchaseCard product={product} onAddToCart={handleAddTourToCart} />
           ) : (
             <MarketplacePhysicalGoodsPurchaseCard 
             product={product} 
             onVariantImageChange={setSelectedVariantImage}
+            onAddToCart={handleAddToCart}
             />
           )}
         </div>

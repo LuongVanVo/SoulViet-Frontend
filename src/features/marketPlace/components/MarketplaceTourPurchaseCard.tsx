@@ -4,10 +4,24 @@ import { Card } from '@/components/ui'
 import type { MarketplaceProductDetailVM } from '@/hooks/useMarketplaceProductDetail'
 import { useTranslation } from 'react-i18next'
 
+export interface MarketplaceTourAddToCartPayload {
+  productId: string
+  quantity: number
+  note: string
+  travelDate: string
+  itemMetadata: {
+    travelDate: string
+    note: string
+    productType: 'tour'
+  }
+}
+
 export const MarketplaceTourPurchaseCard = ({
   product,
+  onAddToCart,
 }: {
   product: MarketplaceProductDetailVM
+  onAddToCart?: (payload: MarketplaceTourAddToCartPayload) => void
 }) => {
   const { t } = useTranslation()
   const [travelDate, setTravelDate] = useState('')
@@ -15,9 +29,26 @@ export const MarketplaceTourPurchaseCard = ({
   const [note, setNote] = useState('')
 
   const maxStock = Math.max(product.stock, 1)
+  const canAddToCart = Boolean(travelDate) && quantity > 0
 
   const increase = () => setQuantity((prev) => Math.min(prev + 1, maxStock))
   const decrease = () => setQuantity((prev) => Math.max(prev - 1, 1))
+
+  const handleAddToCart = () => {
+    if (!canAddToCart) return
+    const trimmedNote = note.trim()
+    onAddToCart?.({
+      productId: product.id,
+      quantity,
+      note: trimmedNote,
+      travelDate,
+      itemMetadata: {
+        travelDate,
+        note: trimmedNote,
+        productType: 'tour',
+      },
+    })
+  }
 
   return (
     <Card className="rounded-3xl border border-gray-100 bg-white p-5">
@@ -108,7 +139,12 @@ export const MarketplaceTourPurchaseCard = ({
           {t('marketplace.detail.purchase.tour.bookNow')}
         </button>
 
-        <button className="flex h-12 w-full items-center justify-center rounded-2xl border border-[#006c49] text-[#006c49] font-extrabold hover:bg-[#006c49]/5">
+        <button
+          type="button"
+          disabled={!canAddToCart}
+          onClick={handleAddToCart}
+          className="flex h-12 w-full items-center justify-center rounded-2xl border border-[#006c49] text-[#006c49] font-extrabold hover:bg-[#006c49]/5 disabled:cursor-not-allowed disabled:opacity-50"
+        >
           {t('marketplace.detail.purchase.tour.addToCart')}
         </button>
 

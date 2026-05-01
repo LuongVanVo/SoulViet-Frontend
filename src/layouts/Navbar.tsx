@@ -5,6 +5,7 @@ import { Button } from '@/components/ui';
 import { Badge } from '@/components/ui/Badge';
 import type { BottomNavTab } from '@/types/home';
 import { useAuthStore } from '@/store';
+import { useMyCart } from '@/hooks/useMyCart';
 
 const desktopNavItems: Array<{ tab: BottomNavTab; labelKey: string; to: string }> = [
   { tab: 'map', labelKey: 'bottomNav.map', to: '/map' },
@@ -18,6 +19,9 @@ export const Navbar = () => {
   const location = useLocation();
   const user = useAuthStore((state) => state.user);
   const isHomePage = location.pathname === '/';
+
+  const { data: cart } = useMyCart();
+  const cartCount = cart?.items.reduce((sum, it) => sum + (it.quantity ?? 0), 0) ?? 0;
 
   return (
     <header
@@ -79,20 +83,17 @@ export const Navbar = () => {
                 <Bell className="h-4 w-4 md:h-5 md:w-5" />
               </button>
 
-              <button
-                type="button"
-                className={`relative inline-flex h-9 w-9 md:h-10 md:w-10 items-center justify-center rounded-full border transition-all hover:scale-105 active:scale-95 ${
-                  isHomePage
-                    ? 'border-white/40 text-white hover:bg-white/10'
-                    : 'border-gray-200 text-gray-700 hover:border-brand hover:text-brand bg-white shadow-sm'
-                }`}
+              <Link
+                to="/cart"
+                id="navbar-cart-button"
+                className="relative inline-flex h-9 w-9 md:h-10 md:w-10 items-center justify-center rounded-full border transition-all hover:scale-105 active:scale-95 border-gray-200 text-gray-700 hover:border-brand hover:text-brand bg-white shadow-sm"
                 aria-label={t('navbar.cart')}
               >
                 <ShoppingBag className="h-4 w-4 md:h-5 md:w-5" />
                 <Badge className="absolute -right-1 -top-1 h-4 min-w-4 justify-center bg-brand px-1 text-[8px] leading-none md:h-5 md:min-w-5 md:text-[10px]">
-                  2
+                  {cartCount}
                 </Badge>
-              </button>
+              </Link>
 
               <Link
                 to="/profile"
