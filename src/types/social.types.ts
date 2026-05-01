@@ -89,6 +89,8 @@ export interface SocialPostApiItem {
   sharesCount: number;
   status: number;
   isLiked?: boolean;
+  isFollowingAuthor?: boolean;
+  isFollowerAuthor?: boolean;
   success?: boolean;
   message?: string;
   type?: 'post' | 'shared-post';
@@ -113,6 +115,8 @@ export interface PostHeaderProps {
   timeAgo: string;
   location?: string;
   vibe: string;
+  isFollowingAuthor?: boolean;
+  isFollowerAuthor?: boolean;
 }
 
 export interface PostActionProps {
@@ -123,6 +127,15 @@ export interface PostActionProps {
   onLike?: (postId: string) => void;
   isLiking?: boolean;
   isLiked?: boolean;
+}
+
+export interface FollowUserResponse {
+  isFollowing: boolean;
+  isFollower: boolean;
+  userId: string;
+  fullName: string;
+  success: boolean;
+  message: string;
 }
 
 export interface SocialPost {
@@ -144,6 +157,8 @@ export interface SocialPost {
   comments: number;
   shares: number;
   isLiked?: boolean;
+  isFollowingAuthor?: boolean;
+  isFollowerAuthor?: boolean;
   rewardCoins: number;
   createdAt: string;
   type?: 'post' | 'shared-post';

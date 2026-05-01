@@ -412,6 +412,7 @@
       "following": "Following",
       "users": "users",
       "follow": "Follow",
+      "followBack": "Follow Back",
       "message": "Message",
       "noPosts": "No posts yet",
       "noPostsDesc": "This user hasn't shared any posts.",

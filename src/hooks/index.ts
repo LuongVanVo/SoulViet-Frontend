@@ -8,3 +8,4 @@ export * from './usePostCommentStream';
 export * from './useCommentReplies';
 export * from './useSharePost';
 export * from './useShareStream';
+export * from './useFollowUser';

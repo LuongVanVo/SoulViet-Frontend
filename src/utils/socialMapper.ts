@@ -63,6 +63,8 @@ export const toSocialPost = (
 		comments: post.commentsCount ?? post.CommentsCount ?? 0,
 		shares: post.sharesCount ?? post.SharesCount ?? 0,
 		isLiked: post.isLiked ?? post.IsLiked ?? false,
+		isFollowingAuthor: post.isFollowingAuthor ?? post.IsFollowingAuthor,
+		isFollowerAuthor: post.isFollowerAuthor ?? post.IsFollowerAuthor,
 		rewardCoins: Math.max(1, likesCount),
 		createdAt: post.createdAt || post.CreatedAt,
 	};

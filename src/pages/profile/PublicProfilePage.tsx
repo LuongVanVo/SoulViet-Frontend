@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MoreVertical, Grid, MapPin } from 'lucide-react';
+import { ArrowLeft, MoreVertical, Grid } from 'lucide-react';
 import { usePublicProfile } from '@/hooks/usePublicProfile';
 import { PostFeedList, ConfirmationDialog } from '@/components';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store';
-import { useMyPostActions, useSocialPostActions } from '@/hooks';
+import { FollowListModal } from '@/components/social/FollowListModal';
+import { useFollowUser, useMyPostActions, useSocialPostActions } from '@/hooks';
 import { EditPostModal } from '@/features/profile/components/EditPostModal';
 import type { SocialPost } from '@/types';
 
@@ -13,15 +14,26 @@ export const PublicProfilePage: React.FC = () => {
     const { userId } = useParams<{ userId: string }>();
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const { profile, posts, isLoading, isError } = usePublicProfile(userId || '');
+    const { profile, posts, isLoadingProfile, isError } = usePublicProfile(userId || '');
     const currentUser = useAuthStore((state) => state.user);
     const isOwnProfile = currentUser?.id === userId;
 
     const [editingPostId, setEditingPostId] = useState<string | null>(null);
     const [deletingPostId, setDeletingPostId] = useState<string | null>(null);
+    const [isUnfollowDialogOpen, setIsUnfollowDialogOpen] = useState(false);
 
     const { updateMyPost, deleteMyPost, isUpdating, isDeleting } = useMyPostActions(userId || '');
     const { likePost, isLiking: isLikingPost } = useSocialPostActions();
+    const [followListModal, setFollowListModal] = useState<{ isOpen: boolean; type: 'followers' | 'following' }>({
+        isOpen: false,
+        type: 'followers'
+    });
+
+    const { isFollowing, isFollower, isPending: isFollowPending, followUser, unfollowUser } = useFollowUser(userId || '');
+
+    React.useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [userId]);
 
     const editingPost = useMemo<SocialPost | null>(
         () => posts.find((item) => item.id === editingPostId) ?? null,
@@ -56,7 +68,36 @@ export const PublicProfilePage: React.FC = () => {
         }
     };
 
-    if (isLoading) {
+    const handleFollowClick = async () => {
+        if (!userId) return;
+
+        if (!currentUser) {
+            navigate(`/login?redirect=${encodeURIComponent(`/profile/${userId}`)}`);
+            return;
+        }
+
+        if (isFollowing) {
+            setIsUnfollowDialogOpen(true);
+            return;
+        }
+
+        try {
+            await followUser();
+        } catch (error) {
+            console.error('Failed to toggle follow state:', error);
+        }
+    };
+
+    const handleConfirmUnfollow = async () => {
+        try {
+            await unfollowUser();
+            setIsUnfollowDialogOpen(false);
+        } catch (error) {
+            console.error('Failed to unfollow user:', error);
+        }
+    };
+
+    if (isLoadingProfile) {
         return (
             <div className="flex min-h-screen items-center justify-center bg-gray-50">
                 <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
@@ -129,17 +170,26 @@ export const PublicProfilePage: React.FC = () => {
                                 <span className="font-bold text-gray-900 text-sm sm:text-[15px]">{profile.postsCount || 0}</span>
                                 <span className="text-[11px] text-gray-600 sm:text-[15px]">{t('profile.public.posts').toLowerCase()}</span>
                             </div>
-                            <div className="flex flex-col sm:flex-row sm:items-center sm:gap-1.5">
+                            <div
+                                className="flex flex-col sm:flex-row sm:items-center sm:gap-1.5 cursor-pointer hover:opacity-70 transition-opacity"
+                                onClick={() => setFollowListModal({ isOpen: true, type: 'followers' })}
+                            >
                                 <span className="font-bold text-gray-900 text-sm sm:text-[15px]">
                                     {profile.followersCount ? (profile.followersCount >= 1000 ? `${(profile.followersCount / 1000).toFixed(1)}k` : profile.followersCount) : 0}
                                 </span>
                                 <span className="text-[11px] text-gray-600 sm:text-[15px]">{t('profile.public.followers').toLowerCase()}</span>
                             </div>
-                            <div className="flex flex-col sm:flex-row sm:items-center sm:gap-1.5">
-                                <span className="font-bold text-gray-900 text-sm sm:text-[15px]">{profile.followingCount || 0}</span>
-                                <span className="text-[11px] text-gray-600 sm:text-[15px]">
-                                    {t('profile.public.following').toLowerCase()}
-                                    <span className="hidden sm:inline"> {t('profile.public.users').toLowerCase()}</span>
+                            <div
+                                className="flex flex-col sm:flex-row sm:items-center sm:gap-1.5 cursor-pointer hover:opacity-70 transition-opacity"
+                                onClick={() => setFollowListModal({ isOpen: true, type: 'following' })}
+                            >
+                                <span className="font-bold text-gray-900 text-sm sm:text-[15px] sm:order-2">{profile.followingCount || 0}</span>
+                                <span className="text-[11px] text-gray-600 sm:text-[15px] sm:order-1">
+                                    <span className="sm:hidden">{t('profile.public.following').toLowerCase()}</span>
+                                    <span className="hidden sm:inline">{t('profile.public.following')} </span>
+                                </span>
+                                <span className="hidden sm:inline text-[11px] text-gray-600 sm:text-[15px] sm:order-3">
+                                    {t('profile.public.users').toLowerCase()}
                                 </span>
                             </div>
                         </div>
@@ -156,21 +206,40 @@ export const PublicProfilePage: React.FC = () => {
                     {isOwnProfile ? (
                         <button
                             onClick={() => navigate('/profile')}
-                            className="flex-1 rounded-2xl bg-[#F0F2F5] py-3 text-center font-bold text-[#1C1E21] transition-all hover:bg-gray-200 active:scale-95"
+                            className="flex-1 rounded-2xl bg-[#F0F2F5] py-3 text-center font-medium text-[#1C1E21] transition-all hover:bg-gray-200 active:scale-95"
                         >
                             {t('profile.public.editProfile')}
                         </button>
                     ) : (
                         <>
-                            <button className="flex-1 rounded-2xl bg-[#0066FF] py-3 text-center font-bold text-white transition-all hover:bg-blue-700 active:scale-95">
-                                {t('profile.public.follow')}
+                            <button
+                                onClick={() => void handleFollowClick()}
+                                disabled={isFollowPending}
+                                className={`flex-1 rounded-2xl py-3 text-center font-medium transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-70 ${isFollowing ? 'bg-[#F0F2F5] text-[#1C1E21] hover:bg-gray-200' : 'bg-[#3B6363] text-white hover:bg-[#2F4F4F]'}`}
+                            >
+                                {isFollowing
+                                    ? (t('profile.public.following') || 'Đang theo dõi')
+                                    : (isFollower ? (t('profile.public.followBack') || 'Theo dõi lại') : (t('profile.public.follow') || 'Theo dõi'))
+                                }
                             </button>
-                            <button className="flex-1 rounded-2xl bg-[#F0F2F5] py-3 text-center font-bold text-[#1C1E21] transition-all hover:bg-gray-200 active:scale-95">
+                            <button className="flex-1 rounded-2xl bg-[#F0F2F5] py-3 text-center font-medium text-[#1C1E21] transition-all hover:bg-gray-200 active:scale-95">
                                 {t('profile.public.message')}
                             </button>
                         </>
                     )}
                 </div>
+
+                <ConfirmationDialog
+                    isOpen={isUnfollowDialogOpen}
+                    title={t('profile.public.unfollowDialog.title', 'Bỏ theo dõi?')}
+                    message={t('profile.public.unfollowDialog.message', 'Bạn có chắc muốn bỏ theo dõi người dùng này không?')}
+                    cancelLabel={t('profile.public.unfollowDialog.cancel', 'Hủy')}
+                    confirmLabel={t('profile.public.unfollowDialog.confirm', 'Bỏ theo dõi')}
+                    loadingLabel={t('profile.public.unfollowDialog.loading', 'Đang bỏ theo dõi...')}
+                    isLoading={isFollowPending}
+                    onCancel={() => setIsUnfollowDialogOpen(false)}
+                    onConfirm={() => void handleConfirmUnfollow()}
+                />
 
 
             </div>
@@ -221,6 +290,14 @@ export const PublicProfilePage: React.FC = () => {
                     />
                 </>
             )}
+            {/* Modals */}
+            <FollowListModal
+                isOpen={followListModal.isOpen}
+                onClose={() => setFollowListModal({ ...followListModal, isOpen: false })}
+                userId={userId || ''}
+                type={followListModal.type}
+                title={followListModal.type === 'followers' ? t('profile.public.followers') : t('profile.public.following')}
+            />
         </div>
     );
 };

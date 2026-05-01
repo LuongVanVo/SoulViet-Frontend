@@ -101,7 +101,7 @@ export const CommentSection = ({
                                 {post.author}
                             </span>
                             {!isOwnPost && (
-                                <span className="text-[14px] font-bold text-blue-500 hover:text-blue-600 cursor-pointer">
+                                <span className="text-[14px] font-bold text-[#4A8B8B] hover:text-[#3B6363] cursor-pointer">
                                     • {t('social.feed.post.actions.follow', { defaultValue: 'Theo dõi' })}
                                 </span>
                             )}
@@ -179,7 +179,7 @@ export const CommentSection = ({
                             <p className="text-gray-800 font-medium text-sm mb-4">{t('social.feed.comments.guest.title', { defaultValue: 'Vui lòng đăng nhập để xem thêm' })}</p>
                             <button
                                 onClick={() => navigate('/login')}
-                                className="w-45 bg-primary text-white py-2 rounded-xl font-semibold text-sm hover:bg-primary-hover transition-all shadow-lg active:scale-95"
+                                className="w-45 bg-[#3B6363] text-white py-2 rounded-full font-semibold text-sm hover:bg-[#2F4F4F] transition-all shadow-lg active:scale-95"
                             >
                                 {t('social.feed.comments.guest.loginButton', { defaultValue: 'Đăng nhập ngay' })}
                             </button>

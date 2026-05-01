@@ -94,6 +94,8 @@ export const SocialPostCard = ({ post, footer, onEditPost, onDeletePost, onLikeP
 				onEdit={onEditPost}
 				onDelete={onDeletePost}
 				isShared={post.type === 'shared-post'}
+				isFollowingAuthor={post.isFollowingAuthor}
+				isFollowerAuthor={post.isFollowerAuthor}
 			/>
 
 			{mediaItems.length > 0 && (
