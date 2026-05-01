@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MoreVertical, Grid } from 'lucide-react';
+import { ArrowLeft, MoreVertical, Grid, ShoppingBag } from 'lucide-react';
 import { usePublicProfile } from '@/hooks/usePublicProfile';
 import { PostFeedList, ConfirmationDialog } from '@/components';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +24,7 @@ export const PublicProfilePage: React.FC = () => {
 
     const { updateMyPost, deleteMyPost, isUpdating, isDeleting } = useMyPostActions(userId || '');
     const { likePost, isLiking: isLikingPost } = useSocialPostActions();
+    const [activeTab, setActiveTab] = useState<'posts' | 'products'>('posts');
     const [followListModal, setFollowListModal] = useState<{ isOpen: boolean; type: 'followers' | 'following' }>({
         isOpen: false,
         type: 'followers'
@@ -163,7 +164,19 @@ export const PublicProfilePage: React.FC = () => {
                     </div>
 
                     <div className="flex flex-1 flex-col gap-1">
-                        <h1 className="text-lg font-bold text-gray-900 sm:text-2xl">{profile.name}</h1>
+                        <div className="flex items-center gap-2">
+                            <h1 className="text-lg font-bold text-gray-900 sm:text-2xl">{profile.name}</h1>
+                            {profile.roles?.some(role => role.toLowerCase() === 'admin') && (
+                                <span className="bg-red-50 text-red-600 text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-md border border-red-100 uppercase tracking-wider font-extrabold flex items-center">
+                                    Admin
+                                </span>
+                            )}
+                            {profile.isLocalPartner && (
+                                <span className="bg-primary/5 text-primary text-[12px] sm:text-[12px] px-1.5 py-0.5 rounded-md border border-primary/10 font-bold flex items-center">
+                                    Local Partner
+                                </span>
+                            )}
+                        </div>
 
                         <div className="flex items-center justify-between sm:justify-start sm:gap-x-8">
                             <div className="flex flex-col sm:flex-row sm:items-center sm:gap-1.5">
@@ -243,26 +256,62 @@ export const PublicProfilePage: React.FC = () => {
 
 
             </div>
-            <div className="mx-auto mt-8 max-w-4xl border-t border-gray-200" />
+            {profile?.isLocalPartner && (
+                <div className="mx-auto max-w-4xl border-t border-gray-100 bg-background">
+                    <div className="flex justify-center">
+                        <button
+                            onClick={() => setActiveTab('posts')}
+                            className={`relative flex flex-1 items-center justify-center py-3.5 transition-all ${activeTab === 'posts' ? 'text-primary' : 'text-gray-400 hover:text-gray-600'}`}
+                        >
+                            <Grid className={`h-5 w-5 ${activeTab === 'posts' ? 'stroke-[2.5px]' : 'stroke-2'}`} />
+                            {activeTab === 'posts' && (
+                                <div className="absolute bottom-0 h-[2px] w-full bg-primary animate-in fade-in slide-in-from-bottom-1 duration-300" />
+                            )}
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('products')}
+                            className={`relative flex flex-1 items-center justify-center py-3.5 transition-all ${activeTab === 'products' ? 'text-primary' : 'text-gray-400 hover:text-gray-600'}`}
+                        >
+                            <ShoppingBag className={`h-5 w-5 ${activeTab === 'products' ? 'stroke-[2.5px]' : 'stroke-2'}`} />
+                            {activeTab === 'products' && (
+                                <div className="absolute bottom-0 h-[2px] w-full bg-primary animate-in fade-in slide-in-from-bottom-1 duration-300" />
+                            )}
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {!profile?.isLocalPartner && (
+                <div className="mx-auto mt-8 max-w-4xl border-t border-gray-200" />
+            )}
+
             <div className="mx-auto max-w-4xl bg-background pt-2">
                 <div className="space-y-6 p-4 md:p-6">
                     <div className="mx-auto max-w-xl">
-                        <PostFeedList
-                            posts={posts}
-                            emptyState={(
-                                <div className="flex flex-col items-center justify-center py-20 text-center">
-                                    <div className="mb-4 rounded-full bg-gray-100 p-6">
-                                        <Grid className="h-12 w-12 text-gray-300" />
+                        {activeTab === 'posts' ? (
+                            <PostFeedList
+                                posts={posts}
+                                emptyState={(
+                                    <div className="flex flex-col items-center justify-center py-20 text-center">
+                                        <div className="mb-4 rounded-full bg-gray-100 p-6">
+                                            <Grid className="h-12 w-12 text-gray-300" />
+                                        </div>
+                                        <h3 className="text-lg font-semibold text-gray-900">{t('profile.public.noPosts')}</h3>
                                     </div>
-                                    <h3 className="text-lg font-semibold text-gray-900">{t('profile.public.noPosts')}</h3>
-                                    <p className="mt-1 text-gray-500">{t('profile.public.noPostsDesc')}</p>
+                                )}
+                                onEditPost={isOwnProfile ? handleEditPost : undefined}
+                                onDeletePost={isOwnProfile ? handleDeletePost : undefined}
+                                onLikePost={handleLikePost}
+                                isLiking={isLikingPost}
+                            />
+                        ) : (
+                            <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in duration-500">
+                                <div className="mb-4 rounded-full bg-gray-100 p-6">
+                                    <ShoppingBag className="h-12 w-12 text-gray-300" />
                                 </div>
-                            )}
-                            onEditPost={isOwnProfile ? handleEditPost : undefined}
-                            onDeletePost={isOwnProfile ? handleDeletePost : undefined}
-                            onLikePost={handleLikePost}
-                            isLiking={isLikingPost}
-                        />
+                                <h3 className="text-lg font-semibold text-gray-900">{t('profile.public.noProducts')}</h3>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -290,7 +339,6 @@ export const PublicProfilePage: React.FC = () => {
                     />
                 </>
             )}
-            {/* Modals */}
             <FollowListModal
                 isOpen={followListModal.isOpen}
                 onClose={() => setFollowListModal({ ...followListModal, isOpen: false })}

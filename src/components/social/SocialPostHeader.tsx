@@ -26,6 +26,7 @@ export const SocialPostHeader = ({
 	onEdit,
 	onDelete,
 	isShared,
+	isLocalPartner,
 }: SocialPostHeaderExtProps) => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
@@ -65,6 +66,11 @@ export const SocialPostHeader = ({
 						<Link to={profileLink} className="truncate text-base font-semibold text-[#1F2937] hover:underline">
 							{author}
 						</Link>
+						{isLocalPartner && (
+							<span className="bg-primary/5 text-primary text-[10px] px-1.5 py-0.5 rounded-md border border-primary/10 uppercase tracking-wider font-extrabold flex items-center shrink-0">
+								Partner
+							</span>
+						)}
 						{isShared && (
 							<span className="text-sm text-gray-500 font-normal">
 								 {t('social.feed.sharedPost.shared', { defaultValue: 'đã chia sẻ bài viết này' })}

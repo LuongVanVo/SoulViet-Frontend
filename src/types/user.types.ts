@@ -10,6 +10,8 @@ export interface UserProfile {
   postsCount?: number;
   isFollowing?: boolean;
   isFollower?: boolean;
+  isLocalPartner?: boolean;
+  roles?: string[];
 }
 
 export interface FollowUserEntry {
