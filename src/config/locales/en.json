@@ -416,6 +416,7 @@
       "message": "Message",
       "noPosts": "No posts yet",
       "noPostsDesc": "This user hasn't shared any posts.",
+      "noProducts": "No products yet",
       "basedIn": "Based in {{location}}.",
       "editProfile": "Edit Profile"
     }

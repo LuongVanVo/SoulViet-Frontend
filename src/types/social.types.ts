@@ -91,6 +91,7 @@ export interface SocialPostApiItem {
   isLiked?: boolean;
   isFollowingAuthor?: boolean;
   isFollowerAuthor?: boolean;
+  isLocalPartnerAuthor?: boolean;
   success?: boolean;
   message?: string;
   type?: 'post' | 'shared-post';
@@ -117,6 +118,7 @@ export interface PostHeaderProps {
   vibe: string;
   isFollowingAuthor?: boolean;
   isFollowerAuthor?: boolean;
+  isLocalPartner?: boolean;
 }
 
 export interface PostActionProps {
@@ -159,6 +161,7 @@ export interface SocialPost {
   isLiked?: boolean;
   isFollowingAuthor?: boolean;
   isFollowerAuthor?: boolean;
+  isLocalPartnerAuthor?: boolean;
   rewardCoins: number;
   createdAt: string;
   type?: 'post' | 'shared-post';

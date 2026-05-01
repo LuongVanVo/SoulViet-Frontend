@@ -13,8 +13,10 @@ function mapToProfile(data: Record<string, unknown>): UserProfile {
   const postsCount = Number(data.postsCount ?? data.PostsCount ?? 0);
   const isFollowing = (data.isFollowing ?? data.IsFollowing) as boolean | undefined;
   const isFollower = (data.isFollower ?? data.IsFollower) as boolean | undefined;
+  const isLocalPartner = (data.isLocalPartner ?? data.IsLocalPartner) as boolean | undefined;
+  const roles = (data.roles ?? data.Roles) as string[] | undefined;
 
-  return { id, name, avatarUrl, bio, followersCount, followingCount, postsCount, isFollowing, isFollower };
+  return { id, name, avatarUrl, bio, followersCount, followingCount, postsCount, isFollowing, isFollower, isLocalPartner, roles };
 }
 
 function mapToFollowResponse(data: any): FollowUserResponse {
