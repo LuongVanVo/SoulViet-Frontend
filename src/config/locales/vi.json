@@ -1,4 +1,4 @@
-{
+﻿{
   "navbar": {
     "logo": "SOULVIET",
     "login": "Đăng nhập",
@@ -513,8 +513,25 @@
       "dataAttribution": "Danh mục đơn vị hành chính sau sáp nhập (dữ liệu cục bộ trong ứng dụng).",
       "saveDisabledHint": "Điền đủ họ tên, SĐT, tỉnh, phường và địa chỉ nhà/đường để lưu hoặc xác nhận.",
       "addNew": "+ Thêm địa chỉ mới",
-      "saveToBook": "Lưu vào sổ địa chỉ (trình duyệt)",
-      "confirm": "Xác nhận"
+      "saveToBook": "Lưu vào sổ địa chỉ",
+      "loading": "Đang tải sổ địa chỉ...",
+      "saving": "Đang lưu...",
+      "delete": "Xóa",
+      "deleteConfirm": "Bạn có chắc muốn xóa địa chỉ này?",
+      "deleteSuccess": "Đã xóa địa chỉ.",
+      "deleteFailed": "Không xóa được địa chỉ.",
+      "defaultSuccess": "Đã đặt địa chỉ mặc định.",
+      "defaultFailed": "Không đặt được địa chỉ mặc định.",
+      "createSuccess": "Đã tạo địa chỉ mới.",
+      "updateSuccess": "Đã cập nhật địa chỉ.",
+      "saveFailed": "Lưu địa chỉ thất bại.",
+      "invalidProvinceWard": "Không xác định được tỉnh/phường, vui lòng chọn lại.",
+      "confirm": "Xác nhận",
+      "edit": "Sửa",
+      "update": "Cập nhật địa chỉ",
+      "deleteTitle": "Xóa địa chỉ",
+      "cancel": "Hủy",
+      "deleting": "Đang xóa..."
     },
     "voucher": {
       "placeholder": "Nhập mã voucher",
