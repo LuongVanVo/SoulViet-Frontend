@@ -6,3 +6,4 @@ export * from './social';
 export * from './marketPlace';
 export * from './AIplan';
 export * from './cart';
+export * from './notification/NotificationPage';

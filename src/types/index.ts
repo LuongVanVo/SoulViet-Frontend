@@ -6,3 +6,4 @@ export * from './social.types';
 export * from './media.types';
 export * from './marketplace.type';
 export * from './cart.type';
+export * from './notification.types';

@@ -1,4 +1,4 @@
-{
+﻿{
   "navbar": {
     "logo": "SOULVIET",
     "login": "Đăng nhập",
@@ -446,7 +446,6 @@
     "partnerLabel": "Đối tác: {{name}}",
     "partnerFallback": "Đối tác {{id}}"
   },
-
   "marketplace": {
     "hero": {
       "title": "Khám phá đặc sản địa phương & Tour trải nghiệm",
@@ -529,5 +528,19 @@
         }
       }
     }
+  },
+  "notifications": {
+    "title": "Thông báo",
+    "filterAll": "Tất cả",
+    "filterUnread": "Chưa đọc",
+    "previous": "Trước đó",
+    "viewAll": "Xem tất cả",
+    "markAllAsRead": "Đánh dấu tất cả đã đọc",
+    "empty": "Bạn chưa có thông báo nào",
+    "loading": "Đang tải thông báo...",
+    "loadMore": "Xem thêm thông báo",
+    "loadingMore": "Đang tải...",
+    "newNotification": "Thông báo mới",
+    "history": "Lịch sử thông báo"
   }
 }

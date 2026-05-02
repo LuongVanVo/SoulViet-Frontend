@@ -9,3 +9,4 @@ export * from './media.api';
 export * from './home';
 export * from './marketplace';
 export * from './cart';
+export * from './notification.api';

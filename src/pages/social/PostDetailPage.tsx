@@ -7,10 +7,12 @@ import { ShareModal } from '@/components/social/ShareModal';
 import { useState, useRef, useMemo } from 'react';
 import { toSocialPost } from '@/utils/socialMapper';
 import { useAuthStore } from '@/store';
+import { useTranslation } from 'react-i18next';
 import { useVibeTags } from '@/hooks/useVibeTags';
-import { useSocialPostActions } from '@/hooks';
+import { useSocialPostActions, useFollowUser } from '@/hooks';
 
 export const PostDetailPage = () => {
+    const { t } = useTranslation();
     const { postId } = useParams<{ postId: string }>();
     const navigate = useNavigate();
     const { data: rawPost, isLoading, error } = usePostById(postId);
@@ -24,10 +26,41 @@ export const PostDetailPage = () => {
         return toSocialPost(rawPost, vibeTagMap, currentUser);
     }, [rawPost, vibeTagsData, currentUser]);
 
+    const originalAuthorId = post?.originalPost?.userId || (post?.originalPost as any)?.UserId || '';
+
+    const {
+        isFollowing: isFollowingOriginal,
+        isFollower: isFollowerOriginal,
+        isPending: isFollowPendingOriginal,
+        followUser: followOriginal,
+        unfollowUser: unfollowOriginal
+    } = useFollowUser(originalAuthorId, {
+        isFollowing: !!post?.originalPost?.isFollowingAuthor,
+        isFollower: !!post?.originalPost?.isFollowerAuthor
+    });
+
+    const {
+        isFollowing: isFollowingAuthor,
+        isFollower: isFollowerAuthor,
+        isPending: isFollowPendingAuthor,
+        followUser: followAuthor,
+        unfollowUser: unfollowAuthor
+    } = useFollowUser(post?.userId || '', {
+        isFollowing: !!post?.isFollowingAuthor,
+        isFollower: !!post?.isFollowerAuthor
+    });
+
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
+
+    const mediaList = useMemo(() => {
+        if (!post) return [];
+        if (post.media && post.media.length > 0) return post.media;
+        if (post.originalPost?.media && post.originalPost.media.length > 0) return post.originalPost.media;
+        return [];
+    }, [post]);
 
     if (isLoading) {
         return (
@@ -50,8 +83,6 @@ export const PostDetailPage = () => {
             </div>
         );
     }
-
-    const mediaList = post.media || [];
 
     const handleScroll = (direction: 'left' | 'right') => {
         if (!scrollRef.current) return;
@@ -89,6 +120,40 @@ export const PostDetailPage = () => {
             return;
         }
         setIsShareModalOpen(true);
+    };
+
+    const handleFollowOriginalClick = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!currentUser) {
+            navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+            return;
+        }
+        try {
+            if (isFollowingOriginal) {
+                await unfollowOriginal();
+            } else {
+                await followOriginal();
+            }
+        } catch (err) {
+            console.error('Failed to toggle follow original:', err);
+        }
+    };
+
+    const handleFollowAuthorClick = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!currentUser) {
+            navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+            return;
+        }
+        try {
+            if (isFollowingAuthor) {
+                await unfollowAuthor();
+            } else {
+                await followAuthor();
+            }
+        } catch (err) {
+            console.error('Failed to toggle follow author:', err);
+        }
     };
 
     return (
@@ -170,7 +235,7 @@ export const PostDetailPage = () => {
                                 </button>
                             )}
 
-                            <div className="absolute bottom-40 md:bottom-4 left-1/2 flex -translate-x-1/2 gap-1.5">
+                            <div className="absolute bottom-40 md:bottom-24 left-1/2 flex -translate-x-1/2 gap-1.5">
                                 {mediaList.map((_, i) => (
                                     <div
                                         key={i}
@@ -180,6 +245,36 @@ export const PostDetailPage = () => {
                                 ))}
                             </div>
                         </>
+                    )}
+
+                    {post.originalPost && (
+                        <div className="absolute bottom-0 left-0 right-0 bg-[#F0F2F5] px-4 py-3 flex items-center justify-between border-t border-gray-200">
+                            <div className="flex items-center gap-3">
+                                <Link to={`/profile/${post.originalPost.userId}`} className="shrink-0">
+                                    <img
+                                        src={post.originalPost.avatar}
+                                        alt=""
+                                        className="h-10 w-10 rounded-full object-cover border border-gray-200"
+                                    />
+                                </Link>
+                                <div className="flex flex-col">
+                                    <Link to={`/profile/${post.originalPost.userId}`} className="text-sm font-bold text-gray-900 hover:underline">
+                                        {post.originalPost.author}
+                                    </Link>
+                                    <span className="text-[11px] text-gray-500">{post.originalPost.timeAgo}</span>
+                                </div>
+                            </div>
+
+                            {currentUser?.id !== originalAuthorId && originalAuthorId && (
+                                <button
+                                    onClick={handleFollowOriginalClick}
+                                    disabled={isFollowPendingOriginal}
+                                    className="text-sm font-bold text-[#2563EB] hover:text-blue-700 transition-colors px-3 py-1"
+                                >
+                                    {isFollowPendingOriginal ? '...' : (isFollowingOriginal ? t('social.profile.following') : (isFollowerOriginal ? t('social.profile.followBack') : t('social.feed.post.actions.follow')))}
+                                </button>
+                            )}
+                        </div>
                     )}
 
                     <div className="absolute bottom-0 left-0 right-0 p-4 pt-10 bg-gradient-to-t from-black/80 to-transparent md:hidden">
@@ -201,7 +296,15 @@ export const PostDetailPage = () => {
                                         >
                                             {post.author}
                                         </Link>
-                                        <button className="text-[#4A8B8B] text-xs font-semibold hover:text-[#3B6363] transition-colors">Theo dõi</button>
+                                        {currentUser?.id !== post.userId && (
+                                            <button
+                                                onClick={handleFollowAuthorClick}
+                                                disabled={isFollowPendingAuthor}
+                                                className="text-[#4A8B8B] text-xs font-semibold hover:text-[#3B6363] transition-colors"
+                                            >
+                                                {isFollowPendingAuthor ? '...' : (isFollowingAuthor ? `• ${t('social.profile.following')}` : (isFollowerAuthor ? `• ${t('social.profile.followBack')}` : `• ${t('social.feed.post.actions.follow')}`))}
+                                            </button>
+                                        )}
                                     </div>
                                     <span className="text-white/60 text-[10px]">{post.timeAgo}</span>
                                 </div>

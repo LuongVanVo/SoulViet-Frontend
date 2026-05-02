@@ -13,7 +13,8 @@ export const useMyPostActions = (userId: string) => {
 	const updateMutation = useMutation({
 		mutationFn: ({ postId, payload }: UpdatePostParams) => postApi.updatePost(postId, payload),
 		onSuccess: async () => {
-			await queryClient.invalidateQueries({ queryKey: ['user-posts', userId] });
+			await queryClient.invalidateQueries({ queryKey: ['userPosts', userId] });
+			await queryClient.invalidateQueries({ queryKey: ['publicProfile', userId] });
 			await queryClient.invalidateQueries({ queryKey: ['socialPosts'] });
 		},
 	});
@@ -21,7 +22,8 @@ export const useMyPostActions = (userId: string) => {
 	const deleteMutation = useMutation({
 		mutationFn: (postId: string) => postApi.deletePost(postId),
 		onSuccess: async () => {
-			await queryClient.invalidateQueries({ queryKey: ['user-posts', userId] });
+			await queryClient.invalidateQueries({ queryKey: ['userPosts', userId] });
+			await queryClient.invalidateQueries({ queryKey: ['publicProfile', userId] });
 			await queryClient.invalidateQueries({ queryKey: ['socialPosts'] });
 		},
 	});

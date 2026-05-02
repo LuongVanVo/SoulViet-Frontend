@@ -18,6 +18,7 @@ import {
   PostDetailPage,
   PublicProfilePage,
   CartPage,
+  NotificationPage,
 } from '@/pages';
 
 export const router = createBrowserRouter([
@@ -64,6 +65,10 @@ export const router = createBrowserRouter([
       {
         path: 'profile/:userId',
         element: <PublicProfilePage />,
+      },
+      {
+        path: 'notifications',
+        element: <NotificationPage />,
       },
       {
         path: 'login',

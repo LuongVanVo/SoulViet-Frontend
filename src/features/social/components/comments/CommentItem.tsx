@@ -5,7 +5,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { vi, enUS } from 'date-fns/locale';
 import i18next from 'i18next';
 import { useAuthStore } from '@/store';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import { useCommentReplies } from '@/hooks';
 
 import { Link } from 'react-router-dom';
@@ -54,6 +54,35 @@ export const CommentItem = ({ comment, postAuthorId, isAuthor, isReply, onReply,
     if (comment.replies && comment.replies.length > (prevRepliesLength || 0)) {
         if (!showReplies) setShowReplies(true);
     }
+
+    const optionsRef = useRef<HTMLDivElement>(null);
+    const [menuDirection, setMenuDirection] = useState<'down' | 'up'>('down');
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (optionsRef.current && !optionsRef.current.contains(event.target as Node)) {
+                setShowOptions(false);
+            }
+        };
+
+        if (showOptions) {
+            document.addEventListener('mousedown', handleClickOutside);
+            
+            // Measure position to decide direction
+            if (optionsRef.current) {
+                const rect = optionsRef.current.getBoundingClientRect();
+                const spaceBelow = window.innerHeight - rect.top;
+                if (spaceBelow < 150) {
+                    setMenuDirection('up');
+                } else {
+                    setMenuDirection('down');
+                }
+            }
+        }
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showOptions]);
 
     const isCommentOwner = currentUser?.id === comment.userId;
     const currentLocale = i18next.language === 'vi' ? vi : enUS;
@@ -137,41 +166,43 @@ export const CommentItem = ({ comment, postAuthorId, isAuthor, isReply, onReply,
                         {isCommentOwner && (
                             <div className="relative">
                                 <button
-                                    onClick={() => setShowOptions(!showOptions)}
-                                    className="opacity-0 group-hover:opacity-100 transition-opacity hover:text-[#1E293B]"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setShowOptions(!showOptions);
+                                    }}
+                                    className="opacity-0 group-hover:opacity-100 transition-opacity text-[#94A3B8] hover:text-[#1E293B]"
                                 >
                                     <MoreHorizontal className="h-4 w-4" />
                                 </button>
 
                                 {showOptions && (
-                                    <>
-                                        <div
-                                            className="fixed inset-0 z-10"
-                                            onClick={() => setShowOptions(false)}
-                                        />
-                                        <div className="absolute left-0 top-full z-20 mt-1 min-w-[120px] rounded-lg border border-[#E5E7EB] bg-white py-1 shadow-lg">
-                                            <button
-                                                onClick={() => {
-                                                    onEdit?.(comment);
-                                                    setShowOptions(false);
-                                                }}
-                                                className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-[12px] text-[#334155] hover:bg-[#F8FAFC]"
-                                            >
-                                                <Edit2 className="h-3 w-3" />
-                                                {t('social.comments.edit', { defaultValue: 'Chỉnh sửa' })}
-                                            </button>
-                                            <button
-                                                onClick={() => {
-                                                    onDelete?.(comment.id);
-                                                    setShowOptions(false);
-                                                }}
-                                                className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-[12px] text-[#DC2626] hover:bg-[#FEF2F2]"
-                                            >
-                                                <Trash2 className="h-3 w-3" />
-                                                {t('social.comments.delete', { defaultValue: 'Xóa' })}
-                                            </button>
-                                        </div>
-                                    </>
+                                    <div 
+                                        ref={optionsRef} 
+                                        className={`absolute left-0 z-20 min-w-[120px] rounded-lg border border-[#E5E7EB] bg-white py-1 shadow-lg ${
+                                            menuDirection === 'up' ? 'bottom-full mb-1' : 'top-full mt-1'
+                                        }`}
+                                    >
+                                        <button
+                                            onClick={() => {
+                                                onEdit?.(comment);
+                                                setShowOptions(false);
+                                            }}
+                                            className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-[12px] text-[#334155] hover:bg-[#F8FAFC]"
+                                        >
+                                            <Edit2 className="h-3 w-3" />
+                                            {t('social.comments.edit', { defaultValue: 'Chỉnh sửa' })}
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                onDelete?.(comment.id);
+                                                setShowOptions(false);
+                                            }}
+                                            className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-[12px] text-[#DC2626] hover:bg-[#FEF2F2]"
+                                        >
+                                            <Trash2 className="h-3 w-3" />
+                                            {t('social.comments.delete', { defaultValue: 'Xóa' })}
+                                        </button>
+                                    </div>
                                 )}
                             </div>
                         )}
