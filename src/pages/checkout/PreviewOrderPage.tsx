@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import {
   ArrowLeft,
@@ -17,17 +17,17 @@ import { usePartnerNames } from "@/hooks/usePartnerNames";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useRequiresPhysicalShipping } from "@/hooks/useRequiresPhysicalShipping";
 import { orderApi } from "@/services/order/order.api";
-import type { CheckoutNavigateState, PreviewOrderResponse } from "@/types";
+import { userAddressApi } from "@/services/user";
+import type { CheckoutNavigateState, PreviewOrderResponse, UserAddressDto } from "@/types";
 import { PaymentMethod } from "@/types";
 import {
   CheckoutAddressModal,
-  type SavedCheckoutAddress,
+  type CheckoutAddressConfirmPayload,
 } from "@/features/checkout/components/CheckoutAddressModal";
 import { CheckoutVoucherModal } from "@/features/checkout/components/CheckoutVoucherModal";
 import type { CartItemDto } from "@/types";
 import { getAxiosErrorMessage } from "@/utils/axiosErrorMessage";
-
-const ADDR_STORAGE = "sv_checkout_addresses_v1";
+import { VIETNAM_PROVINCE_TREE } from "@/utils/vietnamLocalUnits";
 
 const formatVnd = (v: number) =>
   `${new Intl.NumberFormat("vi-VN").format(Math.round(v))}₫`;
@@ -44,20 +44,34 @@ const parseVariantText = (json: string | null) => {
   }
 };
 
-function loadAddresses(): SavedCheckoutAddress[] {
-  try {
-    const raw = localStorage.getItem(ADDR_STORAGE);
-    if (!raw) return [];
-    const p = JSON.parse(raw) as SavedCheckoutAddress[];
-    return Array.isArray(p) ? p : [];
-  } catch {
-    return [];
-  }
-}
+const normalizeAddressText = (v: string) =>
+  v
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
 
-function saveAddresses(list: SavedCheckoutAddress[]) {
-  localStorage.setItem(ADDR_STORAGE, JSON.stringify(list));
-}
+const findProvinceByName = (name?: string) => {
+  if (!name) return undefined;
+  const n = normalizeAddressText(name);
+  return VIETNAM_PROVINCE_TREE.find((p) => {
+    const full = normalizeAddressText(String(p.fullName ?? ""));
+    return full === n || full.includes(n) || n.includes(full);
+  });
+};
+
+const findWardByName = (
+  province: (typeof VIETNAM_PROVINCE_TREE)[number] | undefined,
+  name?: string,
+) => {
+  if (!province || !name) return undefined;
+  const n = normalizeAddressText(name);
+  return province.wards.find((w) => {
+    const full = normalizeAddressText(String(w.fullName ?? ""));
+    return full === n || full.includes(n) || n.includes(full);
+  });
+};
 
 export function PreviewOrderPage() {
   const { t, i18n } = useTranslation();
@@ -98,10 +112,13 @@ export function PreviewOrderPage() {
   const [receiverEmail, setReceiverEmail] = useState("");
   const [shippingAddress, setShippingAddress] = useState("");
   const [addressModalOpen, setAddressModalOpen] = useState(false);
+  const [didHydrateDefaultAddress, setDidHydrateDefaultAddress] = useState(false);
 
-  const [savedAddresses, setSavedAddresses] = useState<SavedCheckoutAddress[]>(
-    () => loadAddresses(),
-  );
+  const userAddressesQuery = useQuery({
+    queryKey: ["checkout-user-addresses", user?.id],
+    queryFn: () => userAddressApi.getMine(),
+    enabled: Boolean(user?.id) && needsShipping && selectedItems.length > 0,
+  });
 
   const [platformVoucherCode, setPlatformVoucherCode] = useState<string | null>(
     null,
@@ -170,6 +187,34 @@ export function PreviewOrderPage() {
   useEffect(() => {
     void runPreview();
   }, [runPreview]);
+
+  useEffect(() => {
+    if (!needsShipping || didHydrateDefaultAddress) return;
+    if (receiverName.trim() || receiverPhone.trim() || shippingAddress.trim()) {
+      setDidHydrateDefaultAddress(true);
+      return;
+    }
+    const list = userAddressesQuery.data;
+    if (!list?.length) return;
+    const selected: UserAddressDto = list.find((a) => a.isDefault) ?? list[0];
+    const p = findProvinceByName(selected.province);
+    const w = findWardByName(p, selected.ward);
+    setReceiverName(selected.receiverName ?? "");
+    setReceiverPhone(selected.receiverPhone ?? "");
+    setReceiverEmail("");
+    setShippingAddress(selected.fullAddress || selected.detailedAddress || "");
+    setAddrProvinceCode(p?.code ?? "");
+    setAddrWardCode(w?.code ?? "");
+    setAddrStreetLine(selected.detailedAddress ?? "");
+    setDidHydrateDefaultAddress(true);
+  }, [
+    needsShipping,
+    didHydrateDefaultAddress,
+    receiverName,
+    receiverPhone,
+    shippingAddress,
+    userAddressesQuery.data,
+  ]);
 
   const imageByCartId = useMemo(() => {
     const m = new Map<string, string | null>();
@@ -616,12 +661,7 @@ export function PreviewOrderPage() {
       <CheckoutAddressModal
         open={addressModalOpen}
         onClose={() => setAddressModalOpen(false)}
-        saved={savedAddresses}
-        onSaveSaved={(list) => {
-          setSavedAddresses(list);
-          saveAddresses(list);
-        }}
-        onConfirm={(addr) => {
+        onConfirm={(addr: CheckoutAddressConfirmPayload) => {
           setReceiverName(addr.receiverName);
           setReceiverPhone(addr.receiverPhone);
           setReceiverEmail(addr.receiverEmail);
