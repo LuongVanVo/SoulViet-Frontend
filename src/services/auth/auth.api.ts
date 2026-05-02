@@ -39,6 +39,8 @@ export interface CurrentUserResponse {
   fullName?: string;
   email?: string;
   avatarUrl?: string;
+  soulCoinBalance?: number;
+  SoulCoinBalance?: number;
 }
 
 export const authApi = {

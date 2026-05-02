@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { useMyCart } from '@/hooks/useMyCart'
 import { useRemoveCartItems, useUpdateCartItemQuantity } from '@/hooks/useCartMutations'
 import { usePartnerNames } from '@/hooks/usePartnerNames'
+import { useNavigate } from 'react-router-dom'
 
 const formatVnd = (v: number) => `${new Intl.NumberFormat('vi-VN').format(Math.round(v))}₫`
 
@@ -23,6 +24,7 @@ export const CartPage = () => {
   const { data, isLoading } = useMyCart(true)
   const { mutate: updateQty, isPending: updating } = useUpdateCartItemQuantity()
   const { mutate: removeItems, isPending: removing } = useRemoveCartItems()
+  const navigate = useNavigate()
 
   const items = data?.items ?? []
   const [selectedIds, setSelectedIds] = useState<string[]>([])
@@ -87,6 +89,11 @@ export const CartPage = () => {
           <button
             type="button"
             disabled={selectedIds.length === 0}
+            onClick={() => 
+              navigate('/checkout/preview', {
+                state: { selectedCartItemIds: selectedIds }
+              })
+            }
             className="h-10 rounded-full bg-[#10b981] px-5 text-xs font-extrabold uppercase tracking-wide text-white transition hover:bg-[#0f9f70] disabled:cursor-not-allowed disabled:opacity-50 sm:h-11 sm:px-7 sm:text-sm"
           >
             {t('cart.checkout')}

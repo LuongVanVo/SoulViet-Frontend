@@ -1,4 +1,4 @@
-﻿{
+{
   "navbar": {
     "logo": "SOULVIET",
     "login": "Đăng nhập",
@@ -445,6 +445,91 @@
     },
     "partnerLabel": "Đối tác: {{name}}",
     "partnerFallback": "Đối tác {{id}}"
+  },
+  "checkout": {
+    "title": "Thanh toán",
+    "loading": "Đang tải…",
+    "backToCart": "Giỏ hàng",
+    "previewError": "Không tải được xem trước đơn hàng.",
+    "orderFailed": "Đặt hàng thất bại.",
+    "delivery": {
+      "title": "Địa chỉ giao hàng",
+      "change": "Đổi",
+      "placeholderName": "Họ tên người nhận",
+      "placeholderAddress": "Chưa có địa chỉ — bấm Đổi để nhập"
+    },
+    "lineQty": "SL: {{qty}}",
+    "shopVoucher": {
+      "select": "Chọn voucher cửa hàng",
+      "applied": "Đã áp voucher cửa hàng",
+      "modalTitle": "Voucher cửa hàng"
+    },
+    "platformVoucher": {
+      "title": "Voucher SoulViet",
+      "modalTitle": "Voucher SoulViet"
+    },
+    "soulCoin": {
+      "title": "SoulCoin",
+      "balanceTitle": "Số dư SoulCoin",
+      "hint": "Bạn có {{coins}} coin (≈ {{vnd}})",
+      "inputLabel": "Số coin muốn dùng",
+      "useHint": "Nhập số coin trừ vào đơn (không vượt quá tổng tạm tính và số dư).",
+      "toggleAria": "Dùng SoulCoin cho đơn này"
+    },
+    "payment": {
+      "title": "Phương thức thanh toán"
+    },
+    "summary": {
+      "subtotal": "Tạm tính hàng",
+      "shipping": "Phí vận chuyển",
+      "shopDiscounts": "Giảm từ shop",
+      "platformVoucher": "Voucher nền tảng",
+      "soulCoin": "SoulCoin",
+      "total": "Tổng thanh toán",
+      "vat": "Đã bao gồm VAT (nếu có)"
+    },
+    "placeOrder": "Đặt hàng",
+    "address": {
+      "modalTitle": "Chọn địa chỉ giao hàng",
+      "close": "Đóng",
+      "savedOnDevice": "Đã lưu trên thiết bị",
+      "savedEmpty": "Chưa có địa chỉ lưu. Điền form bên dưới và bấm lưu để dùng lần sau.",
+      "setDefault": "Đặt làm mặc định",
+      "formSection": "Thông tin người nhận và địa chỉ",
+      "defaultBadge": "Mặc định",
+      "name": "Họ và tên",
+      "phone": "Số điện thoại",
+      "emailOptional": "Email (tuỳ chọn)",
+      "fullAddress": "Địa chỉ đầy đủ",
+      "province": "Tỉnh / Thành phố",
+      "ward": "Phường / Xã",
+      "selectProvince": "Chọn tỉnh / thành phố",
+      "selectWard": "Chọn phường / xã",
+      "selectProvinceFirst": "Chọn tỉnh trước",
+      "street": "Số nhà, đường, ngõ, tòa nhà",
+      "streetPlaceholder": "Ví dụ: 12 ngõ 4 Nguyễn Tuân",
+      "previewLabel": "Địa chỉ đầy đủ:",
+      "previewEmpty": "Chọn tỉnh, phường và nhập số nhà / đường",
+      "dataAttribution": "Danh mục đơn vị hành chính sau sáp nhập (dữ liệu cục bộ trong ứng dụng).",
+      "saveDisabledHint": "Điền đủ họ tên, SĐT, tỉnh, phường và địa chỉ nhà/đường để lưu hoặc xác nhận.",
+      "addNew": "+ Thêm địa chỉ mới",
+      "saveToBook": "Lưu vào sổ địa chỉ (trình duyệt)",
+      "confirm": "Xác nhận"
+    },
+    "voucher": {
+      "placeholder": "Nhập mã voucher",
+      "apply": "Áp dụng",
+      "suggested": "Gợi ý",
+      "loadingList": "Đang tải danh sách…",
+      "emptyList": "Không có voucher phù hợp.",
+      "enterCode": "Vui lòng nhập mã.",
+      "invalid": "Mã không hợp lệ hoặc không dùng được cho đơn này.",
+      "checkFailed": "Không kiểm tra được mã. Kiểm tra kết nối hoặc thử lại.",
+      "appliedSuccess": "Đã áp dụng mã giảm giá vào đơn.",
+      "tourNoFreeShipping": "Đơn chỉ có tour hoặc sản phẩm không giao hàng — không phát sinh phí ship, nên không thể dùng voucher miễn phí vận chuyển.",
+      "selectedCount": "Đã chọn: {{count}}",
+      "ok": "OK"
+    }
   },
   "marketplace": {
     "hero": {

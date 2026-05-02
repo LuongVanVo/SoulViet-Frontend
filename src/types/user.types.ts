@@ -12,6 +12,7 @@ export interface UserProfile {
   isFollower?: boolean;
   isLocalPartner?: boolean;
   roles?: string[];
+  soulCoinBalance?: number;
 }
 
 export interface FollowUserEntry {
