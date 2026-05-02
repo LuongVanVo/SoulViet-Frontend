@@ -1,5 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuthStore } from '@/store';
+import { useFollowUser } from '@/hooks';
 import { CommentSection } from './CommentSection';
 import type { SocialPost } from '@/types';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
@@ -12,6 +15,37 @@ interface CommentModalProps {
 
 export const CommentModal = ({ isOpen, onClose, post }: CommentModalProps) => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
+    const currentUser = useAuthStore((state) => state.user);
+    const originalAuthorId = post.originalPost?.userId || '';
+
+    const {
+        isFollowing,
+        isFollower,
+        isPending,
+        followUser,
+        unfollowUser
+    } = useFollowUser(originalAuthorId, {
+        isFollowing: post.originalPost?.isFollowingAuthor,
+        isFollower: post.originalPost?.isFollowerAuthor
+    });
+
+    const handleFollowToggle = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!currentUser) {
+            navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+            return;
+        }
+        try {
+            if (isFollowing) {
+                await unfollowUser();
+            } else {
+                await followUser();
+            }
+        } catch (error) {
+            console.error('Failed to toggle follow:', error);
+        }
+    };
     const [currentIndex, setCurrentIndex] = useState(0);
     const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -113,21 +147,35 @@ export const CommentModal = ({ isOpen, onClose, post }: CommentModalProps) => {
                     {post.originalPost && (
                         <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between bg-white/95 px-6 py-4 backdrop-blur-sm">
                             <div className="flex items-center gap-3">
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#E2E8F0] text-sm font-bold text-[#0F172A]">
+                                <Link 
+                                    to={`/profile/${post.originalPost.userId}`}
+                                    className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#E2E8F0] text-sm font-bold text-[#0F172A] hover:opacity-80 transition-opacity"
+                                >
                                     {post.originalPost.avatar ? (
                                         <img src={post.originalPost.avatar} alt={post.originalPost.author} className="h-full w-full object-cover" />
                                     ) : (
                                         <span>{post.originalPost.author.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()}</span>
                                     )}
-                                </div>
+                                </Link>
                                 <div className="flex flex-col">
-                                    <span className="text-[14px] font-bold text-gray-900">{post.originalPost.author}</span>
+                                    <Link 
+                                        to={`/profile/${post.originalPost.userId}`}
+                                        className="text-[14px] font-bold text-gray-900 hover:underline"
+                                    >
+                                        {post.originalPost.author}
+                                    </Link>
                                     <span className="text-[12px] text-gray-500">{post.originalPost.timeAgo}</span>
                                 </div>
                             </div>
-                            <button className="text-[14px] font-bold text-blue-600 hover:text-blue-700 transition-colors">
-                                {t('social.feed.post.actions.follow', { defaultValue: 'Theo dõi' })}
-                            </button>
+                            {currentUser?.id !== originalAuthorId && originalAuthorId && (
+                                <button
+                                    onClick={handleFollowToggle}
+                                    disabled={isPending}
+                                    className="text-[14px] font-bold text-[#4A8B8B] hover:text-[#3B6363] transition-colors disabled:opacity-50"
+                                >
+                                    {isPending ? '...' : (isFollowing ? t('social.profile.following', { defaultValue: 'Đang theo dõi' }) : (isFollower ? t('social.profile.followBack', { defaultValue: 'Theo dõi lại' }) : t('social.feed.post.actions.follow', { defaultValue: 'Theo dõi' })))}
+                                </button>
+                            )}
                         </div>
                     )}
                 </div>

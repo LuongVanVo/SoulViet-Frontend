@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { X, Heart, MessageCircle, Share2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { usePostComments, usePostCommentStream, useSocialPostActions } from '@/hooks';
+import { usePostComments, usePostCommentStream, useSocialPostActions, useFollowUser } from '@/hooks';
 import type { SocialPost, PostComment } from '@/types';
 import { CommentItem } from './CommentItem';
 import { CommentInput } from './CommentInput';
@@ -40,6 +40,41 @@ export const CommentSection = ({
 
     const { likePost, isLiking } = useSocialPostActions();
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
+    const {
+        isFollowing,
+        isFollower,
+        followUser,
+        unfollowUser,
+        isLoading: isFollowLoading
+    } = useFollowUser(post.userId, {
+        isFollowing: post.isFollowingAuthor,
+        isFollower: post.isFollowerAuthor
+    });
+
+    const handleFollowToggle = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!currentUserId) {
+            navigate('/login');
+            return;
+        }
+
+        try {
+            if (isFollowing) {
+                await unfollowUser();
+            } else {
+                await followUser();
+            }
+        } catch (error) {
+            console.error('Failed to toggle follow:', error);
+        }
+    };
+
+    const getFollowLabel = () => {
+        if (isFollowing) return t('social.profile.following', { defaultValue: 'Đang theo dõi' });
+        if (isFollower) return t('social.profile.followBack', { defaultValue: 'Theo dõi lại' });
+        return t('social.feed.post.actions.follow', { defaultValue: 'Theo dõi' });
+    };
 
     const [editingComment, setEditingComment] = useState<PostComment | null>(null);
     const [replyingTo, setReplyingTo] = useState<PostComment | null>(null);
@@ -80,7 +115,7 @@ export const CommentSection = ({
         <div className="flex h-full flex-col bg-white">
             <div className="flex items-center justify-between border-b border-[#F1F5F9] px-4 py-3 shrink-0">
                 <div className="flex items-center gap-3">
-                    <div 
+                    <div
                         className="h-8 w-8 overflow-hidden rounded-full ring-1 ring-gray-100 cursor-pointer hover:opacity-80 transition-opacity"
                         onClick={() => navigate(`/profile/${post.userId}`)}
                     >
@@ -94,16 +129,20 @@ export const CommentSection = ({
                     </div>
                     <div>
                         <div className="flex items-center gap-1.5">
-                            <span 
+                            <span
                                 className="text-[14px] font-bold text-[#1E293B] cursor-pointer hover:underline"
                                 onClick={() => navigate(`/profile/${post.userId}`)}
                             >
                                 {post.author}
                             </span>
                             {!isOwnPost && (
-                                <span className="text-[14px] font-bold text-[#4A8B8B] hover:text-[#3B6363] cursor-pointer">
-                                    • {t('social.feed.post.actions.follow', { defaultValue: 'Theo dõi' })}
-                                </span>
+                                <button
+                                    onClick={handleFollowToggle}
+                                    disabled={isFollowLoading}
+                                    className="text-[14px] font-bold text-[#4A8B8B] hover:text-[#3B6363] cursor-pointer disabled:opacity-50 transition-colors"
+                                >
+                                    • {getFollowLabel()}
+                                </button>
                             )}
                         </div>
                     </div>
@@ -117,10 +156,10 @@ export const CommentSection = ({
             </div>
 
             <div className="flex-1 overflow-y-auto scrollbar-hide relative">
-                <div className={`divide-y divide-[#F1F5F9]/30 ${!currentUserId ? 'blur-[4px] select-none pointer-events-none' : ''}`}>
+                <div className={`divide-y divide-[#F1F5F9]/30 pb-10 ${!currentUserId ? 'blur-[4px] select-none pointer-events-none' : ''}`}>
                     {post.caption && (
                         <div className="flex gap-3 px-4 py-4">
-                            <div 
+                            <div
                                 className="h-8 w-8 shrink-0 overflow-hidden rounded-full ring-1 ring-gray-100 cursor-pointer hover:opacity-80 transition-opacity"
                                 onClick={() => navigate(`/profile/${post.userId}`)}
                             >
@@ -128,7 +167,7 @@ export const CommentSection = ({
                             </div>
                             <div className="flex-1 space-y-1">
                                 <div className="text-[14px]">
-                                    <span 
+                                    <span
                                         className="font-bold text-[#1E293B] mr-2 cursor-pointer hover:underline"
                                         onClick={() => navigate(`/profile/${post.userId}`)}
                                     >

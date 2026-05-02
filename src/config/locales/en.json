@@ -1,4 +1,4 @@
-{
+﻿{
   "navbar": {
     "logo": "SOULVIET",
     "login": "Login",
@@ -518,5 +518,19 @@
         }
       }
     }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "filterAll": "All",
+    "filterUnread": "Unread",
+    "previous": "Previous",
+    "viewAll": "View all",
+    "markAllAsRead": "Mark all as read",
+    "empty": "No notifications yet",
+    "loading": "Loading notifications...",
+    "loadMore": "Load more notifications",
+    "loadingMore": "Loading...",
+    "newNotification": "New Notification",
+    "history": "Notification History"
   }
 }
