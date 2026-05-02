@@ -15,8 +15,8 @@ function mapToProfile(data: Record<string, unknown>): UserProfile {
   const isFollower = (data.isFollower ?? data.IsFollower) as boolean | undefined;
   const isLocalPartner = (data.isLocalPartner ?? data.IsLocalPartner) as boolean | undefined;
   const roles = (data.roles ?? data.Roles) as string[] | undefined;
-
-  return { id, name, avatarUrl, bio, followersCount, followingCount, postsCount, isFollowing, isFollower, isLocalPartner, roles };
+  const soulCoinBalance = Number(data.soulCoinBalance ?? data.SoulCoinBalance ?? NaN);
+  return { id, name, avatarUrl, bio, followersCount, followingCount, postsCount, isFollowing, isFollower, isLocalPartner, roles, soulCoinBalance: Number.isFinite(soulCoinBalance) ? soulCoinBalance : undefined };
 }
 
 function mapToFollowResponse(data: any): FollowUserResponse {

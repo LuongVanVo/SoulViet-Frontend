@@ -20,6 +20,7 @@ import {
   CartPage,
   NotificationPage,
 } from '@/pages';
+import { PreviewOrderPage } from '@/pages/checkout';
 
 export const router = createBrowserRouter([
   {
@@ -53,6 +54,10 @@ export const router = createBrowserRouter([
       {
         path: 'cart',
         element: <CartPage />,
+      },
+      {
+        path: 'checkout/preview',
+        element: <PreviewOrderPage />,
       },
       {
         path: 'marketplace/:productId',

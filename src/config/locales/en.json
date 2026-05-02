@@ -1,4 +1,4 @@
-﻿{
+{
   "navbar": {
     "logo": "SOULVIET",
     "login": "Login",
@@ -435,6 +435,91 @@
     },
     "partnerLabel": "Partner: {{name}}",
     "partnerFallback": "Partner {{id}}"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "loading": "Loading…",
+    "backToCart": "Cart",
+    "previewError": "Could not load order preview.",
+    "orderFailed": "Order failed.",
+    "delivery": {
+      "title": "Delivery address",
+      "change": "Change",
+      "placeholderName": "Recipient name",
+      "placeholderAddress": "No address yet — tap Change to enter"
+    },
+    "lineQty": "Qty: {{qty}}",
+    "shopVoucher": {
+      "select": "Select shop voucher",
+      "applied": "Shop voucher applied",
+      "modalTitle": "Shop vouchers"
+    },
+    "platformVoucher": {
+      "title": "SoulViet voucher",
+      "modalTitle": "SoulViet vouchers"
+    },
+    "soulCoin": {
+      "title": "SoulCoin",
+      "balanceTitle": "SoulCoin balance",
+      "hint": "You have {{coins}} coins (≈ {{vnd}})",
+      "inputLabel": "Coins to apply",
+      "useHint": "Enter coins to deduct (cannot exceed order total or your balance).",
+      "toggleAria": "Use SoulCoin on this order"
+    },
+    "payment": {
+      "title": "Payment method"
+    },
+    "summary": {
+      "subtotal": "Merchandise subtotal",
+      "shipping": "Shipping total",
+      "shopDiscounts": "Shop discounts",
+      "platformVoucher": "Platform vouchers",
+      "soulCoin": "SoulCoin",
+      "total": "Total payment",
+      "vat": "VAT included where applicable"
+    },
+    "placeOrder": "Place order",
+    "address": {
+      "modalTitle": "Select delivery address",
+      "close": "Close",
+      "savedOnDevice": "Saved on this device",
+      "savedEmpty": "No saved addresses yet. Fill in the form below and save for next time.",
+      "setDefault": "Set as default",
+      "formSection": "Recipient and address",
+      "defaultBadge": "Default",
+      "name": "Full name",
+      "phone": "Phone number",
+      "emailOptional": "Email (optional)",
+      "fullAddress": "Full address",
+      "province": "Province / City",
+      "ward": "Ward / Commune",
+      "selectProvince": "Select province or city",
+      "selectWard": "Select ward or commune",
+      "selectProvinceFirst": "Select province first",
+      "street": "Street, alley, building, unit",
+      "streetPlaceholder": "e.g. 12 Lane 4 Nguyen Tuan",
+      "previewLabel": "Full address:",
+      "previewEmpty": "Choose province, ward, and enter street / number",
+      "dataAttribution": "Post-merger administrative units (bundled locally in the app).",
+      "saveDisabledHint": "Enter full name, phone, province, ward, and street to save or confirm.",
+      "addNew": "+ Add new address",
+      "saveToBook": "Save to address book (browser)",
+      "confirm": "Confirm selection"
+    },
+    "voucher": {
+      "placeholder": "Enter voucher code",
+      "apply": "Apply",
+      "suggested": "Suggested",
+      "loadingList": "Loading list…",
+      "emptyList": "No vouchers available.",
+      "enterCode": "Please enter a code.",
+      "invalid": "This code is invalid or cannot be used on this order.",
+      "checkFailed": "Could not verify the code. Check your connection and try again.",
+      "appliedSuccess": "Voucher applied to your order.",
+      "tourNoFreeShipping": "This order only has tours or items with no shipping — there is no shipping fee, so free-shipping vouchers cannot be used.",
+      "selectedCount": "Selected: {{count}}",
+      "ok": "OK"
+    }
   },
   "marketplace": {
     "hero": {

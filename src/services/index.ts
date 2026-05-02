@@ -10,3 +10,4 @@ export * from './home';
 export * from './marketplace';
 export * from './cart';
 export * from './notification.api';
+export * from './order';

@@ -7,3 +7,5 @@ export * from './media.types';
 export * from './marketplace.type';
 export * from './cart.type';
 export * from './notification.types';
+export * from './order.type';
+export * from './voucher.enums';
