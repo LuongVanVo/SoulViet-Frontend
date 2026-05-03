@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Lock, CheckCircle2, ArrowRight } from 'lucide-react';
 import { authApi } from '@/services';
@@ -8,7 +8,6 @@ import { isValidPassword, doPasswordsMatch, getPasswordValidationMessage, getPas
 
 export default function ResetPasswordPage() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const token = searchParams.get('token');

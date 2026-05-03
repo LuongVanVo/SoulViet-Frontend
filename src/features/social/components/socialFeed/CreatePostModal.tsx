@@ -309,7 +309,6 @@ export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: Creat
   const userName = user?.name ?? t('social.feed.createModal.defaultUserName');
   const canPublish = caption.trim().length > 0 || mediaFiles.length > 0 || Boolean(selectedLocation);
   const avatarInitial = userName.charAt(0).toUpperCase();
-  const primaryPreview = mediaPreviewUrls[0];
   const isLocalPartner = user?.isLocalPartner || user?.roles?.some(role => role === 'LocalPartner' || role === 'Partner');
 
   return (

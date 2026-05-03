@@ -82,8 +82,6 @@ export const Navbar = () => {
                   className={`relative inline-flex h-9 w-9 md:h-10 md:w-10 items-center justify-center rounded-full border transition-all hover:scale-105 active:scale-95 ${
                     isHomePage
                       ? isNotiOpen 
-                        ? 'border-white bg-white text-brand' 
-                        : 'border-white/40 text-white hover:bg-white/10'
                       : isNotiOpen
                         ? 'border-brand bg-gray-50 text-brand shadow-sm'
                         : 'border-gray-200 text-gray-700 hover:border-brand hover:text-brand bg-white shadow-sm'

@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store';
 import { FollowListModal } from '@/components/social/FollowListModal';
 import { useFollowUser, useMyPostActions, useSocialPostActions } from '@/hooks';
+
 import { EditPostModal } from '@/features/profile/components/EditPostModal';
 import { CreatePostModal } from '@/features/social/components/socialFeed/CreatePostModal';
 import type { SocialPost } from '@/types';
@@ -27,6 +28,7 @@ export const PublicProfilePage: React.FC = () => {
     const { updateMyPost, deleteMyPost, isUpdating, isDeleting } = useMyPostActions(userId || '');
     const { likePost, isLiking: isLikingPost } = useSocialPostActions();
     const [activeTab, setActiveTab] = useState<'posts' | 'products'>('posts');
+
     const [followListModal, setFollowListModal] = useState<{ isOpen: boolean; type: 'followers' | 'following' }>({
         isOpen: false,
         type: 'followers'
@@ -96,8 +98,20 @@ export const PublicProfilePage: React.FC = () => {
             await unfollowUser();
             setIsUnfollowDialogOpen(false);
         } catch (error) {
-            console.error('Failed to unfollow user:', error);
         }
+    };
+
+    const handleMessageClick = () => {
+        if (!currentUser) {
+            navigate(`/login?redirect=${encodeURIComponent(`/profile/${userId}`)}`);
+            return;
+        }
+        const params = new URLSearchParams({
+            user: userId!,
+            userName: profile?.name ?? '',
+        });
+        if (profile?.avatarUrl) params.set('userAvatar', profile.avatarUrl);
+        navigate(`/messages?${params.toString()}`);
     };
 
     if (isLoadingProfile) {
@@ -247,7 +261,10 @@ export const PublicProfilePage: React.FC = () => {
                                     : (isFollower ? (t('profile.public.followBack') || 'Theo dõi lại') : (t('profile.public.follow') || 'Theo dõi'))
                                 }
                             </button>
-                            <button className="flex-1 rounded-2xl bg-[#F0F2F5] py-3 text-center font-medium text-[#1C1E21] transition-all hover:bg-gray-200 active:scale-95">
+                            <button
+                                onClick={() => void handleMessageClick()}
+                                className="flex-1 rounded-2xl bg-[#F0F2F5] py-3 text-center font-medium text-[#1C1E21] transition-all hover:bg-gray-200 active:scale-95"
+                            >
                                 {t('profile.public.message')}
                             </button>
                         </>
