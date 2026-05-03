@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, createElement } from 'react';
 import * as signalR from '@microsoft/signalr';
 import { useAuthStore, useNotificationStore } from '@/store';
+import { useSignalRStore } from '@/store/signalr.store';
 import { authApi, notificationApi } from '@/services';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +13,7 @@ const _backendOrigin = (import.meta.env.VITE_BACKEND_ORIGIN ?? 'http://localhost
 const HUB_URL = `${_backendOrigin.replace(/\/$/, '')}/hubs/notifications`;
 
 export const useSignalR = () => {
-    const [connection, setConnection] = useState<signalR.HubConnection | null>(null);
+    const setConnection = useSignalRStore(state => state.setConnection);
     const connectionRef = useRef<signalR.HubConnection | null>(null);
     const navigate = useNavigate();
 
@@ -104,7 +105,5 @@ export const useSignalR = () => {
             newConnection.stop();
             connectionRef.current = null;
         };
-    }, [isLoggedIn, user, addNotification, navigate, t, setUnreadCount]);
-
-    return connection;
+    }, [isLoggedIn, user, addNotification, navigate, t, setUnreadCount, setConnection]);
 };

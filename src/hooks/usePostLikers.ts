@@ -1,22 +1,25 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { socialFeedApi } from '@/services/social';
-import type { PostLiker, Connection } from '@/types';
 
 export const usePostLikers = (postId: string, isOpen: boolean = true, first: number = 20) => {
-    const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useQuery({
+    const query = useInfiniteQuery({
         queryKey: ['post-likers', postId, first],
-        queryFn: () => socialFeedApi.getPostLikers(postId, undefined, first),
+        queryFn: ({ pageParam }) => socialFeedApi.getPostLikers(postId, pageParam as string | undefined, first),
+        initialPageParam: undefined as string | undefined,
+        getNextPageParam: (lastPage) => lastPage.pageInfo.hasNextPage ? lastPage.pageInfo.endCursor : undefined,
         enabled: !!postId && isOpen,
     });
 
-    const likers = data?.edges.map(edge => edge.node) || [];
-    const totalCount = data?.totalCount || 0;
+    const likers = query.data?.pages.flatMap(page => page.edges.map(edge => edge.node)) || [];
+    const totalCount = query.data?.pages[0]?.totalCount || 0;
 
     return {
         likers,
         totalCount,
-        isLoading,
-        isError,
-        pageInfo: data?.pageInfo,
+        isLoading: query.isLoading,
+        isError: query.isError,
+        fetchNextPage: query.fetchNextPage,
+        hasNextPage: query.hasNextPage,
+        isFetchingNextPage: query.isFetchingNextPage,
     };
 };

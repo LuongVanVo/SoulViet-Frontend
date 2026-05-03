@@ -19,7 +19,9 @@ import {
   PublicProfilePage,
   CartPage,
   NotificationPage,
+  MessagesPage,
 } from '@/pages';
+
 import { PreviewOrderPage } from '@/pages/checkout';
 
 export const router = createBrowserRouter([
@@ -75,6 +77,11 @@ export const router = createBrowserRouter([
         path: 'notifications',
         element: <NotificationPage />,
       },
+      {
+        path: 'messages',
+        element: <MessagesPage />,
+      },
+
       {
         path: 'login',
         element: <SignInPage />,

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState} from 'react';
 import { X, Search, User as UserIcon, Lock } from 'lucide-react';
 import { useFollowList } from '@/hooks/useFollowList';
 import { useFollowUser } from '@/hooks/useFollowUser';

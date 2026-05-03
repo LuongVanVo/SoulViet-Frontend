@@ -10,3 +10,4 @@ export * from './notification.types';
 export * from './order.type';
 export * from './voucher.enums';
 export * from './user-address.type';
+export * from './chat.types';

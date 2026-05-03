@@ -89,7 +89,7 @@ export const BottomNav = ({ activeTab, onTabChange }: BottomNavProps) => {
               {isCenterAi ? (
                 <span
                   className={cn(
-                    'absolute left-1/2 top-[-2.25rem] flex h-[66px] w-[66px] -translate-x-1/2 items-center justify-center rounded-full border-[5px] border-white shadow-[0_12px_28px_-10px_rgba(245,158,11,0.65)] transition-transform sm:h-[72px] sm:w-[72px]',
+                    'absolute left-1/2 top-[-2.25rem] flex h-[66px] w-[66px] -translate-x-1/2 items-center justify-center rounded-full border-[5px] border-white shadow-[0_8px_20px_-10px_rgba(245,158,11,0.4)] transition-transform sm:h-[72px] sm:w-[72px]',
                     isActive ? 'bg-amber-400 text-white' : 'bg-amber-400 text-white/95'
                   )}
                 >
