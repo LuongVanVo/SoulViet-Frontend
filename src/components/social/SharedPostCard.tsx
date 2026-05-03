@@ -33,7 +33,6 @@ export const SharedPostCard = ({
 	const location = useLocation();
 	const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
-	// If the original post is missing (e.g., deleted), don't render the share card
 	if (!post) return null;
 
 	const [currentIndex, setCurrentIndex] = useState(0);
@@ -103,6 +102,16 @@ export const SharedPostCard = ({
 
 	const handleOriginalPostClick = () => {
 		navigate(`/posts/${post.id}`);
+	};
+
+	const handleFollowClick = (e: React.MouseEvent) => {
+		e.stopPropagation();
+		if (!isLoggedIn) {
+			const redirect = encodeURIComponent(`${location.pathname}${location.search}${location.hash}`);
+			navigate(`/login?redirect=${redirect}`);
+			return;
+		}
+		navigate(`/profile/${post.userId}`);
 	};
 
 	return (
@@ -208,7 +217,7 @@ export const SharedPostCard = ({
 						</div>
 						<button
 							className="text-[13px] font-bold text-[#4A8B8B] hover:text-[#3B6363] transition-colors"
-							onClick={(e) => { e.stopPropagation(); navigate(`/profile/${post.userId}`); }}
+							onClick={handleFollowClick}
 						>
 							{post.isFollowingAuthor 
 								? t('profile.public.following', { defaultValue: 'Đang theo dõi' }) 

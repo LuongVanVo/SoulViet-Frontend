@@ -103,10 +103,6 @@ export const useSocialPostActions = () => {
 			}
 
 			if (foundNode) {
-				console.log(`[Cache] Found post ${postId} in query:`, queryKey, {
-					likes: foundNode.likesCount ?? foundNode.likes,
-					isLiked: foundNode.isLiked
-				});
 				return foundNode;
 			}
 		}
@@ -118,8 +114,6 @@ export const useSocialPostActions = () => {
 		mutationFn: async ({ postId, isCurrentlyLiked }: { postId: string; isCurrentlyLiked: boolean }) => {
 			const token = localStorage.getItem('access_token');
 			if (!currentUser && !token) throw new Error('Not authenticated');
-
-			console.log('[Like] Decided Action:', isCurrentlyLiked ? 'UNLIKE (DELETE)' : 'LIKE (POST)');
 			return isCurrentlyLiked ? socialFeedApi.unlikePost(postId) : socialFeedApi.likePost(postId);
 		},
 		onMutate: async ({ postId, isCurrentlyLiked }) => {
@@ -136,8 +130,6 @@ export const useSocialPostActions = () => {
 				? Math.max(0, totalLikes - 1)
 				: totalLikes + 1;
 
-			console.log('[Like] Optimistic Update:', { postId, isLiked: !isCurrentlyLiked, newLikesCount });
-
 			updateSocialFeedLikeCollections({
 				postId,
 				isLiked: !isCurrentlyLiked,
@@ -147,7 +139,6 @@ export const useSocialPostActions = () => {
 			return { prevPost: currentPost };
 		},
 		onError: (err, variables, context) => {
-			console.error('[Like] Mutation Error:', err);
 			if (context?.prevPost) {
 				updateSocialFeedLikeCollections({
 					postId: variables.postId,
@@ -157,7 +148,6 @@ export const useSocialPostActions = () => {
 			}
 		},
 		onSuccess: (response) => {
-			console.log('[Like] Server Success:', response);
 			if (response.isLiked) {
 				markPostLikedForUser(currentUser?.id, response.postId);
 			} else {
@@ -170,14 +160,7 @@ export const useSocialPostActions = () => {
 
 	const likePost = async (postId: string) => {
 		const token = localStorage.getItem('access_token');
-		console.log('[Like] Auth Check:', {
-			hasUserInStore: !!currentUser,
-			userId: currentUser?.id,
-			hasTokenInStorage: !!token
-		});
-
 		if (!currentUser && !token) {
-			console.warn('[Like] Aborted: No user and no token found.');
 			return;
 		}
 
@@ -187,7 +170,6 @@ export const useSocialPostActions = () => {
 			? (currentPost?.isLiked ?? isPostLikedForUser(currentUser?.id || 'unknown', postId) ?? false)
 			: false;
 
-		console.log('[Like] Triggering mutation...', { postId, isCurrentlyLiked });
 		await likeMutation.mutateAsync({ postId, isCurrentlyLiked });
 	};
 

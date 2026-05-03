@@ -10,6 +10,7 @@ import { vi, enUS } from 'date-fns/locale';
 import i18next from 'i18next';
 import { useAuthStore } from '@/store';
 import { ShareModal } from '@/components/social/ShareModal';
+import { LikersModal } from '@/components/social/LikersModal';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -40,6 +41,7 @@ export const CommentSection = ({
 
     const { likePost, isLiking } = useSocialPostActions();
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const [isLikersModalOpen, setIsLikersModalOpen] = useState(false);
 
     const {
         isFollowing,
@@ -252,7 +254,10 @@ export const CommentSection = ({
                         <div className="flex items-center justify-between mb-1">
                             <div>
                                 {post.likes > 0 && (
-                                    <p className="text-[13px] font-semibold text-gray-700">
+                                    <p 
+                                        className="text-[13px] font-semibold text-gray-700 cursor-pointer hover:underline"
+                                        onClick={() => setIsLikersModalOpen(true)}
+                                    >
                                         {post.likes} {t('social.feed.post.likes')}
                                     </p>
                                 )}
@@ -291,6 +296,12 @@ export const CommentSection = ({
             <ShareModal
                 isOpen={isShareModalOpen}
                 onClose={() => setIsShareModalOpen(false)}
+                postId={post.id}
+            />
+
+            <LikersModal 
+                isOpen={isLikersModalOpen}
+                onClose={() => setIsLikersModalOpen(false)}
                 postId={post.id}
             />
         </div>

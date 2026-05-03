@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, X, Heart, MessageCircle, Share2, MoreHorizon
 import { usePostById } from '@/hooks/usePostById';
 import { CommentSection } from '@/features/social/components/comments/CommentSection';
 import { CommentModal } from '@/features/social/components/comments/CommentModal';
+import { LikersModal } from '@/components/social/LikersModal';
 import { ShareModal } from '@/components/social/ShareModal';
 import { useState, useRef, useMemo } from 'react';
 import { toSocialPost } from '@/utils/socialMapper';
@@ -52,6 +53,7 @@ export const PostDetailPage = () => {
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+    const [isLikersModalOpen, setIsLikersModalOpen] = useState(false);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -104,6 +106,11 @@ export const PostDetailPage = () => {
             return;
         }
         await likePost(post.id);
+    };
+
+    const handleLikersClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setIsLikersModalOpen(true);
     };
 
     const handleCommentClick = () => {
@@ -323,7 +330,12 @@ export const PostDetailPage = () => {
                                     className="flex items-center gap-1.5 text-white"
                                 >
                                     <Heart className={`h-6 w-6 ${post.isLiked ? 'fill-red-500 text-red-500' : ''}`} />
-                                    <span className="text-sm font-medium">{post.likes > 0 ? post.likes : ''}</span>
+                                    <span 
+                                        className="text-sm font-medium hover:underline cursor-pointer"
+                                        onClick={handleLikersClick}
+                                    >
+                                        {post.likes > 0 ? post.likes : ''}
+                                    </span>
                                 </button>
                                 <button
                                     onClick={handleCommentClick}
@@ -358,6 +370,12 @@ export const PostDetailPage = () => {
             <ShareModal
                 isOpen={isShareModalOpen}
                 onClose={() => setIsShareModalOpen(false)}
+                postId={post.id}
+            />
+
+            <LikersModal 
+                isOpen={isLikersModalOpen}
+                onClose={() => setIsLikersModalOpen(false)}
                 postId={post.id}
             />
         </div>

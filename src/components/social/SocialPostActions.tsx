@@ -1,9 +1,12 @@
+import { useState } from 'react';
 import { Heart, MessageCircle, Share2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { PostActionProps } from '@/types';
+import { LikersModal } from './LikersModal';
 
 export const SocialPostActions = ({ likes, comments, shares, postId, onLike, isLiking, isLiked, onComment, onShare }: PostActionProps & { onComment?: () => void; onShare?: () => void }) => {
 	const { t } = useTranslation();
+	const [isLikersModalOpen, setIsLikersModalOpen] = useState(false);
 	const likeButtonClass = isLiked
 		? 'text-[#DC2626] hover:bg-[#FEF2F2]'
 		: 'text-[#334155] hover:bg-[#F8FAFC]';
@@ -14,7 +17,10 @@ export const SocialPostActions = ({ likes, comments, shares, postId, onLike, isL
 				<div className="flex items-center justify-between px-4 py-3 text-sm text-[#64748B]">
 					<div>
 						{likes > 0 && (
-							<p>
+							<p 
+								className="cursor-pointer hover:underline"
+								onClick={() => setIsLikersModalOpen(true)}
+							>
 								{likes} {t('social.feed.post.likes')}
 							</p>
 						)}
@@ -65,6 +71,14 @@ export const SocialPostActions = ({ likes, comments, shares, postId, onLike, isL
 					{t('social.feed.post.actions.share')}
 				</button>
 			</div>
+
+			{postId && (
+				<LikersModal 
+					isOpen={isLikersModalOpen}
+					onClose={() => setIsLikersModalOpen(false)}
+					postId={postId}
+				/>
+			)}
 		</>
 	);
 };

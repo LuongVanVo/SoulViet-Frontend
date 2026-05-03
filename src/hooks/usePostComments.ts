@@ -20,9 +20,6 @@ export const usePostComments = (postId: string, includeReplies: boolean = false)
     });
 
     useEffect(() => {
-        if (data) {
-            console.log(`[usePostComments] Raw API data for post ${postId}:`, data);
-        }
     }, [data, postId]);
 
     const createCommentMutation = useMutation({
@@ -97,6 +94,11 @@ export const usePostComments = (postId: string, includeReplies: boolean = false)
                 const existingArray = (Array.isArray(old) ? old : []).filter((c: any) => !c.id.toString().startsWith('temp-'));
                 return [createdComment, ...existingArray];
             });
+
+            queryClient.invalidateQueries({ queryKey: ['post', postId] });
+            queryClient.invalidateQueries({ queryKey: ['socialPosts'] });
+            queryClient.invalidateQueries({ queryKey: ['user-posts'] });
+            queryClient.invalidateQueries({ queryKey: ['userPosts'] });
         },
         onMutate: async (newCommentPayload) => {
             await queryClient.cancelQueries({ queryKey: ['post-comments', postId, includeReplies] });
@@ -179,6 +181,10 @@ export const usePostComments = (postId: string, includeReplies: boolean = false)
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['post-comments', postId, includeReplies] });
+            queryClient.invalidateQueries({ queryKey: ['post', postId] });
+            queryClient.invalidateQueries({ queryKey: ['socialPosts'] });
+            queryClient.invalidateQueries({ queryKey: ['user-posts'] });
+            queryClient.invalidateQueries({ queryKey: ['userPosts'] });
         },
     });
 
@@ -221,6 +227,10 @@ export const usePostComments = (postId: string, includeReplies: boolean = false)
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['post-comments', postId, includeReplies] });
+            queryClient.invalidateQueries({ queryKey: ['post', postId] });
+            queryClient.invalidateQueries({ queryKey: ['socialPosts'] });
+            queryClient.invalidateQueries({ queryKey: ['user-posts'] });
+            queryClient.invalidateQueries({ queryKey: ['userPosts'] });
         },
     });
 

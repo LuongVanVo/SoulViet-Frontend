@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MoreVertical, Grid, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, MoreVertical, Grid, ShoppingBag, Plus } from 'lucide-react';
 import { usePublicProfile } from '@/hooks/usePublicProfile';
 import { PostFeedList, ConfirmationDialog } from '@/components';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,7 @@ import { useAuthStore } from '@/store';
 import { FollowListModal } from '@/components/social/FollowListModal';
 import { useFollowUser, useMyPostActions, useSocialPostActions } from '@/hooks';
 import { EditPostModal } from '@/features/profile/components/EditPostModal';
+import { CreatePostModal } from '@/features/social/components/socialFeed/CreatePostModal';
 import type { SocialPost } from '@/types';
 
 export const PublicProfilePage: React.FC = () => {
@@ -21,6 +22,7 @@ export const PublicProfilePage: React.FC = () => {
     const [editingPostId, setEditingPostId] = useState<string | null>(null);
     const [deletingPostId, setDeletingPostId] = useState<string | null>(null);
     const [isUnfollowDialogOpen, setIsUnfollowDialogOpen] = useState(false);
+    const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
 
     const { updateMyPost, deleteMyPost, isUpdating, isDeleting } = useMyPostActions(userId || '');
     const { likePost, isLiking: isLikingPost } = useSocialPostActions();
@@ -144,9 +146,19 @@ export const PublicProfilePage: React.FC = () => {
                     </div>
 
                     <div className="flex w-12 justify-end">
-                        <button className="rounded-full p-2 transition-colors hover:bg-gray-100/50">
-                            <MoreVertical className="h-6 w-6 text-gray-800" />
-                        </button>
+                        {isOwnProfile ? (
+                            <button 
+                                onClick={() => setIsCreatePostModalOpen(true)}
+                                className="rounded-full p-2 transition-colors hover:bg-gray-100/50"
+                                title={t('social.feed.createModal.title')}
+                            >
+                                <Plus className="h-6 w-6 text-gray-800" />
+                            </button>
+                        ) : (
+                            <button className="rounded-full p-2 transition-colors hover:bg-gray-100/50">
+                                <MoreVertical className="h-6 w-6 text-gray-800" />
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
@@ -173,7 +185,7 @@ export const PublicProfilePage: React.FC = () => {
                             )}
                             {profile.isLocalPartner && (
                                 <span className="bg-primary/5 text-primary text-[12px] sm:text-[12px] px-1.5 py-0.5 rounded-md border border-primary/10 font-bold flex items-center">
-                                    Local Partner
+                                    {t('common.localPartner', { defaultValue: 'Local Partner' })}
                                 </span>
                             )}
                         </div>
@@ -239,6 +251,12 @@ export const PublicProfilePage: React.FC = () => {
                                 {t('profile.public.message')}
                             </button>
                         </>
+                    )}
+                    {isOwnProfile && (
+                        <CreatePostModal 
+                            isOpen={isCreatePostModalOpen}
+                            onClose={() => setIsCreatePostModalOpen(false)}
+                        />
                     )}
                 </div>
 
