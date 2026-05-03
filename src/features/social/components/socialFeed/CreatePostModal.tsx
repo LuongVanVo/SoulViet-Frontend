@@ -14,6 +14,9 @@ import {
   Globe,
   Home,
   Pencil,
+  ChevronLeft,
+  ChevronRight,
+  ShoppingBag,
   type LucideIcon,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +25,7 @@ import { useAuthStore } from '@/store';
 import type { CreatePostModalProps, PostMediaPayload, TouristAttractionCardItem, FileUploadRequest } from '@/types';
 import { LocationMapPickerModal } from './LocationMapPickerModal';
 import { SOCIAL_LOCATION_ID_REGEX } from '@/utils/socialLocation';
+import { cn } from '@/utils/cn';
 
 export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: CreatePostModalProps) => {
   const { t } = useTranslation();
@@ -35,6 +39,7 @@ export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: Creat
   const [mediaPreviewUrls, setMediaPreviewUrls] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
 
   const [selectedVibe, setSelectedVibe] = useState<number | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<TouristAttractionCardItem | null>(null);
@@ -55,7 +60,7 @@ export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: Creat
     6: { icon: Home, color: 'text-[#EA580C]', bgColor: 'bg-[#FAF1E8]' },
   };
 
-  const [aspectRatio, setAspectRatio] = useState<'horizontal' | 'vertical' | 'square'>('square');
+  const [aspectRatio, setAspectRatio] = useState<'horizontal' | 'vertical' | 'square' | 'story'>('square');
 
   const vibeOptions = [1, 2, 3, 4, 5, 6].map((id) => ({
     id,
@@ -172,6 +177,7 @@ export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: Creat
     setMediaFiles((prev) => [...prev, ...selectedFiles]);
     setMediaNames((prev) => [...prev, ...selectedFiles.map((file) => file.name)]);
     setMediaPreviewUrls((prev) => [...prev, ...nextPreviewUrls]);
+    setCurrentMediaIndex(mediaPreviewUrls.length); // Focus on the first newly added image
 
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -187,6 +193,10 @@ export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: Creat
     setMediaFiles((prev) => prev.filter((_, idx) => idx !== index));
     setMediaNames((prev) => prev.filter((_, idx) => idx !== index));
     setMediaPreviewUrls((prev) => prev.filter((_, idx) => idx !== index));
+
+    if (currentMediaIndex >= index && currentMediaIndex > 0) {
+      setCurrentMediaIndex(currentMediaIndex - 1);
+    }
   };
 
   const resetForm = () => {
@@ -199,6 +209,7 @@ export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: Creat
     setVibeSearchQuery('');
     setSubmitError('');
     setIsSubmitting(false);
+    setCurrentMediaIndex(0);
   };
 
   const handleClose = () => {
@@ -299,10 +310,11 @@ export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: Creat
   const canPublish = caption.trim().length > 0 || mediaFiles.length > 0 || Boolean(selectedLocation);
   const avatarInitial = userName.charAt(0).toUpperCase();
   const primaryPreview = mediaPreviewUrls[0];
+  const isLocalPartner = user?.isLocalPartner || user?.roles?.some(role => role === 'LocalPartner' || role === 'Partner');
 
   return (
     <div className="fixed inset-0 z-[100] flex items-end justify-center bg-[#6B728099] p-0 sm:items-center sm:p-4" onClick={handleClose}>
-      <div 
+      <div
         className="relative flex w-full max-w-full max-h-[calc(100dvh-0.5rem)] flex-col overflow-hidden rounded-t-[2rem] bg-[#FCFCFD] shadow-2xl sm:max-w-[420px] sm:max-h-[calc(100dvh-2rem)] sm:rounded-3xl"
         onClick={(e) => e.stopPropagation()}
       >
@@ -435,11 +447,31 @@ export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: Creat
                 >
                   {t('social.feed.createModal.aspectRatio.vertical', { defaultValue: '4:5' })}
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setAspectRatio('story')}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${aspectRatio === 'story' ? 'bg-[#1F58A5] text-white' : 'bg-[#F0F2F5] text-[#4B5563] hover:bg-[#E4E6E9]'}`}
+                >
+                  {t('social.feed.createModal.aspectRatio.story', { defaultValue: '9:16' })}
+                </button>
               </div>
 
-              {primaryPreview ? (
-                <div className="relative overflow-hidden rounded-2xl border border-[#D9DEE6] bg-white">
-                  <img src={primaryPreview} alt={t('social.feed.createModal.mediaPreviewAlt')} className="h-64 w-full object-cover" />
+              {mediaPreviewUrls.length > 0 ? (
+                <div className="relative group overflow-hidden rounded-2xl border border-[#D9DEE6] bg-black">
+                  <div
+                    className={cn(
+                      "w-full transition-all duration-300 flex items-center justify-center overflow-hidden",
+                      aspectRatio === 'square' ? 'aspect-square' :
+                        aspectRatio === 'horizontal' ? 'aspect-video' :
+                        aspectRatio === 'vertical' ? 'aspect-[4/5]' : 'aspect-[9/16]'
+                    )}
+                  >
+                    <img
+                      src={mediaPreviewUrls[currentMediaIndex]}
+                      alt={t('social.feed.createModal.mediaPreviewAlt')}
+                      className="h-full w-full object-cover object-center"
+                    />
+                  </div>
 
                   <div className="absolute left-3 top-3">
                     <button
@@ -454,18 +486,45 @@ export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: Creat
 
                   <button
                     type="button"
-                    onClick={() => removeMediaAt(0)}
+                    onClick={() => removeMediaAt(currentMediaIndex)}
                     aria-label={t('social.feed.createModal.removeMedia')}
-                    className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#4B5563] shadow-sm"
+                    className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/50 text-white shadow-sm transition-colors hover:bg-black/70"
                   >
                     <X className="h-5 w-5" />
                   </button>
 
-                  {mediaPreviewUrls.length > 1 ? (
-                    <div className="absolute bottom-3 right-3 rounded-full bg-black/65 px-2.5 py-1 text-xs font-semibold text-white">
-                      +{mediaPreviewUrls.length - 1}
-                    </div>
-                  ) : null}
+                  {mediaPreviewUrls.length > 1 && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setCurrentMediaIndex(prev => Math.max(0, prev - 1))}
+                        disabled={currentMediaIndex === 0}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-gray-800 opacity-0 group-hover:opacity-100 transition-opacity disabled:hidden"
+                      >
+                        <ChevronLeft className="h-5 w-5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setCurrentMediaIndex(prev => Math.min(mediaPreviewUrls.length - 1, prev + 1))}
+                        disabled={currentMediaIndex === mediaPreviewUrls.length - 1}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-gray-800 opacity-0 group-hover:opacity-100 transition-opacity disabled:hidden"
+                      >
+                        <ChevronRight className="h-5 w-5" />
+                      </button>
+                      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                        {mediaPreviewUrls.map((_, idx) => (
+                          <div
+                            key={idx}
+                            className={cn(
+                              "h-1.5 w-1.5 rounded-full transition-all",
+                              idx === currentMediaIndex ? "bg-white w-3" : "bg-white/50"
+                            )}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
+
                 </div>
               ) : null}
 
@@ -510,6 +569,15 @@ export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: Creat
                     >
                       <Tag className="h-4 w-4" />
                     </button>
+                    {isLocalPartner && (
+                      <button
+                        type="button"
+                        aria-label={t('social.feed.createModal.cartLabel', { defaultValue: 'Gắn sản phẩm' })}
+                        className="flex h-8 w-8 items-center justify-center rounded-full bg-[#DCE7F5] text-[#1F58A5] transition-colors hover:bg-[#CADBF2]"
+                      >
+                        <ShoppingBag className="h-4 w-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -518,11 +586,21 @@ export const CreatePostModal = ({ isOpen, onClose, initialAction = null }: Creat
                     <p className="text-xs text-[#64748B]">{t('social.feed.createModal.selectedMedia', { count: mediaNames.length })}</p>
                     <div className="flex gap-2 overflow-x-auto pb-1">
                       {mediaPreviewUrls.map((url, index) => (
-                        <div key={`${url}-${index}`} className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-[#D1D5DB] bg-white">
+                        <div
+                          key={`${url}-${index}`}
+                          onClick={() => setCurrentMediaIndex(index)}
+                          className={cn(
+                            "relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border bg-white cursor-pointer transition-all",
+                            index === currentMediaIndex ? "border-[#1F58A5] ring-2 ring-[#1F58A5]/20 scale-105" : "border-[#D1D5DB]"
+                          )}
+                        >
                           <img src={url} alt={mediaNames[index] ?? t('social.feed.createModal.mediaPreviewAlt')} className="h-full w-full object-cover" />
                           <button
                             type="button"
-                            onClick={() => removeMediaAt(index)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeMediaAt(index);
+                            }}
                             className="absolute right-0 top-0 rounded-bl-md bg-black/60 px-1 text-[10px] text-white"
                             aria-label={t('social.feed.createModal.removeMedia')}
                           >

@@ -44,14 +44,11 @@ export const useSignalR = () => {
                 accessTokenFactory: () => token,
             })
             .withAutomaticReconnect()
-            .configureLogging(signalR.LogLevel.Information)
+            .configureLogging(signalR.LogLevel.None)
             .build();
 
         newConnection.on('ReceiveNotification', (notification: Notification) => {
-            console.log('[SignalR] Thông báo mới:', notification);
-
             if (user && notification.actorId === user.id) {
-                console.log('[SignalR] Bỏ qua thông báo từ chính mình');
                 return;
             }
 
@@ -97,12 +94,10 @@ export const useSignalR = () => {
         newConnection
             .start()
             .then(() => {
-                console.log('SignalR Connected! ConnectionId:', newConnection.connectionId);
                 connectionRef.current = newConnection;
                 setConnection(newConnection);
             })
-            .catch((e) => {
-                console.error('SignalR Connection Error:', e);
+            .catch((_e) => {
             });
 
         return () => {

@@ -210,6 +210,15 @@ export interface PostComment {
   replies?: PostComment[];
 }
 
+export interface PostLiker {
+  id: string;
+  fullName: string;
+  avatarUrl?: string;
+  isLocalPartner: boolean;
+  isFollowing: boolean;
+  isFollower: boolean;
+}
+
 export interface CreateCommentPayload {
   postId: string;
   content: string;

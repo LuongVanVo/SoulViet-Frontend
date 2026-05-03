@@ -59,7 +59,11 @@ export const BottomNav = ({ activeTab, onTabChange }: BottomNavProps) => {
 
     const selected = navItems.find((item) => item.tab === tab);
     if (selected) {
-      navigate(selected.to);
+      if (location.pathname === selected.to) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        navigate(selected.to);
+      }
     }
   };
 

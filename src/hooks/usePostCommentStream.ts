@@ -16,7 +16,6 @@ export const usePostCommentStream = (postId: string) => {
 
         if (!eventSourceManager[postId]) {
             const url = commentApi.getCommentStreamUrl(postId);
-            console.log('[SSE] Creating NEW connection for post:', postId);
 
             const es = new EventSource(url);
             const handlers = new Set<(event: MessageEvent) => void>();
@@ -27,10 +26,8 @@ export const usePostCommentStream = (postId: string) => {
 
             es.addEventListener('comment', masterHandler);
 
-            es.onopen = () => console.log('[SSE] Connection opened:', postId);
-            es.onerror = (err) => {
-                console.error('[SSE] Connection error:', postId, err);
-            };
+            es.onopen = () => {};
+            es.onerror = (_err) => {};
 
             eventSourceManager[postId] = { es, refCount: 0, handlers };
         }
@@ -39,7 +36,6 @@ export const usePostCommentStream = (postId: string) => {
         connection.refCount++;
 
         const handleCommentEvent = (event: MessageEvent) => {
-            console.log('[SSE] Received event for post:', postId);
             try {
                 queryClient.invalidateQueries({ queryKey: ['post-comments', postId] });
                 const data = JSON.parse(event.data);
@@ -66,7 +62,6 @@ export const usePostCommentStream = (postId: string) => {
                     });
                 }
             } catch (error) {
-                console.error('[SSE] Failed to process event:', error);
             }
         };
 
@@ -77,7 +72,6 @@ export const usePostCommentStream = (postId: string) => {
             connection.handlers.delete(handleCommentEvent);
 
             if (connection.refCount <= 0) {
-                console.log('[SSE] Closing connection (last user left):', postId);
                 connection.es.close();
                 delete eventSourceManager[postId];
             }
